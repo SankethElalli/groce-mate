@@ -1,0 +1,136 @@
+.admin-dashboard-content {
+  --background: #f9fafb;
+  background: var(--background);
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  box-sizing: border-box;
+  display: block;
+  /* Remove flex centering */
+}
+
+.admin-dashboard-full {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 2rem 0.5rem 1.5rem 0.5rem;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  display: block;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.admin-table thead, .admin-table tbody, .admin-table tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.admin-table th, .admin-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.7rem 0.5rem;
+  text-align: left;
+  font-size: 1rem;
+  word-break: break-word;
+}
+
+.admin-table th {
+  background: #f4f4f5;
+  font-weight: 700;
+}
+
+.admin-table img {
+  display: block;
+}
+
+.admin-dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #18181b;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+.admin-dashboard-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+.admin-form {
+  margin-bottom: 1.5rem;
+  padding-left: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .admin-dashboard-full {
+    padding: 1rem 0.2rem;
+  }
+  .admin-table th, .admin-table td {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.2rem;
+  }
+  .admin-dashboard-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-dashboard-full {
+    padding: 0.5rem 0.1rem;
+    border-radius: 0;
+  }
+  .admin-dashboard-title {
+    font-size: 1.1rem;
+  }
+  .admin-dashboard-tabs {
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .admin-form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .admin-table th, .admin-table td {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.1rem;
+  }
+  .admin-table {
+    font-size: 0.9rem;
+  }
+}
+
+/* Make form controls stack vertically on mobile */
+@media (max-width: 500px) {
+  .admin-form > .ion-item, .admin-form > ion-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .admin-form input,
+  .admin-form select,
+  .admin-form button,
+  .admin-form .ion-input,
+  .admin-form .ion-select {
+    width: 100% !important;
+    margin-bottom: 0.5rem;
+  }
+}
