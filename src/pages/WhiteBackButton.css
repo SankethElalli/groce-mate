@@ -1,0 +1,39 @@
+/* Fix for toolbar and back button visibility issues */
+
+/* Set a light background for toolbars to ensure visibility */
+ion-toolbar {
+  --background: #f4f5f8 !important;
+  --color: #333 !important;
+  border-bottom: 1px solid #ddd !important;
+}
+
+/* Make sure the page title is visible */
+ion-title, 
+ion-header h1 {
+  color: #333 !important;
+}
+
+/* Ensure back button is highly visible with contrasting colors */
+ion-back-button {
+  --color: white !important;
+  --background: #3880ff !important;
+  --border-radius: 4px !important;
+  --padding-start: 8px !important;
+  --padding-end: 8px !important;
+  --padding-top: 4px !important;
+  --padding-bottom: 4px !important;
+  --icon-font-size: 22px !important;
+  margin: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Override any theme-specific colors */
+.admin-page ion-back-button,
+.profile-page ion-back-button,
+.products-page ion-back-button,
+.orders-page ion-back-button {
+  --color: white !important;
+}

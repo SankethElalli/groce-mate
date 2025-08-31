@@ -1,0 +1,41 @@
+/* Global styles for back button visibility */
+
+ion-back-button {
+  --padding-start: 4px;
+  --padding-end: 8px;
+  --min-height: 32px;
+  --min-width: 40px;
+  --color: white;
+  --background: var(--ion-color-primary);
+  --border-radius: 8px;
+  --background-hover: var(--ion-color-primary-shade);
+  --background-focused: var(--ion-color-primary-shade);
+  margin-right: 8px;
+  font-weight: bold;
+  visibility: visible !important;
+  display: block !important;
+  opacity: 1 !important;
+}
+
+ion-buttons[slot="start"] {
+  margin-left: 4px;
+  min-width: 40px;
+}
+
+/* Additional optimization for different screen sizes */
+@media (max-width: 576px) {
+  ion-back-button {
+    --icon-font-size: 22px;
+  }
+  
+  ion-title {
+    font-size: 16px !important;
+    padding-inline-start: 0 !important;
+  }
+}
+
+/* Make toolbar stand out more */
+ion-header ion-toolbar {
+  --background: #f4f5f8;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}

@@ -1,95 +1,202 @@
 .admin-dashboard-content {
-  --background: #f9fafb;
+  --background: var(--ion-background-color);
   background: var(--background);
-  min-height: 100vh;
-  padding: 0;
-  margin: 0;
-  width: 100vw;
-  box-sizing: border-box;
-  display: block;
-  /* Remove flex centering */
 }
 
 .admin-dashboard-full {
   width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 2rem 0.5rem 1.5rem 0.5rem;
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  box-sizing: border-box;
-  overflow-x: auto;
-}
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  margin-bottom: 2rem;
-  overflow-x: auto;
-  display: block;
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
-}
-
-.admin-table thead, .admin-table tbody, .admin-table tr {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
-
-.admin-table th, .admin-table td {
-  border: 1px solid #e5e7eb;
-  padding: 0.7rem 0.5rem;
-  text-align: left;
-  font-size: 1rem;
-  word-break: break-word;
-}
-
-.admin-table th {
-  background: #f4f4f5;
-  font-weight: 700;
-}
-
-.admin-table img {
-  display: block;
+  margin: 0 auto;
+  padding: 12px;
+  overflow-x: hidden;
 }
 
 .admin-dashboard-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #18181b;
-  margin-bottom: 1.5rem;
-  text-align: left;
-  padding-left: 0.5rem;
+  color: var(--ion-text-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 1rem 0.5rem;
 }
 
 .admin-dashboard-tabs {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-left: 0.5rem;
+  background: var(--ion-card-background);
+  padding: 0.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.admin-dashboard-tabs ion-button {
+  --background: transparent;
+  --background-activated: var(--ion-primary);
+  --background-focused: var(--ion-primary);
+  --color: var(--ion-text-color);
+  --color-activated: #000000;
+  --color-focused: #000000;
+}
+
+.admin-dashboard-tabs ion-button[fill="solid"] {
+  --background: var(--ion-primary);
+  --color: #000000;
 }
 
 .admin-form {
-  margin-bottom: 1.5rem;
-  padding-left: 0.5rem;
+  background: var(--ion-card-background);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 
-@media (max-width: 900px) {
-  .admin-dashboard-full {
-    padding: 1rem 0.2rem;
+.admin-form ion-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.admin-form ion-input,
+.admin-form select {
+  --background: var(--ion-input-background);
+  --color: var(--ion-text-color);
+  --placeholder-color: var(--ion-input-placeholder);
+  border: 1px solid var(--ion-input-border);
+  border-radius: 10px;
+  margin: 0.5rem 0;
+  height: 42px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.admin-form ion-button {
+  --background: var(--ion-primary);
+  --color: #000000;
+  font-weight: 600;
+}
+
+.admin-form ion-button[fill="outline"] {
+  --border-color: var(--ion-secondary);
+  --color: var(--ion-secondary);
+}
+
+.admin-table {
+  background: var(--ion-card-background);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 1rem 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.admin-table table {
+  min-width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  background: var(--ion-primary);
+  color: #000000;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.admin-table td {
+  border-bottom: 1px solid var(--ion-input-border);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+}
+
+.admin-table td ion-button {
+  --padding-start: 0.5rem;
+  --padding-end: 0.5rem;
+  height: 30px;
+  font-size: 0.8rem;
+}
+
+.admin-table tr:hover td {
+  background: rgba(255, 178, 44, 0.05);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-buttons ion-button {
+  --padding-start: 1rem;
+  --padding-end: 1rem;
+  height: 36px;
+  font-size: 0.9rem;
+  --background: var(--ion-primary);
+  --color: #000000;
+}
+
+.action-buttons ion-button[color="danger"] {
+  --background: var(--ion-secondary);
+  --color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .admin-table {
+    box-shadow: none;
   }
-  .admin-table th, .admin-table td {
+  
+  .admin-table td {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-full {
+    padding: 1rem;
+  }
+  
+  .admin-dashboard-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .admin-form ion-item {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-table {
+    font-size: 0.9rem;
+  }
+  
+  .admin-table th, 
+  .admin-table td {
     font-size: 0.95rem;
     padding: 0.5rem 0.2rem;
   }
+  
   .admin-dashboard-title {
     font-size: 1.3rem;
+  }
+  
+  .admin-form {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Form controls for mobile */
+  .admin-form > .ion-item, 
+  .admin-form > ion-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .admin-form input,
+  .admin-form select,
+  .admin-form button,
+  .admin-form .ion-input,
+  .admin-form .ion-select {
+    width: 100% !important;
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -118,6 +225,10 @@
     font-size: 0.9rem;
   }
 }
+  .admin-table {
+    font-size: 0.9rem;
+  }
+
 
 /* Make form controls stack vertically on mobile */
 @media (max-width: 500px) {

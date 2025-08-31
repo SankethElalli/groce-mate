@@ -7,8 +7,19 @@
   font-family: inherit;
   font-weight: 800;
   letter-spacing: -1px;
-  color: #000000;
+  color: var(--ion-text-color);
   text-align: left;
   margin-left: 0px;
   margin-right: auto;
+}
+
+ion-toolbar {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+}
+
+ion-tab-bar {
+  --background: var(--ion-card-background);
+  --color: var(--ion-text-color);
+  border-top: 1px solid var(--ion-input-border);
 }

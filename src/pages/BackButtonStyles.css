@@ -1,0 +1,60 @@
+/* Common styles for back buttons across the application */
+
+/* Enhance back button visibility */
+ion-back-button {
+  --color: white;
+  --icon-font-size: 24px;
+  --icon-font-weight: bold;
+  --icon-margin-end: 6px;
+  --padding-start: 8px;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure toolbar and headers are properly sized for mobile */
+ion-toolbar {
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+ion-header {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Add color contrast to make it more visible */
+ion-header::after {
+  display: block;
+  content: '';
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+/* Ensure title is not overlapping with back button */
+ion-title {
+  padding-left: 32px; /* Give space for the back button */
+  font-size: 1.2rem !important;
+  text-align: center;
+}
+
+/* Responsive container for all pages */
+.page-container {
+  padding: 16px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Fix header on mobile */
+@media (max-width: 576px) {
+  ion-back-button {
+    --icon-font-size: 28px;
+    margin-left: -4px;
+  }
+  
+  .ion-title {
+    font-size: 1.1rem !important;
+  }
+}

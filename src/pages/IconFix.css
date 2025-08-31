@@ -1,0 +1,83 @@
+/* Fix for tab bar icon issues specifically with dark mode and SVG icons */
+
+/* Force SVG icons to use the correct color in both modes */
+ion-tab-button ion-icon {
+  --ionicon-stroke-color: var(--ion-tab-bar-color, #888888) !important;
+}
+
+ion-tab-button.tab-selected ion-icon {
+  --ionicon-stroke-color: var(--ion-tab-bar-color-selected, #4caf50) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Override any hard-coded colors in SVG icons */
+  ion-tab-button ion-icon svg {
+    stroke: var(--ion-tab-bar-color, #8c8c8c) !important;
+    fill: none !important;
+  }
+  
+  ion-tab-button.tab-selected ion-icon svg {
+    stroke: var(--ion-tab-bar-color-selected, #66bb6a) !important;
+  }
+  
+  .nav-icon {
+    color: var(--ion-tab-bar-color, #8c8c8c) !important;
+    --ionicon-stroke-color: var(--ion-tab-bar-color, #8c8c8c) !important;
+  }
+  
+  .tab-selected .nav-icon {
+    color: var(--ion-tab-bar-color-selected, #66bb6a) !important;
+    --ionicon-stroke-color: var(--ion-tab-bar-color-selected, #66bb6a) !important;
+  }
+  
+  /* Additional SVG specific fixes */
+  ion-icon.hydrated {
+    visibility: visible !important;
+  }
+  
+  ion-tab-button ion-icon::part(native) {
+    color: var(--ion-tab-bar-color, #8c8c8c) !important;
+  }
+  
+  ion-tab-button.tab-selected ion-icon::part(native) {
+    color: var(--ion-tab-bar-color-selected, #66bb6a) !important;
+  }
+  
+  /* Fix for ionicon SVGs */
+  .ionicon {
+    stroke: currentColor !important;
+  }
+  
+  .ionicon-fill-none {
+    fill: none !important;
+  }
+  
+  .ionicon-stroke-width {
+    stroke-width: 32px !important;
+  }
+}
+
+/* Fix for specific icons in light mode */
+@media (prefers-color-scheme: light) {
+  ion-tab-button ion-icon svg {
+    stroke: var(--ion-tab-bar-color, #888888) !important;
+    fill: none !important;
+  }
+  
+  ion-tab-button.tab-selected ion-icon svg {
+    stroke: var(--ion-tab-bar-color-selected, #4caf50) !important;
+  }
+  
+  /* Fix for ionicon SVGs */
+  .ionicon {
+    stroke: currentColor !important;
+  }
+  
+  .ionicon-fill-none {
+    fill: none !important;
+  }
+  
+  .ionicon-stroke-width {
+    stroke-width: 32px !important;
+  }
+}

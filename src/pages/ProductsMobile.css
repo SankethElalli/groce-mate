@@ -1,0 +1,63 @@
+/* Mobile optimizations for Products page */
+
+/* Make back button more visible */
+.products-page ion-back-button {
+  --color: white;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Enhanced mobile styling */
+.products-content {
+  padding-bottom: 16px;
+}
+
+.products-header {
+  padding: 12px 16px;
+}
+
+.products-header input {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Responsive grid for product items */
+@media (max-width: 576px) {
+  .products-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 12px;
+  }
+  
+  .product-item {
+    width: 100%;
+    margin: 0;
+    border-radius: 8px;
+  }
+  
+  .product-image {
+    height: 120px;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .product-details {
+    padding: 10px;
+  }
+  
+  .product-name {
+    font-size: 14px;
+  }
+  
+  .product-price {
+    font-size: 16px;
+  }
+  
+  .product-category {
+    font-size: 12px;
+  }
+}

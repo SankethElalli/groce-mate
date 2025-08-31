@@ -25,14 +25,42 @@ router.post('/users', authenticate, requireAdmin, async (req, res) => {
   res.status(201).json(user);
 });
 
-// Edit user
+// Edit user role
 router.put('/users/:id', authenticate, requireAdmin, async (req, res) => {
-  const { name, email, password, role } = req.body;
-  const update = { name, email, role };
-  if (password) update.password = await bcrypt.hash(password, 10);
-  const user = await User.findByIdAndUpdate(req.params.id, update, { new: true });
-  if (!user) return res.status(404).json({ message: 'User not found' });
-  res.json(user);
+  try {
+    const { role } = req.body;
+    
+    if (!role) {
+      return res.status(400).json({ message: 'Role is required' });
+    }
+    
+    if (!['user', 'admin'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role value' });
+    }
+    
+    // Only allow role updates
+    const update = { role };
+    
+    // Update the user
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: update },
+      { new: true, runValidators: true }
+    ).select('-password'); // Don't return password in response
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    console.log('User updated successfully:', user);
+    res.json(user);
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ 
+      message: 'Error updating user', 
+      error: error.message 
+    });
+  }
 });
 
 // Delete user
@@ -52,11 +80,27 @@ router.get('/categories', authenticate, requireAdmin, async (req, res) => {
 
 // Add category
 router.post('/categories', authenticate, requireAdmin, async (req, res) => {
-  const { name } = req.body;
-  const exists = await Category.findOne({ name });
-  if (exists) return res.status(400).json({ message: 'Category already exists' });
-  const category = await Category.create({ name });
-  res.status(201).json(category);
+  try {
+    const { name } = req.body;
+    
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: 'Category name is required' });
+    }
+    
+    const exists = await Category.findOne({ name: name.trim() });
+    if (exists) {
+      return res.status(400).json({ message: 'Category already exists' });
+    }
+    
+    const category = await Category.create({ name: name.trim() });
+    res.status(201).json(category);
+  } catch (error) {
+    console.error('Error creating category:', error);
+    res.status(500).json({ 
+      message: 'Error creating category', 
+      error: error.message 
+    });
+  }
 });
 
 // Edit category
@@ -78,8 +122,13 @@ router.delete('/categories/:id', authenticate, requireAdmin, async (req, res) =>
 
 // Get all products
 router.get('/products', authenticate, requireAdmin, async (req, res) => {
-  const products = await Product.find().populate('category');
-  res.json(products);
+  try {
+    const products = await Product.find().populate('category');
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).json({ message: 'Failed to fetch products' });
+  }
 });
 
 // Add product

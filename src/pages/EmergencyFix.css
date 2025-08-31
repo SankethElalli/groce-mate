@@ -1,0 +1,48 @@
+/* Debug styles to make sure back buttons and toolbars are always visible 
+ * This file takes precedence over theme variables and ensures visibility
+ */
+
+/* Force light background on toolbar */
+ion-toolbar {
+  --background: #ffffff !important;
+  background-color: #ffffff !important;
+}
+
+/* Force title visibility */
+ion-title {
+  color: #333333 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Force back button to be extremely visible */
+ion-back-button {
+  --background: #3880ff !important;
+  --color: #ffffff !important;
+  background-color: #3880ff !important;
+  color: #ffffff !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  margin: 8px !important;
+  font-weight: bold !important;
+  opacity: 1 !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Add an outline to back button to make it stand out against any background */
+ion-back-button::part(native) {
+  box-shadow: 0 0 0 2px white !important;
+}
+
+/* In dark mode, make sure things are still visible */
+@media (prefers-color-scheme: dark) {
+  ion-toolbar {
+    --background: #333333 !important;
+    background-color: #333333 !important;
+  }
+  
+  ion-title {
+    color: #ffffff !important;
+  }
+}

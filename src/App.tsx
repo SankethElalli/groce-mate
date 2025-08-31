@@ -14,7 +14,8 @@ import {
   IonTitle,
   IonContent as IonMenuContent,
   IonButtons,
-  IonMenuButton
+  IonMenuButton,
+  IonBadge
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { ellipse, square, triangle, homeOutline, cartOutline, storefrontOutline } from 'ionicons/icons';
@@ -24,6 +25,8 @@ import Products from './pages/Products';
 import Cart from './pages/Cart';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
+import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 import SideMenu from './components/SideMenu';
 
 /* Core CSS required for Ionic components to work properly */
@@ -56,23 +59,72 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
+import './pages/BackButtonStyles.css';
+import './pages/BackButtonEnhanced.css';
+import './pages/WhiteBackButton.css';
+import './pages/EmergencyFix.css';
+import './pages/ProfessionalAppFix.css';
+import './pages/ThemeSupport.css';
+import './pages/IconFix.css';
+import './pages/TabBarFix.css';
 
-setupIonicReact();
+// Add custom style for focus management
+const style = document.createElement('style');
+style.textContent = `
+  [inert] * {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Ensure menu items are properly focusable */
+  ion-item[button]:focus {
+    outline: 2px solid var(--ion-color-primary);
+    outline-offset: -2px;
+  }
+`;
+document.head.appendChild(style);
+
+import { isPlatform } from '@ionic/react';
+
+setupIonicReact({
+  // Add these accessibility-focused config options
+  animated: true,
+  mode: 'md',
+  innerHTMLTemplatesEnabled: false,
+  tabButtonLayout: 'label-hide'
+  // Removed a11yStatusMessageEnabled as it's not a valid config option
+});
 
 const App: React.FC = () => (
   <IonApp>
     <SideMenu />
     {/* Main Content */}
-    <div className="ion-page" id="main-content">
+    <div 
+      className="ion-page" 
+      id="main-content" 
+      role="main"
+      aria-live="polite"
+    >
       <IonHeader>
         <IonToolbar className="app-toolbar">
           <IonTitle className="app-title">GroceMate</IonTitle>
           <IonButtons slot="end">
-            <IonMenuButton />
+            <IonMenuButton 
+              aria-label="Menu"
+              onClick={() => {
+                // When menu is activated, make main content inert
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                  mainContent.setAttribute('inert', '');
+                }
+              }}
+            />
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonReactRouter>
+        {/* Fixed: Don't pass tabsHideOnSubPages to IonTabs - it's not a valid prop for this version */}
         <IonTabs>
           <IonRouterOutlet>
             <Route exact path="/" component={Home} />
@@ -80,19 +132,22 @@ const App: React.FC = () => (
             <Route exact path="/cart" component={Cart} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/admin" component={AdminDashboard} />
+            <Route exact path="/orders" component={Orders} />
+            <Route exact path="/profile" component={Profile} />
           </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="home" href="/">
-              <IonIcon aria-hidden="true" icon={homeOutline} />
+          <IonTabBar slot="bottom" className="tab-bar-custom">
+            <IonTabButton tab="home" href="/" className="tab-button-custom">
+              <IonIcon aria-hidden="true" icon={homeOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
               <IonLabel>Home</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="menu" href="/menu">
-              <IonIcon aria-hidden="true" icon={storefrontOutline} />
+            <IonTabButton tab="menu" href="/menu" className="tab-button-custom">
+              <IonIcon aria-hidden="true" icon={storefrontOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
               <IonLabel>Products</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="cart" href="/cart">
-              <IonIcon aria-hidden="true" icon={cartOutline} />
+            <IonTabButton tab="cart" href="/cart" className="tab-button-custom">
+              <IonIcon aria-hidden="true" icon={cartOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
               <IonLabel>Cart</IonLabel>
+              <IonBadge className="cart-badge" id="cart-badge">0</IonBadge>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
@@ -101,5 +156,5 @@ const App: React.FC = () => (
   </IonApp>
 );
 
-
 export default App;
+

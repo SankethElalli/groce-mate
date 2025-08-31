@@ -1,5 +1,5 @@
 .login-content {
-  --background: #f9fafb;
+  --background: var(--ion-background-color);
   background: var(--background);
   display: flex;
   justify-content: center;
@@ -20,7 +20,7 @@
 .login-title {
   font-size: 2rem;
   font-weight: 700;
-  color: #18181b;
+  color: var(--ion-text-color);
   margin-bottom: 1.5rem;
 }
 
@@ -34,21 +34,26 @@
 .login-input {
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
-  border: 1px solid #e5e7eb;
-  background: #f4f4f5;
+  border: 1px solid var(--ion-input-border);
+  background: var(--ion-input-background);
+  color: var(--ion-input-text);
   font-size: 1rem;
   outline: none;
   transition: border 0.2s;
   width: 100%;
 }
 
+.login-input::placeholder {
+  color: var(--ion-input-placeholder);
+}
+
 .login-input:focus {
-  border: 1.5px solid #6366f1;
-  background: #fff;
+  border: 1.5px solid var(--ion-primary);
+  background: var(--ion-card-background);
 }
 
 .login-btn {
-  background: #6366f1;
+  background: var(--ion-primary);
   color: #fff;
   border: none;
   border-radius: 0.75rem;
@@ -66,19 +71,37 @@
 
 .login-toggle {
   font-size: 1rem;
-  color: #71717a;
+  color: var(--ion-text-color);
+  opacity: 0.7;
   margin-top: 1rem;
 }
 
 .login-link {
   background: none;
   border: none;
-  color: #6366f1;
+  color: var(--ion-primary);
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
   margin-left: 0.2rem;
+}
+
+.offline-warning {
+  margin-bottom: 1rem;
+}
+
+.login-error {
+  color: #dc2626;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.login-loading {
+  margin-top: 1rem;
+  color: var(--ion-color-primary);
+  text-align: center;
 }
 
 @media (max-width: 500px) {

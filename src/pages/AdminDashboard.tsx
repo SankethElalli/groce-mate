@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { IonContent, IonPage, IonButton, IonInput, IonItem, IonLabel } from '@ionic/react';
+import { IonContent, IonPage, IonButton, IonInput, IonItem, IonLabel, IonSpinner, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast } from '@ionic/react';
 import './AdminDashboard.css';
+import './AdminDashboardMobile.css';
 
 const API_BASE = 'http://localhost:5000/api/admin';
 
@@ -9,36 +10,73 @@ function getToken() {
 }
 
 async function apiGet(path: string) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: { Authorization: `Bearer ${getToken()}` }
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: { Authorization: `Bearer ${getToken()}` }
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: true, message: errorData.message || 'Request failed' };
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('API Get Error:', error);
+    return { error: true, message: 'Network error. Please check your connection.' };
+  }
 }
 
 async function apiPost(path: string, body: any) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-    body: JSON.stringify(body)
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: true, message: errorData.message || 'Request failed' };
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('API Post Error:', error);
+    return { error: true, message: 'Network error. Please check your connection.' };
+  }
 }
 
 async function apiPut(path: string, body: any) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-    body: JSON.stringify(body)
-  });
-  return res.json();
+  try {
+    console.log('Making PUT request to:', path, 'with body:', body);
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: true, message: errorData.message || 'Request failed' };
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('API Put Error:', error);
+    return { error: true, message: 'Network error. Please check your connection.' };
+  }
 }
 
 async function apiDelete(path: string) {
-  const res = await fetch(`${API_BASE}${path}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${getToken()}` }
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${getToken()}` }
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      return { error: true, message: errorData.message || 'Request failed' };
+    }
+    return await res.json();
+  } catch (error) {
+    console.error('API Delete Error:', error);
+    return { error: true, message: 'Network error. Please check your connection.' };
+  }
 }
 
 const AdminDashboard: React.FC = () => {
@@ -47,9 +85,10 @@ const AdminDashboard: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
   // Form states
-  const [userForm, setUserForm] = useState({ name: '', email: '', password: '', role: 'user', id: '' });
+  const [userForm, setUserForm] = useState({ name: '', email: '', role: 'user', id: '' });
   const [categoryForm, setCategoryForm] = useState({ name: '', id: '' });
   const [productForm, setProductForm] = useState({ name: '', price: '', image: '', category: '', id: '' });
 
@@ -73,32 +112,126 @@ const AdminDashboard: React.FC = () => {
   // --- USERS ---
   async function handleUserSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (userForm.id) {
-      await apiPut(`/users/${userForm.id}`, userForm);
-    } else {
-      await apiPost('/users', userForm);
+    setLoading(true);
+    try {
+      const updateData = {
+        role: userForm.role
+      };
+      const response = await apiPut(`/users/${userForm.id}`, updateData);
+      if (!response.error) {
+        const updatedUsers = users.map(user => 
+          user._id === userForm.id ? { ...user, role: userForm.role } : user
+        );
+        setUsers(updatedUsers);
+        setNotification({
+          show: true,
+          message: 'User role updated successfully',
+          type: 'success'
+        });
+        setUserForm({ name: '', email: '', role: 'user', id: '' });
+      } else {
+        console.error('Error updating user role:', response.message);
+        setNotification({
+          show: true,
+          message: response.message || 'Error updating user role',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      setNotification({
+        show: true,
+        message: 'Network error. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
     }
-    setUserForm({ name: '', email: '', password: '', role: 'user', id: '' });
-    setUsers(await apiGet('/users'));
   }
+
   function handleUserEdit(u: any) {
-    setUserForm({ name: u.name, email: u.email, password: '', role: u.role, id: u._id });
+    setUserForm({ 
+      name: u.name || '', 
+      email: u.email || '', 
+      role: u.role || 'user', 
+      id: u._id 
+    });
   }
+
   async function handleUserDelete(id: string) {
-    await apiDelete(`/users/${id}`);
-    setUsers(await apiGet('/users'));
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      setLoading(true);
+      try {
+        const response = await apiDelete(`/users/${id}`);
+        if (!response.error) {
+          setUsers(users.filter(user => user._id !== id));
+          setNotification({
+            show: true,
+            message: 'User deleted successfully',
+            type: 'success'
+          });
+        } else {
+          console.error('Error deleting user:', response.message);
+          setNotification({
+            show: true,
+            message: response.message || 'Error deleting user',
+            type: 'error'
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        // You might want to show an error message to the user here
+      } finally {
+        setLoading(false);
+      }
+    }
   }
 
   // --- CATEGORIES ---
   async function handleCategorySubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (categoryForm.id) {
-      await apiPut(`/categories/${categoryForm.id}`, categoryForm);
-    } else {
-      await apiPost('/categories', categoryForm);
+    setLoading(true);
+    try {
+      if (!categoryForm.name.trim()) {
+        setNotification({
+          show: true,
+          message: 'Category name is required',
+          type: 'error'
+        });
+        return;
+      }
+
+      const response = categoryForm.id 
+        ? await apiPut(`/categories/${categoryForm.id}`, categoryForm)
+        : await apiPost('/categories', categoryForm);
+
+      if (!response.error) {
+        const updatedCategories = await apiGet('/categories');
+        setCategories(updatedCategories);
+        setCategoryForm({ name: '', id: '' });
+        setNotification({
+          show: true,
+          message: `Category ${categoryForm.id ? 'updated' : 'created'} successfully`,
+          type: 'success'
+        });
+      } else {
+        console.error('Error with category:', response.message);
+        setNotification({
+          show: true,
+          message: response.message || 'Error processing category',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('Error processing category:', error);
+      setNotification({
+        show: true,
+        message: 'Network error. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
     }
-    setCategoryForm({ name: '', id: '' });
-    setCategories(await apiGet('/categories'));
   }
   function handleCategoryEdit(c: any) {
     setCategoryForm({ name: c.name, id: c._id });
@@ -134,124 +267,248 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <IonPage>
+    <IonPage className="admin-page">
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/" text="" />
+          </IonButtons>
+          <IonLabel className="admin-dashboard-title">Admin Dashboard</IonLabel>
+        </IonToolbar>
+      </IonHeader>
       <IonContent fullscreen className="admin-dashboard-content">
         <div className="admin-dashboard-full">
-          <h1 className="admin-dashboard-title">Admin Dashboard</h1>
+          <IonToast
+            isOpen={notification.show}
+            onDidDismiss={() => setNotification({ ...notification, show: false })}
+            message={notification.message}
+            duration={3000}
+            color={notification.type === 'success' ? 'success' : 'danger'}
+            position="top"
+          />
           <div className="admin-dashboard-tabs">
-            <IonButton fill={activeTab === 'users' ? 'solid' : 'outline'} onClick={() => setActiveTab('users')}>Users</IonButton>
-            <IonButton fill={activeTab === 'categories' ? 'solid' : 'outline'} onClick={() => setActiveTab('categories')}>Categories</IonButton>
-            <IonButton fill={activeTab === 'products' ? 'solid' : 'outline'} onClick={() => setActiveTab('products')}>Products</IonButton>
+            <IonButton 
+              expand="block"
+              fill={activeTab === 'users' ? 'solid' : 'outline'} 
+              onClick={() => setActiveTab('users')}
+            >
+              Users
+            </IonButton>
+            <IonButton 
+              expand="block"
+              fill={activeTab === 'categories' ? 'solid' : 'outline'} 
+              onClick={() => setActiveTab('categories')}
+            >
+              Categories
+            </IonButton>
+            <IonButton 
+              expand="block"
+              fill={activeTab === 'products' ? 'solid' : 'outline'} 
+              onClick={() => setActiveTab('products')}
+            >
+              Products
+            </IonButton>
           </div>
-          {loading && <div>Loading...</div>}
-          {/* USERS */}
-          {activeTab === 'users' && (
-            <div>
-              <form className="admin-form" onSubmit={handleUserSubmit}>
-                <IonItem>
-                  <IonInput placeholder="Name" value={userForm.name} onIonChange={e => setUserForm(f => ({ ...f, name: e.detail.value! }))} required />
-                  <IonInput placeholder="Email" value={userForm.email} onIonChange={e => setUserForm(f => ({ ...f, email: e.detail.value! }))} required />
-                  <IonInput placeholder="Password" type="password" value={userForm.password} onIonChange={e => setUserForm(f => ({ ...f, password: e.detail.value! }))} required={!userForm.id} />
-                  <select value={userForm.role} onChange={e => setUserForm(f => ({ ...f, role: e.target.value }))}>
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                  <IonButton type="submit">{userForm.id ? 'Update' : 'Add'} User</IonButton>
-                  {userForm.id && <IonButton color="medium" onClick={() => setUserForm({ name: '', email: '', password: '', role: 'user', id: '' })}>Cancel</IonButton>}
-                </IonItem>
-              </form>
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map(u => (
-                    <tr key={u._id}>
-                      <td>{u.name}</td>
-                      <td>{u.email}</td>
-                      <td>{u.role}</td>
-                      <td>
-                        <IonButton size="small" onClick={() => handleUserEdit(u)}>Edit</IonButton>
-                        <IonButton size="small" color="danger" onClick={() => handleUserDelete(u._id)}>Delete</IonButton>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+              <IonSpinner />
             </div>
-          )}
-          {/* CATEGORIES */}
-          {activeTab === 'categories' && (
-            <div>
-              <form className="admin-form" onSubmit={handleCategorySubmit}>
-                <IonItem>
-                  <IonInput placeholder="Category Name" value={categoryForm.name} onIonChange={e => setCategoryForm(f => ({ ...f, name: e.detail.value! }))} required />
-                  <IonButton type="submit">{categoryForm.id ? 'Update' : 'Add'} Category</IonButton>
-                  {categoryForm.id && <IonButton color="medium" onClick={() => setCategoryForm({ name: '', id: '' })}>Cancel</IonButton>}
-                </IonItem>
-              </form>
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Name</th><th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {categories.map(c => (
-                    <tr key={c._id}>
-                      <td>{c.name}</td>
-                      <td>
-                        <IonButton size="small" onClick={() => handleCategoryEdit(c)}>Edit</IonButton>
-                        <IonButton size="small" color="danger" onClick={() => handleCategoryDelete(c._id)}>Delete</IonButton>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-          {/* PRODUCTS */}
-          {activeTab === 'products' && (
-            <div>
-              <form className="admin-form" onSubmit={handleProductSubmit}>
-                <IonItem>
-                  <IonInput placeholder="Product Name" value={productForm.name} onIonChange={e => setProductForm(f => ({ ...f, name: e.detail.value! }))} required />
-                  <IonInput placeholder="Price" value={productForm.price} onIonChange={e => setProductForm(f => ({ ...f, price: e.detail.value! }))} required />
-                  <IonInput placeholder="Image URL" value={productForm.image} onIonChange={e => setProductForm(f => ({ ...f, image: e.detail.value! }))} />
-                  <select value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} required>
-                    <option value="">Select Category</option>
-                    {categories.map(c => (
-                      <option key={c._id} value={c._id}>{c.name}</option>
-                    ))}
-                  </select>
-                  <IonButton type="submit">{productForm.id ? 'Update' : 'Add'} Product</IonButton>
-                  {productForm.id && <IonButton color="medium" onClick={() => setProductForm({ name: '', price: '', image: '', category: '', id: '' })}>Cancel</IonButton>}
-                </IonItem>
-              </form>
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Name</th><th>Price</th><th>Category</th><th>Image</th><th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map(p => (
-                    <tr key={p._id}>
-                      <td>{p.name}</td>
-                      <td>{p.price}</td>
-                      <td>{p.category?.name || ''}</td>
-                      <td>{p.image && <img src={p.image} alt={p.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />}</td>
-                      <td>
-                        <IonButton size="small" onClick={() => handleProductEdit(p)}>Edit</IonButton>
-                        <IonButton size="small" color="danger" onClick={() => handleProductDelete(p._id)}>Delete</IonButton>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          ) : (
+            <>
+              {activeTab === 'users' && (
+                <>
+                  {userForm.id && (
+                    <form className="admin-form" onSubmit={handleUserSubmit}>
+                      <IonItem lines="none">
+                        <IonLabel position="stacked">User Role</IonLabel>
+                        <select 
+                          value={userForm.role} 
+                          onChange={e => setUserForm(f => ({ ...f, role: e.target.value }))}
+                        >
+                          <option value="user">User</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </IonItem>
+                      <div className="action-buttons">
+                        <IonButton expand="block" type="submit">
+                          Update Role
+                        </IonButton>
+                        <IonButton 
+                          expand="block"
+                          fill="outline" 
+                          onClick={() => setUserForm({ name: '', email: '', role: 'user', id: '' })}
+                        >
+                          Cancel
+                        </IonButton>
+                      </div>
+                    </form>
+                  )}
+
+                  <div className="admin-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.map(u => (
+                          <tr key={u._id}>
+                            <td>{u.name}</td>
+                            <td>{u.email}</td>
+                            <td>{u.role}</td>
+                            <td>
+                              <IonButton size="small" onClick={() => handleUserEdit(u)}>Edit</IonButton>
+                              <IonButton size="small" color="danger" onClick={() => handleUserDelete(u._id)}>Delete</IonButton>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'categories' && (
+                <>
+                  <form className="admin-form" onSubmit={handleCategorySubmit}>
+                    <IonItem lines="none">
+                      <IonInput 
+                        label="Category Name" 
+                        labelPlacement="stacked"
+                        value={categoryForm.name} 
+                        onIonInput={e => setCategoryForm(f => ({ ...f, name: e.detail.value || '' }))}
+                        placeholder="Enter category name"
+                        required 
+                      />
+                    </IonItem>
+                    <div className="action-buttons">
+                      <IonButton expand="block" type="submit">
+                        {categoryForm.id ? 'Update' : 'Add'} Category
+                      </IonButton>
+                      {categoryForm.id && (
+                        <IonButton 
+                          expand="block"
+                          fill="outline" 
+                          onClick={() => setCategoryForm({ name: '', id: '' })}
+                        >
+                          Cancel
+                        </IonButton>
+                      )}
+                    </div>
+                  </form>
+
+                  <div className="admin-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th><th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {categories.map(c => (
+                          <tr key={c._id}>
+                            <td>{c.name}</td>
+                            <td>
+                              <IonButton size="small" onClick={() => handleCategoryEdit(c)}>Edit</IonButton>
+                              <IonButton size="small" color="danger" onClick={() => handleCategoryDelete(c._id)}>Delete</IonButton>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'products' && (
+                <>
+                  <form className="admin-form" onSubmit={handleProductSubmit}>
+                    <IonItem lines="none">
+                      <IonInput 
+                        label="Product Name" 
+                        labelPlacement="stacked"
+                        value={productForm.name} 
+                        onIonInput={e => setProductForm(f => ({ ...f, name: e.detail.value || '' }))}
+                        placeholder="Enter product name"
+                        required 
+                      />
+                    </IonItem>
+                    <IonItem lines="none">
+                      <IonInput 
+                        label="Price"
+                        labelPlacement="stacked"
+                        value={productForm.price}
+                        type="number"
+                        onIonInput={e => setProductForm(f => ({ ...f, price: e.detail.value || '' }))}
+                        placeholder="Enter price"
+                        required 
+                      />
+                    </IonItem>
+                    <IonItem lines="none">
+                      <IonInput 
+                        label="Image URL"
+                        labelPlacement="stacked"
+                        value={productForm.image} 
+                        onIonInput={e => setProductForm(f => ({ ...f, image: e.detail.value || '' }))}
+                        placeholder="Enter image URL"
+                      />
+                    </IonItem>
+                    <IonItem lines="none">
+                      <select 
+                        value={productForm.category} 
+                        onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} 
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map(c => (
+                          <option key={c._id} value={c._id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </IonItem>
+                    <div className="action-buttons">
+                      <IonButton expand="block" type="submit">
+                        {productForm.id ? 'Update' : 'Add'} Product
+                      </IonButton>
+                      {productForm.id && (
+                        <IonButton 
+                          expand="block"
+                          fill="outline" 
+                          onClick={() => setProductForm({ name: '', price: '', image: '', category: '', id: '' })}
+                        >
+                          Cancel
+                        </IonButton>
+                      )}
+                    </div>
+                  </form>
+
+                  <div className="admin-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Name</th><th>Price</th><th>Category</th><th>Image</th><th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {products.map(p => (
+                          <tr key={p._id}>
+                            <td>{p.name}</td>
+                            <td>{p.price}</td>
+                            <td>{p.category?.name || ''}</td>
+                            <td>{p.image && <img src={p.image} alt={p.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />}</td>
+                            <td>
+                              <IonButton size="small" onClick={() => handleProductEdit(p)}>Edit</IonButton>
+                              <IonButton size="small" color="danger" onClick={() => handleProductDelete(p._id)}>Delete</IonButton>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+            </>
           )}
         </div>
       </IonContent>
