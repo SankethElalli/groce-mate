@@ -44,7 +44,7 @@ ion-toolbar.dark-toolbar ion-icon {
 }
 
 ion-menu-button {
-  --color: #4caf50 !important;
+  --color: #00809D !important;
   font-size: 24px !important;
   visibility: visible !important;
 }
@@ -112,7 +112,7 @@ ion-card-title {
 
 ion-card-subtitle {
   font-size: 14px !important;
-  color: #4caf50 !important;
+  color: #00809D !important;
   font-weight: 500 !important;
 }
 
@@ -122,9 +122,9 @@ ion-card-content {
 
 /* Button styling */
 ion-button {
-  --background: var(--ion-color-primary, #4caf50) !important;
-  --background-activated: var(--ion-color-primary-shade, #3d8b40) !important;
-  --background-focused: var(--ion-color-primary-shade, #3d8b40) !important;
+  --background: var(--ion-color-primary, #00809D) !important;
+  --background-activated: var(--ion-color-primary-shade, #00708a) !important;
+  --background-focused: var(--ion-color-primary-shade, #00708a) !important;
   --color: var(--ion-color-primary-contrast, white) !important;
   --border-radius: 8px !important;
   --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
@@ -134,12 +134,12 @@ ion-button {
 }
 
 ion-button.button-outline {
-  --border-color: var(--ion-color-primary, #4caf50) !important;
+  --border-color: var(--ion-color-primary, #00809D) !important;
   --border-width: 1px !important;
-  --color: var(--ion-color-primary, #4caf50) !important;
+  --color: var(--ion-color-primary, #00809D) !important;
   --background: transparent !important;
-  --background-activated: rgba(var(--ion-color-primary-rgb, 76, 175, 80), 0.1) !important;
-  --background-focused: rgba(var(--ion-color-primary-rgb, 76, 175, 80), 0.1) !important;
+  --background-activated: rgba(var(--ion-color-primary-rgb, 0, 128, 157), 0.1) !important;
+  --background-focused: rgba(var(--ion-color-primary-rgb, 0, 128, 157), 0.1) !important;
 }
 
 /* Fixing Item styling */

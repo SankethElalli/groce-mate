@@ -73,7 +73,7 @@
 }
 
 .login-btn {
-  background: var(--ion-color-primary, #4caf50);
+  background: var(--ion-color-primary, #00809D);
   color: var(--ion-color-primary-contrast, #ffffff);
   border: none;
   border-radius: 0.75rem;
@@ -86,7 +86,7 @@
 }
 
 .login-btn:hover {
-  background: var(--ion-color-primary-shade, #3d8b40);
+  background: var(--ion-color-primary-shade, #00708a);
   transform: translateY(-1px);
 }
 
