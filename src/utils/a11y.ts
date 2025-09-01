@@ -64,3 +64,20 @@ export function createAriaLabel(element: HTMLElement): string {
   
   return 'Unlabeled element';
 }
+
+// Helper function to handle tab selection without visual highlighting
+export function setTabSelectedState(tabButton: HTMLElement, isSelected: boolean) {
+  // Keep ARIA state for accessibility
+  tabButton.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+  
+  // Add or remove the selected class (for JavaScript reference)
+  if (isSelected) {
+    tabButton.classList.add('tab-selected');
+  } else {
+    tabButton.classList.remove('tab-selected');
+  }
+  
+  // Ensure no visual highlighting
+  tabButton.style.borderBottom = 'none';
+  tabButton.style.boxShadow = 'none';
+}

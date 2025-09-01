@@ -29,7 +29,7 @@ http://ionicframework.com/docs/theming/ */
   --ion-toolbar-background: #ffffff;
   --ion-toolbar-color: #333333;
   --ion-tab-bar-background: #ffffff;
-  --ion-tab-bar-color: #888888;
+  --ion-tab-bar-color: #666666;
   --ion-tab-bar-color-selected: #4caf50;
   
   --ion-input-background: #ffffff;
@@ -69,6 +69,10 @@ http://ionicframework.com/docs/theming/ */
   /* Accessibility improvements */
   --ion-backdrop-opacity: 0.4;
   --ion-modal-shadow-color: rgba(0, 0, 0, 0.4);
+  
+  /* Remove default tab button border styles */
+  --ion-tab-button-border: none;
+  --ion-tab-button-border-selected: none;
 }
 
 /* Style for screen reader only content */
@@ -123,12 +127,16 @@ http://ionicframework.com/docs/theming/ */
     --ion-toolbar-background: #1f1f1f;
     --ion-toolbar-color: #ffffff;
     --ion-tab-bar-background: #1f1f1f;
-    --ion-tab-bar-color: #8c8c8c;
+    --ion-tab-bar-color: #999999;
     --ion-tab-bar-color-selected: #66bb6a;
     
     --ion-input-background: rgba(255, 255, 255, 0.05);
     --ion-input-border: rgba(255, 255, 255, 0.1);
     --ion-input-text: #F7F7F7;
     --ion-input-placeholder: rgba(247, 247, 247, 0.6);
+    
+    /* Remove default tab button border styles in dark mode */
+    --ion-tab-button-border: none;
+    --ion-tab-button-border-selected: none;
   }
 }

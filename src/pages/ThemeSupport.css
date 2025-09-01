@@ -42,53 +42,16 @@
     --ion-toolbar-background: #1f1f1f;
     --ion-toolbar-color: #ffffff;
     --ion-tab-bar-background: #1f1f1f;
-    --ion-tab-bar-color: #8c8c8c;
+    --ion-tab-bar-color: #999999;
     --ion-tab-bar-color-selected: #66bb6a;
 
     --ion-card-background: #2a2a2a;
     --ion-item-background: #2a2a2a;
   }
 
-  /* Override fixed colors in dark mode */
-  ion-tab-bar {
-    --background: var(--ion-tab-bar-background) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-  }
-
-  ion-tab-button {
-    --color: var(--ion-tab-bar-color) !important;
-    --color-selected: var(--ion-tab-bar-color-selected) !important;
-  }
-
-  ion-tab-button ion-icon {
-    color: var(--ion-tab-bar-color) !important;
-    --ionicon-stroke-color: var(--ion-tab-bar-color) !important;
-  }
-
-  ion-tab-button.tab-selected ion-icon {
-    color: var(--ion-tab-bar-color-selected) !important;
-    --ionicon-stroke-color: var(--ion-tab-bar-color-selected) !important;
-  }
-
-  ion-tab-button::before {
-    background-color: var(--ion-tab-bar-color-selected) !important;
-  }
-
+  /* Keep other essential dark mode styling */
   ion-toolbar {
     --background: var(--ion-toolbar-background) !important;
-    --color: var(--ion-toolbar-color) !important;
-  }
-
-  .app-toolbar {
-    --background: var(--ion-toolbar-background) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-  }
-
-  .app-title {
-    color: var(--ion-toolbar-color) !important;
-  }
-
-  ion-back-button {
     --color: var(--ion-toolbar-color) !important;
   }
 
@@ -114,7 +77,6 @@
     background: var(--ion-toolbar-background) !important;
   }
 
-  /* Dark mode text and icon enhancements */
   h1, h2, h3, p, span, div:not(.cart-badge):not(.order-status) {
     color: var(--ion-text-color) !important;
   }
@@ -133,7 +95,23 @@
     --color: var(--ion-color-primary) !important;
   }
 
-  /* Admin dashboard table dark mode */
+  input, select, textarea {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: var(--ion-text-color) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  ion-input, ion-textarea, ion-select {
+    --background: rgba(255, 255, 255, 0.1) !important;
+    --color: var(--ion-text-color) !important;
+    --placeholder-color: rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+/* System preference mode transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
   .admin-table table {
     color: var(--ion-text-color) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
@@ -160,7 +138,28 @@
     --color: var(--ion-text-color) !important;
     --placeholder-color: rgba(255, 255, 255, 0.5) !important;
   }
+
+/* System preference mode transition */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
 }
+  .admin-table td {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Form elements dark mode */
+  input, select, textarea {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: var(--ion-text-color) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  ion-input, ion-textarea, ion-select {
+    --background: rgba(255, 255, 255, 0.1) !important;
+    --color: var(--ion-text-color) !important;
+    --placeholder-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
 
 /* System preference mode transition */
 * {
@@ -170,5 +169,5 @@
 /* Force tab bar colors in both themes */
 :root {
   --ion-tab-bar-color-force: var(--ion-tab-bar-color) !important;
-  --ion-tab-bar-color-selected-force: var(--ion-tab-bar-color-selected) !important;
+  --ion-tab-bar-color-selected-force: var(--ion-tab-bar-color) !important; /* Same as non-selected */
 }
