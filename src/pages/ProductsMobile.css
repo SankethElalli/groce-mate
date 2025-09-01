@@ -1,28 +1,60 @@
-/* Mobile optimizations for Products page */
-
-/* Make back button more visible */
-.products-page ion-back-button {
-  --color: white;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
-
-/* Enhanced mobile styling */
 .products-content {
   padding-bottom: 16px;
 }
 
+/* Remove custom title styling - use Ionic's IonTitle instead */
+.products-page ion-title {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: var(--ion-text-color) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-align: center !important;
+}
+
+/* Show the products title in content area above search bar */
+.products-page .products-title {
+  display: block !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: var(--ion-text-color) !important;
+  margin: 0 0 1rem 0 !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-align: left !important;
+}
+
+/* Enhanced search input for mobile */
 .products-header {
-  padding: 12px 16px;
+  padding: 4rem 1rem 0.5rem !important;
+  margin: 0 auto 0.5rem !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
+  margin-top: 1rem !important;
 }
 
 .products-header input {
-  width: 100%;
-  padding: 10px 16px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  width: 100% !important;
+  padding: 0.7rem 1rem !important;
+  font-size: 1rem !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  background: var(--ion-card-background) !important;
+  margin: 0 !important;
+  color: var(--ion-text-color) !important;
+}
+
+/* Fix content positioning */
+.products-content {
+  padding-top: 0 !important;
+  --padding-top: 0 !important;
+  padding-bottom: 16px;
 }
 
 /* Responsive grid for product items */
@@ -30,34 +62,126 @@
   .products-list {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    padding: 0 12px;
+    gap: 0.75rem;
+    padding: 0 0.75rem 1.5rem !important;
   }
   
-  .product-item {
-    width: 100%;
-    margin: 0;
-    border-radius: 8px;
+  .product-card {
+    height: 300px !important;
+    border-radius: 12px !important;
   }
   
   .product-image {
-    height: 120px;
-    border-radius: 8px 8px 0 0;
+    height: 140px !important;
+    border-radius: 0 !important;
   }
   
-  .product-details {
-    padding: 10px;
+  .product-info {
+    padding: 0.75rem !important;
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: space-between !important;
   }
   
   .product-name {
-    font-size: 14px;
+    font-size: 0.9rem !important;
+    text-align: center !important;
+    margin-bottom: 0.25rem !important;
   }
   
   .product-price {
-    font-size: 16px;
+    font-size: 1rem !important;
+    margin-bottom: 0.25rem !important;
   }
   
   .product-category {
-    font-size: 12px;
+    font-size: 0.8rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .product-add-btn {
+    padding: 0.6rem 0.75rem !important;
+    font-size: 0.85rem !important;
+    margin-top: auto !important;
+    width: 100% !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .products-page .products-title {
+    font-size: 1.4rem !important;
+  }
+  
+  .products-header {
+    padding: 1.5rem 0.75rem 0.5rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .products-header input {
+    padding: 0.6rem 0.8rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .product-card {
+    height: 280px !important;
+  }
+  
+  .product-image {
+    height: 120px !important;
+  }
+  
+  .product-info {
+    padding: 0.6rem !important;
+  }
+  
+  .product-name {
+    font-size: 0.85rem !important;
+  }
+  
+  .product-price {
+    font-size: 0.95rem !important;
+  }
+  
+  .product-category {
+    font-size: 0.75rem !important;
+    margin-bottom: 0.4rem !important;
+  }
+  
+  .product-add-btn {
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .products-header input {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .products-page ion-toolbar {
+    border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+  }
+}
+
+  .products-page ion-back-button {
+    --min-height: 36px !important;
+    --min-width: 36px !important;
+    --padding-start: 6px !important;
+    --padding-end: 6px !important;
+  }
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .products-header input {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .products-page ion-toolbar {
+    border-bottom-color: rgba(255, 255, 255, 0.05) !important;
   }
 }

@@ -1,7 +1,8 @@
-import { IonContent, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton } from '@ionic/react';
+import { IonContent, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast, IonTitle } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { getProducts } from '../api/api';
+import { useCart } from '../contexts/CartContext';
 import './Product.css';
 import './ProductsMobile.css';
 
@@ -12,6 +13,13 @@ const Products: React.FC = () => {
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Add toast notification state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  
+  // Use cart context
+  const { addToCart } = useCart();
 
   // Fetch products from backend
   useEffect(() => {
@@ -72,6 +80,13 @@ const Products: React.FC = () => {
     setFilteredProducts(filtered);
   };
 
+  // Handle adding product to cart
+  const handleAddToCart = (product: any) => {
+    addToCart(product);
+    setToastMessage(`${product.name} added to cart!`);
+    setShowToast(true);
+  };
+
   return (
     <IonPage className="products-page">
       <IonHeader>
@@ -79,18 +94,18 @@ const Products: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/" text="" />
           </IonButtons>
-          <h1 className="products-title">Products</h1>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="products-content">
         <div className="products-header">
+          <h1 className="products-title">Products</h1>
           <input
-            className="home-search"
+            className="home-search products-search"
             type="text"
             placeholder="Search groceries..."
             value={searchTerm}
             onChange={handleSearch}
-            style={{ marginTop: "1rem", marginBottom: "1.5rem" }}
+            aria-label="Search products"
           />
         </div>
         <div className="products-list">
@@ -107,7 +122,13 @@ const Products: React.FC = () => {
                   <div className="product-price">₹{product.price}</div>
                   <div className="product-category">{product.category?.name}</div>
                 </div>
-                <button className="product-add-btn">Add</button>
+                <button 
+                  className="product-add-btn" 
+                  onClick={() => handleAddToCart(product)}
+                  aria-label={`Add ${product.name} to cart`}
+                >
+                  Add to Cart
+                </button>
               </div>
             ))
           ) : (
@@ -116,6 +137,22 @@ const Products: React.FC = () => {
             </div>
           )}
         </div>
+        
+        {/* Toast notification for cart additions */}
+        <IonToast
+          isOpen={showToast}
+          onDidDismiss={() => setShowToast(false)}
+          message={toastMessage}
+          duration={2000}
+          position="bottom"
+          color="success"
+          buttons={[
+            {
+              text: 'Dismiss',
+              role: 'cancel'
+            }
+          ]}
+        />
       </IonContent>
     </IonPage>
   );

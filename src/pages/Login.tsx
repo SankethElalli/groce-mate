@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IonContent, IonPage, IonToast, IonChip, IonIcon, IonLabel } from '@ionic/react';
+import { IonContent, IonPage, IonToast, IonChip, IonIcon, IonLabel, IonHeader, IonToolbar, IonButtons, IonBackButton } from '@ionic/react';
 import { login as apiLogin, register as apiRegister } from '../api/api';
 import { useHistory } from 'react-router-dom';
 import { cloudOfflineOutline } from 'ionicons/icons';
@@ -121,11 +121,20 @@ const Login: React.FC = () => {
   };
 
   return (
-    <IonPage>
+    <IonPage className="login-page">
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/" text="" />
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent fullscreen className="login-content">
+        <div className="login-header">
+          <h1 className="login-page-title">{isRegister ? 'Create Account' : 'Welcome Back'}</h1>
+        </div>
+        
         <div className="login-center">
-          <h1 className="login-title">{isRegister ? 'Register' : 'Login'}</h1>
-          
           {isOffline && (
             <IonChip color="warning" className="offline-warning">
               <IonIcon icon={cloudOfflineOutline} />
@@ -163,7 +172,7 @@ const Login: React.FC = () => {
               />
             )}
             <button className="login-btn" type="submit" disabled={loading}>
-              {isRegister ? 'Register' : 'Login'}
+              {loading ? 'Please wait...' : (isRegister ? 'Create Account' : 'Sign In')}
             </button>
           </form>
           {error && <div className="login-error">{error}</div>}
@@ -173,14 +182,14 @@ const Login: React.FC = () => {
               <>
                 Already have an account?{' '}
                 <button type="button" onClick={() => setIsRegister(false)} className="login-link">
-                  Login
+                  Sign In
                 </button>
               </>
             ) : (
               <>
                 Don't have an account?{' '}
                 <button type="button" onClick={() => setIsRegister(true)} className="login-link">
-                  Register
+                  Create Account
                 </button>
               </>
             )}

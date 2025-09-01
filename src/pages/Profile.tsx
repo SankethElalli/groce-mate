@@ -344,21 +344,13 @@ const Profile: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/" text="" />
           </IonButtons>
-          <IonTitle>
-            Profile 
-            {isOfflineMode && (
-              <IonChip color="warning" className="offline-chip">
-                <IonIcon icon={cloudOfflineOutline} />
-                <IonLabel>Offline Mode</IonLabel>
-                <IonButton fill="clear" size="small" onClick={handleRetryConnection}>
-                  <IonIcon icon={refreshOutline} />
-                </IonButton>
-              </IonChip>
-            )}
-          </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="profile-content">
+        <div className="profile-header">
+          <h1 className="profile-title">Profile</h1>
+        </div>
+        
         <div 
           className="profile-container" 
           ref={mainContentRef} 

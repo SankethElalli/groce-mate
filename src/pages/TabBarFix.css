@@ -118,19 +118,26 @@ ion-tab-button .nav-icon svg * {
   fill: none !important;
 }
 
-/* Badge Styling */
-ion-tab-button ion-badge {
+/* Perfect Circular Badge Styling - ONLY THIS IMPLEMENTATION */
+.cart-badge-circular {
   position: absolute !important;
-  top: 8px !important;
-  right: 12px !important;
-  --background: var(--ion-color-secondary) !important;
-  --color: white !important;
+  top: 6px !important;
+  right: 8px !important;
+  background: #ff4444 !important;
+  color: white !important;
   font-size: 10px !important;
+  font-weight: 700 !important;
   min-width: 18px !important;
   height: 18px !important;
-  border-radius: 9px !important;
-  border: 2px solid var(--ion-tab-bar-background) !important;
-  font-weight: 600 !important;
+  border-radius: 50% !important;
+  border: 2px solid var(--ion-tab-bar-background, #ffffff) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  z-index: 10 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Focus Accessibility - minimal outline */
@@ -144,6 +151,10 @@ ion-tab-button:focus {
   ion-tab-bar {
     border-top-color: rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .cart-badge-circular {
+    border-color: var(--ion-tab-bar-background, #1a1a1a) !important;
   }
 }
 
@@ -175,55 +186,13 @@ ion-tab-button.tab-selected ion-icon {
   ion-tab-button ion-label {
     font-size: 10px !important;
   }
-}
-
-@media (min-width: 768px) {
-  ion-tab-bar {
-    height: 70px !important;
-    padding: 10px 0 !important;
-  }
   
-  ion-tab-button {
-    margin: 0 8px !important;
-  }
-}
-  
-  
-  ion-tab-button ion-label {
-    font-size: 10px !important;
-  }
-
-
-@media (min-width: 768px) {
-  ion-tab-bar {
-    height: 70px !important;
-    padding: 10px 0 !important;
-  }
-  
-  ion-tab-button {
-    margin: 0 8px !important;
-  }
-}
-
-/* Remove any conflicting styles - replaced by main selectors above */
-/* .tab-icon-selected and .tab-icon-unselected classes are now handled by the main selectors */
-
-/* Ensure proper spacing on different screen sizes */
-@media (max-width: 480px) {
-  ion-tab-bar {
-    height: 62px !important;
-    padding: 6px 0 !important;
-  }
-  
-  ion-tab-button ion-icon,
-  ion-tab-button .nav-icon {
-    font-size: 22px !important;
-    width: 22px !important;
-    height: 22px !important;
-  }
-  
-  ion-tab-button ion-label {
-    font-size: 10px !important;
+  .cart-badge-circular {
+    top: 4px !important;
+    right: 6px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    font-size: 9px !important;
   }
 }
 

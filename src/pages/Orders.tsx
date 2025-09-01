@@ -1,22 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { IonContent, IonPage, IonIcon, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonBadge, IonText, IonRefresher, IonRefresherContent, IonButton, IonModal, IonList, IonItem, IonLabel, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonCardHeader } from '@ionic/react';
+import { IonContent, IonPage, IonIcon, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonBadge, IonText, IonRefresher, IonRefresherContent, IonButton, IonModal, IonList, IonItem, IonLabel, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonCardHeader, IonSpinner } from '@ionic/react';
 import { bagCheckOutline, timeOutline, chevronForwardOutline, cartOutline, closeOutline, locationOutline, cardOutline, callOutline, chatboxEllipsesOutline } from 'ionicons/icons';
-import OrderDetailsModal from './OrderDetailsModal';
 import './Orders.css';
 import './OrdersMobile.css';
 
-// Extended Order interface
+// Order interfaces
 interface OrderItem {
+  _id: string;
   name: string;
   quantity: number;
-  price: string;
+  price: number;
+  image?: string;
 }
 
 interface Order {
-  id: string;
-  date: string;
-  total: string;
+  _id: string;
+  orderNumber: string;
+  createdAt: string;
+  total: number;
   status: string;
   items: OrderItem[];
   deliveryAddress?: string;
@@ -26,103 +28,78 @@ interface Order {
   orderNotes?: string;
 }
 
+// Temporary getUserOrders function - replace with actual API call
+const getUserOrders = async () => {
+  // For now, return empty orders array
+  return {
+    success: true,
+    data: [],
+    message: 'No orders found'
+  };
+};
+
 const Orders: React.FC = () => {
   const history = useHistory();
   
-  // State for modal
+  // State management
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  // Debug effect to track modal state changes
+  // Fetch orders on component mount
   useEffect(() => {
-    console.log('Modal state changed:', { isModalOpen, selectedOrder });
-  }, [isModalOpen, selectedOrder]);
+    fetchOrders();
+  }, []);
 
-  // Sample order data - replace with actual API data later
-  const orders: Order[] = [
-    {
-      id: "ORD001",
-      date: "2024-03-15T14:30:00",
-      total: "₹350",
-      status: "Delivered",
-      items: [
-        { name: "Apple", quantity: 2, price: "₹80" },
-        { name: "Milk", quantity: 1, price: "₹50" },
-        { name: "Eggs", quantity: 12, price: "₹120" },
-        { name: "Bread", quantity: 1, price: "₹100" }
-      ],
-      deliveryAddress: "123 Main Street, Apartment 4B, Mumbai, 400001",
-      paymentMethod: "Credit Card (ending 4242)",
-      phoneNumber: "+91 9876543210",
-      estimatedDelivery: "Delivered on March 15, 2024 at 6:30 PM",
-      orderNotes: "Please leave at the doorstep"
-    },
-    {
-      id: "ORD002",
-      date: "2024-03-14T10:15:00",
-      total: "₹220",
-      status: "Processing",
-      items: [
-        { name: "Bread", quantity: 1, price: "₹30" },
-        { name: "Tomato", quantity: 2, price: "₹50" },
-        { name: "Spinach", quantity: 1, price: "₹40" },
-        { name: "Rice", quantity: 1, price: "₹100" }
-      ],
-      deliveryAddress: "456 Park Avenue, Delhi, 110001",
-      paymentMethod: "Cash on Delivery",
-      phoneNumber: "+91 8765432109",
-      estimatedDelivery: "Expected on March 16, 2024 between 2-4 PM"
-    },
-    {
-      id: "ORD003",
-      date: "2024-03-10T09:45:00",
-      total: "₹580",
-      status: "Cancelled",
-      items: [
-        { name: "Chicken", quantity: 1, price: "₹280" },
-        { name: "Onions", quantity: 3, price: "₹60" },
-        { name: "Pasta", quantity: 2, price: "₹240" }
-      ],
-      deliveryAddress: "789 Village Road, Bangalore, 560001",
-      paymentMethod: "UPI",
-      phoneNumber: "+91 7654321098"
+  // Fetch orders from API
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        history.push('/login');
+        return;
+      }
+
+      const response = await getUserOrders();
+      
+      if (response.success) {
+        setOrders(response.data || []);
+      } else {
+        setError(response.message || 'Failed to fetch orders');
+      }
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setError('Failed to load orders. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   // Handle opening the modal with order details
   const handleViewDetails = (order: Order) => {
-    console.log('View details clicked for order:', order);
+    if (isModalOpen) return;
     
-    // Prevent multiple rapid clicks
-    if (isModalOpen) {
-      console.log('Modal already open, ignoring click');
-      return;
-    }
-    
-    // Add a small delay to ensure proper state management
     setTimeout(() => {
       setSelectedOrder(order);
       setIsModalOpen(true);
-      console.log('Modal state updated - isOpen:', true, 'selectedOrder:', order);
     }, 50);
   };
 
   // Handle closing the modal
   const handleCloseModal = () => {
-    console.log('Closing modal - simple handler');
     setIsModalOpen(false);
     setSelectedOrder(null);
   };
 
   // Handle refresh when pulled down
-  const handleRefresh = (event: CustomEvent) => {
-    // In a real app, you would fetch new data here
-    console.log('Refreshing orders...');
-    
-    // Simulate refresh delay
-    setTimeout(() => {
-      event.detail.complete();
-    }, 1000);
+  const handleRefresh = async (event: CustomEvent) => {
+    await fetchOrders();
+    event.detail.complete();
   };
 
   // Format date to readable format
@@ -145,71 +122,27 @@ const Orders: React.FC = () => {
     return `status-${status.toLowerCase()}`;
   };
 
+  // Get status color for badge
+  const getStatusColor = (status: string): string => {
+    switch(status.toLowerCase()) {
+      case 'delivered': return 'success';
+      case 'processing': return 'warning';
+      case 'cancelled': return 'danger';
+      case 'shipped': return 'primary';
+      default: return 'medium';
+    }
+  };
+
   return (
     <IonPage className="orders-page">
-      <IonHeader style={{
-        position: 'relative',
-        zIndex: 100,
-        background: 'var(--ion-background-color)'
-      }}>
-        <IonToolbar style={{
-          position: 'relative',
-          zIndex: 101,
-          background: 'var(--ion-background-color)',
-          borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-        }}>
-          {/* CUSTOM BACK BUTTON - GUARANTEED VISIBLE */}
-          <div 
-            onClick={() => history.goBack()}
-            style={{
-              position: 'absolute',
-              left: '12px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 9999,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '36px',
-              height: '36px',
-              backgroundColor: 'rgba(56, 128, 255, 0.1)',
-              border: '2px solid #3880ff',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              color: '#3880ff'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(56, 128, 255, 0.2)';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(56, 128, 255, 0.1)';
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-            }}
-            onMouseDown={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(0.95)';
-            }}
-            onMouseUp={(e) => {
-              e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
-            }}
-          >
+      <IonHeader className="orders-header-wrapper">
+        <IonToolbar className="orders-toolbar">
+          <div className="custom-back-button" onClick={() => history.goBack()}>
             <IonIcon 
               icon={chevronForwardOutline} 
-              style={{
-                fontSize: '20px',
-                color: '#3880ff',
-                transform: 'rotate(180deg)'
-              }}
+              className="back-button-icon"
             />
           </div>
-          <IonTitle style={{ 
-            paddingLeft: '60px',
-            fontSize: '1.1rem',
-            fontWeight: '600',
-            textAlign: 'left'
-          }}>My Orders</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="orders-content">
@@ -217,22 +150,43 @@ const Orders: React.FC = () => {
           <IonRefresherContent></IonRefresherContent>
         </IonRefresher>
         
+        <div className="orders-header">
+          <h1 className="orders-title">Orders</h1>
+        </div>
+        
         <div className="orders-container">
-          {orders.length === 0 ? (
+          {loading ? (
+            <div className="orders-loading">
+              <IonSpinner name="crescent" />
+              <p>Loading your orders...</p>
+            </div>
+          ) : error ? (
+            <div className="orders-error">
+              <IonIcon icon={cartOutline} />
+              <h3>Oops! Something went wrong</h3>
+              <p>{error}</p>
+              <IonButton fill="outline" onClick={fetchOrders}>
+                Try Again
+              </IonButton>
+            </div>
+          ) : orders.length === 0 ? (
             <div className="no-orders">
               <IonIcon icon={cartOutline} />
               <h3>No Orders Yet</h3>
               <p>Your order history will appear here</p>
+              <IonButton routerLink="/menu" fill="outline">
+                Start Shopping
+              </IonButton>
             </div>
           ) : (
             <div className="orders-list">
               {orders.map(order => (
-                <div key={order.id} className="order-card">
+                <div key={order._id} className="order-card">
                   <div className="order-header">
                     <div className="order-id-container">
                       <div className="order-id">
                         <IonIcon icon={bagCheckOutline} />
-                        <span>{order.id}</span>
+                        <span>#{order.orderNumber}</span>
                       </div>
                       <div className={`order-status ${getStatusClass(order.status)}`}>
                         {order.status}
@@ -240,7 +194,7 @@ const Orders: React.FC = () => {
                     </div>
                     <div className="order-date">
                       <IonIcon icon={timeOutline} />
-                      <span>{formatDate(order.date)}</span>
+                      <span>{formatDate(order.createdAt)}</span>
                     </div>
                   </div>
 
@@ -253,14 +207,14 @@ const Orders: React.FC = () => {
                       </IonText>
                     </div>
                     <div className="order-total">
-                      <strong>{order.total}</strong>
+                      <strong>₹{order.total.toFixed(2)}</strong>
                     </div>
                   </div>
 
                   <button 
                     className="order-details-btn" 
                     onClick={() => handleViewDetails(order)}
-                    aria-label={`View details for order ${order.id}`}
+                    aria-label={`View details for order ${order.orderNumber}`}
                     type="button"
                   >
                     View Details
@@ -273,7 +227,7 @@ const Orders: React.FC = () => {
         </div>
       </IonContent>
       
-      {/* Professional Modal Design - Always rendered, controlled by isOpen */}
+      {/* Order Details Modal */}
       <IonModal 
         isOpen={isModalOpen} 
         onDidDismiss={handleCloseModal}
@@ -302,13 +256,9 @@ const Orders: React.FC = () => {
                 <IonCardContent>
                   <div className="order-header-content">
                     <div className="order-id-section">
-                      <h2>#{selectedOrder.id}</h2>
+                      <h2>#{selectedOrder.orderNumber}</h2>
                       <IonBadge 
-                        color={
-                          selectedOrder.status.toLowerCase() === 'delivered' ? 'success' :
-                          selectedOrder.status.toLowerCase() === 'processing' ? 'warning' :
-                          selectedOrder.status.toLowerCase() === 'cancelled' ? 'danger' : 'medium'
-                        }
+                        color={getStatusColor(selectedOrder.status)}
                         className="status-badge"
                       >
                         {selectedOrder.status}
@@ -316,7 +266,7 @@ const Orders: React.FC = () => {
                     </div>
                     <div className="order-date-section">
                       <IonIcon icon={timeOutline} />
-                      <span>{new Date(selectedOrder.date).toLocaleDateString('en-US', { 
+                      <span>{new Date(selectedOrder.createdAt).toLocaleDateString('en-US', { 
                         month: 'short', 
                         day: 'numeric',
                         year: 'numeric',
@@ -340,86 +290,20 @@ const Orders: React.FC = () => {
                       <IonCol size="2">Qty</IonCol>
                       <IonCol size="4" className="text-right">Price</IonCol>
                     </IonRow>
-                    {selectedOrder.items.map((item, index) => (
+                    {selectedOrder.items.map((item: OrderItem, index: number) => (
                       <IonRow key={index} className="item-row">
                         <IonCol size="6" className="item-name">{item.name}</IonCol>
                         <IonCol size="2" className="item-qty">{item.quantity}</IonCol>
-                        <IonCol size="4" className="text-right item-price">{item.price}</IonCol>
+                        <IonCol size="4" className="text-right item-price">₹{(item.price * item.quantity).toFixed(2)}</IonCol>
                       </IonRow>
                     ))}
                     <IonRow className="total-row">
                       <IonCol size="8" className="total-label"><strong>Total Amount</strong></IonCol>
-                      <IonCol size="4" className="text-right total-price"><strong>{selectedOrder.total}</strong></IonCol>
+                      <IonCol size="4" className="text-right total-price"><strong>₹{selectedOrder.total.toFixed(2)}</strong></IonCol>
                     </IonRow>
                   </IonGrid>
                 </IonCardContent>
               </IonCard>
-
-              {/* Delivery & Payment Info */}
-              {(selectedOrder.deliveryAddress || selectedOrder.paymentMethod || selectedOrder.phoneNumber) && (
-                <IonCard className="details-card">
-                  <IonCardHeader>
-                    <h3 className="section-title">Delivery & Payment</h3>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <IonList className="details-list">
-                      {selectedOrder.deliveryAddress && (
-                        <IonItem lines="none" className="detail-item">
-                          <IonIcon icon={locationOutline} slot="start" color="primary" />
-                          <IonLabel className="ion-text-wrap">
-                            <h4>Delivery Address</h4>
-                            <p>{selectedOrder.deliveryAddress}</p>
-                          </IonLabel>
-                        </IonItem>
-                      )}
-                      
-                      {selectedOrder.paymentMethod && (
-                        <IonItem lines="none" className="detail-item">
-                          <IonIcon icon={cardOutline} slot="start" color="primary" />
-                          <IonLabel>
-                            <h4>Payment Method</h4>
-                            <p>{selectedOrder.paymentMethod}</p>
-                          </IonLabel>
-                        </IonItem>
-                      )}
-                      
-                      {selectedOrder.phoneNumber && (
-                        <IonItem lines="none" className="detail-item">
-                          <IonIcon icon={callOutline} slot="start" color="primary" />
-                          <IonLabel>
-                            <h4>Contact Number</h4>
-                            <p>{selectedOrder.phoneNumber}</p>
-                          </IonLabel>
-                        </IonItem>
-                      )}
-                    </IonList>
-                  </IonCardContent>
-                </IonCard>
-              )}
-
-              {/* Order Notes */}
-              {selectedOrder.orderNotes && (
-                <IonCard className="notes-card">
-                  <IonCardHeader>
-                    <h3 className="section-title">
-                      <IonIcon icon={chatboxEllipsesOutline} />
-                      Order Notes
-                    </h3>
-                  </IonCardHeader>
-                  <IonCardContent>
-                    <div className="notes-content">
-                      <p>{selectedOrder.orderNotes}</p>
-                    </div>
-                  </IonCardContent>
-                </IonCard>
-              )}
-
-              {/* Help Section */}
-              <div className="help-section">
-                <IonButton expand="block" fill="outline" color="primary">
-                  Need Help with this Order?
-                </IonButton>
-              </div>
             </>
           ) : (
             <div className="no-order-selected">

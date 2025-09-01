@@ -10,29 +10,12 @@ ion-toolbar {
 
 /* Force title visibility */
 ion-title {
-  color: #333333 !important;
+  color: var(--ion-text-color) !important;
   opacity: 1 !important;
   visibility: visible !important;
-}
-
-/* Force back button to be extremely visible */
-ion-back-button {
-  --background: #3880ff !important;
-  --color: #ffffff !important;
-  background-color: #3880ff !important;
-  color: #ffffff !important;
-  border-radius: 4px !important;
-  padding: 4px 8px !important;
-  margin: 8px !important;
-  font-weight: bold !important;
-  opacity: 1 !important;
   display: block !important;
-  visibility: visible !important;
-}
-
-/* Add an outline to back button to make it stand out against any background */
-ion-back-button::part(native) {
-  box-shadow: 0 0 0 2px white !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
 }
 
 /* In dark mode, make sure things are still visible */
@@ -45,4 +28,73 @@ ion-back-button::part(native) {
   ion-title {
     color: #ffffff !important;
   }
+}
+
+/* Remove the problematic toolbar background element */
+.products-page .toolbar-background,
+.products-page div[part="background"] {
+  display: none !important;
+}
+
+/* Remove custom title styling - conflicts removed */
+.products-page .products-title {
+  display: none !important;
+}
+
+/* Fix specifically for the Products page */
+.products-page ion-back-button {
+  --color: var(--ion-color-primary) !important;
+  --background: transparent !important;
+  background-color: transparent !important;
+  color: var(--ion-color-primary) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  z-index: 9999 !important;
+  position: relative !important;
+}
+
+.products-page ion-toolbar {
+  --background: var(--ion-background-color) !important;
+  background-color: var(--ion-background-color) !important;
+  position: relative !important;
+}
+
+/* Remove problematic toolbar background */
+.products-page .toolbar-background,
+.products-page div[part="background"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+}
+
+.products-page .products-title {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: var(--ion-text-color) !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+.products-page .products-title {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: var(--ion-text-color) !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+/* Specific fixes for products and cart pages */
+.products-page ion-title,
+.cart-page ion-title {
+  color: var(--ion-text-color) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 1000 !important;
 }

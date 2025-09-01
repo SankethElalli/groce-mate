@@ -14,10 +14,11 @@
   --ion-background-color: #f8f9fa;
   --ion-background-color-rgb: 248, 249, 250;
 
+  /* Light Theme Toolbar Colors */
   --ion-toolbar-background: #ffffff;
   --ion-toolbar-color: #333333;
   --ion-tab-bar-background: #ffffff;
-  --ion-tab-bar-color: #888888;
+  --ion-tab-bar-color: #666666;
   --ion-tab-bar-color-selected: #4caf50;
 
   --ion-card-background: #ffffff;
@@ -39,6 +40,7 @@
     --ion-background-color: #121212;
     --ion-background-color-rgb: 18, 18, 18;
 
+    /* Dark Theme Toolbar Colors */
     --ion-toolbar-background: #1f1f1f;
     --ion-toolbar-color: #ffffff;
     --ion-tab-bar-background: #1f1f1f;
@@ -49,10 +51,11 @@
     --ion-item-background: #2a2a2a;
   }
 
-  /* Keep other essential dark mode styling */
+  /* Enhanced dark theme styling */
   ion-toolbar {
     --background: var(--ion-toolbar-background) !important;
     --color: var(--ion-toolbar-color) !important;
+    background: var(--ion-toolbar-background) !important;
   }
 
   ion-content {

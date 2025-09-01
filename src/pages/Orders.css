@@ -3,57 +3,24 @@
   overflow-y: auto;
 }
 
-/* CUSTOM BACK BUTTON - GUARANTEED VISIBILITY */
-.orders-page .custom-back-button {
-  position: absolute !important;
-  left: 12px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  z-index: 9999 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 36px !important;
-  height: 36px !important;
-  background-color: rgba(56, 128, 255, 0.1) !important;
-  border: 2px solid #3880ff !important;
-  border-radius: 8px !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  color: #3880ff !important;
-  box-shadow: 0 2px 8px rgba(56, 128, 255, 0.3) !important;
-}
-
-.orders-page .custom-back-button:hover {
-  background-color: rgba(56, 128, 255, 0.2) !important;
-  transform: translateY(-50%) scale(1.05) !important;
-  box-shadow: 0 4px 12px rgba(56, 128, 255, 0.4) !important;
-}
-
-.orders-page .custom-back-button:active {
-  transform: translateY(-50%) scale(0.95) !important;
-}
-
 /* Header and toolbar styling */
-.orders-page ion-header {
+.orders-header-wrapper {
   position: relative !important;
   z-index: 100 !important;
   background: var(--ion-background-color) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
-.orders-page ion-toolbar {
+.orders-toolbar {
   position: relative !important;
   z-index: 101 !important;
   background: var(--ion-background-color) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-  min-height: 56px !important;
 }
 
 /* Title positioning */
 .orders-page ion-title {
-  padding-left: 60px !important;
-  font-size: 1.1rem !important;
+  font-size: 1.8rem !important;
   font-weight: 600 !important;
   text-align: left !important;
 }
@@ -78,8 +45,32 @@ ion-header ion-title {
   text-align: center;
 }
 
+.orders-header {
+  padding: 4rem 1rem 1rem !important;
+  margin: 0 auto 0.5rem !important;
+  width: 100% !important;
+  max-width: 800px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 10 !important;
+  margin-top: 1rem !important;
+}
+
+/* Show the orders title in content area */
+.orders-page .orders-title {
+  display: block !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: var(--ion-text-color) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  text-align: left !important;
+}
+
 .orders-container {
-  padding: 1rem;
+  padding: 0 1rem;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -97,12 +88,12 @@ ion-header ion-title {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 15rem 1rem;
   color: var(--ion-color-medium);
 }
 
 .no-orders ion-icon {
-  font-size: 3.5rem;
+  font-size: 4rem;
   margin-bottom: 1rem;
   color: var(--ion-color-medium-tint);
 }
@@ -111,13 +102,18 @@ ion-header ion-title {
   font-size: 1.25rem;
   font-weight: 600;
   margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   color: var(--ion-text-color);
 }
 
 .no-orders p {
   font-size: 0.95rem;
-  margin: 0;
+  margin: 0 0 1rem 0;
+  color: var(--ion-color-medium);
+}
+
+.no-orders ion-button {
+  margin-top: 0.5rem;
 }
 
 /* Order Card Styling */
@@ -273,10 +269,83 @@ ion-header ion-title {
   font-size: 1rem;
 }
 
+/* Loading and Error States */
+.orders-loading,
+.orders-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  min-height: 40vh;
+}
+
+.orders-loading p,
+.orders-error p {
+  margin-top: 1rem;
+  color: var(--ion-color-medium);
+}
+
+.orders-error ion-icon {
+  font-size: 3rem;
+  color: var(--ion-color-medium);
+  margin-bottom: 1rem;
+}
+
+.orders-error h3 {
+  color: var(--ion-text-color);
+  margin-bottom: 0.5rem;
+}
+
+/* Custom back button styling */
+.custom-back-button {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(56, 128, 255, 0.1);
+  border: 2px solid #3880ff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #3880ff;
+}
+
+.custom-back-button:hover {
+  background-color: rgba(56, 128, 255, 0.2);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.custom-back-button:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.back-button-icon {
+  font-size: 20px;
+  color: #3880ff;
+  transform: rotate(180deg);
+}
+
 /* Responsive Styles */
 @media (max-width: 600px) {
+  .orders-header {
+    padding: 1.5rem 0.75rem 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .orders-page .orders-title {
+    font-size: 1.8rem !important;
+  }
+  
   .orders-container {
-    padding: 0.75rem;
+    padding: 0 0.75rem;
   }
 
   .order-card {

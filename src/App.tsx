@@ -28,6 +28,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Orders from './pages/Orders';
 import Profile from './pages/Profile';
 import SideMenu from './components/SideMenu';
+import { CartProvider, useCart } from './contexts/CartContext';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -59,9 +60,6 @@ import '@ionic/react/css/palettes/dark.system.css';
 /* Theme variables */
 import './theme/variables.css';
 import './App.css';
-import './pages/BackButtonStyles.css';
-import './pages/BackButtonEnhanced.css';
-import './pages/WhiteBackButton.css';
 import './pages/EmergencyFix.css';
 import './pages/ProfessionalAppFix.css';
 import './pages/ThemeSupport.css';
@@ -96,64 +94,76 @@ setupIonicReact({
   // Removed a11yStatusMessageEnabled as it's not a valid config option
 });
 
+const TabBar: React.FC = () => {
+  const { getTotalItems } = useCart();
+  const itemCount = getTotalItems();
+
+  return (
+    <IonTabBar slot="bottom" className="tab-bar-custom">
+      <IonTabButton tab="home" href="/" className="tab-button-custom">
+        <IonIcon aria-hidden="true" icon={homeOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
+        <IonLabel>Home</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="menu" href="/menu" className="tab-button-custom">
+        <IonIcon aria-hidden="true" icon={storefrontOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
+        <IonLabel>Products</IonLabel>
+      </IonTabButton>
+      <IonTabButton tab="cart" href="/cart" className="tab-button-custom">
+        <IonIcon aria-hidden="true" icon={cartOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
+        <IonLabel>Cart</IonLabel>
+        {itemCount > 0 && (
+          <IonBadge className="cart-badge-circular">{itemCount}</IonBadge>
+        )}
+      </IonTabButton>
+    </IonTabBar>
+  );
+};
+
 const App: React.FC = () => (
-  <IonApp>
-    <SideMenu />
-    {/* Main Content */}
-    <div 
-      className="ion-page" 
-      id="main-content" 
-      role="main"
-      aria-live="polite"
-    >
-      <IonHeader>
-        <IonToolbar className="app-toolbar">
-          <IonTitle className="app-title">GroceMate</IonTitle>
-          <IonButtons slot="end">
-            <IonMenuButton 
-              aria-label="Menu"
-              onClick={() => {
-                // When menu is activated, make main content inert
-                const mainContent = document.getElementById('main-content');
-                if (mainContent) {
-                  mainContent.setAttribute('inert', '');
-                }
-              }}
-            />
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <IonReactRouter>
-        {/* Fixed: Don't pass tabsHideOnSubPages to IonTabs - it's not a valid prop for this version */}
-        <IonTabs>
-          <IonRouterOutlet>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/menu" component={Products} />
-            <Route exact path="/cart" component={Cart} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/admin" component={AdminDashboard} />
-            <Route exact path="/orders" component={Orders} />
-            <Route exact path="/profile" component={Profile} />
-          </IonRouterOutlet>
-          <IonTabBar slot="bottom" className="tab-bar-custom">
-            <IonTabButton tab="home" href="/" className="tab-button-custom">
-              <IonIcon aria-hidden="true" icon={homeOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
-              <IonLabel>Home</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="menu" href="/menu" className="tab-button-custom">
-              <IonIcon aria-hidden="true" icon={storefrontOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
-              <IonLabel>Products</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="cart" href="/cart" className="tab-button-custom">
-              <IonIcon aria-hidden="true" icon={cartOutline} className="nav-icon" style={{visibility: 'visible', opacity: 1, display: 'block'}} />
-              <IonLabel>Cart</IonLabel>
-              <IonBadge className="cart-badge" id="cart-badge">0</IonBadge>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactRouter>
-    </div>
-  </IonApp>
+  <CartProvider>
+    <IonApp>
+      <SideMenu />
+      {/* Main Content */}
+      <div 
+        className="ion-page" 
+        id="main-content" 
+        role="main"
+        aria-live="polite"
+      >
+        <IonHeader>
+          <IonToolbar className="app-toolbar">
+            <IonTitle className="app-title">GroceMate</IonTitle>
+            <IonButtons slot="end">
+              <IonMenuButton 
+                aria-label="Menu"
+                onClick={() => {
+                  // When menu is activated, make main content inert
+                  const mainContent = document.getElementById('main-content');
+                  if (mainContent) {
+                    mainContent.setAttribute('inert', '');
+                  }
+                }}
+              />
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonReactRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/menu" component={Products} />
+              <Route exact path="/cart" component={Cart} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/admin" component={AdminDashboard} />
+              <Route exact path="/orders" component={Orders} />
+              <Route exact path="/profile" component={Profile} />
+            </IonRouterOutlet>
+            <TabBar />
+          </IonTabs>
+        </IonReactRouter>
+      </div>
+    </IonApp>
+  </CartProvider>
 );
 
 export default App;

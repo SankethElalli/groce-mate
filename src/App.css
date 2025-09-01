@@ -1,25 +1,116 @@
+/* Main App Toolbar - Proper Theme Support */
 .app-toolbar {
-  min-height: 10px;
+  min-height: 56px !important;
+  --background: var(--ion-toolbar-background) !important;
+  --color: var(--ion-toolbar-color) !important;
+  background: var(--ion-toolbar-background) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
 }
 
+/* Main App Title */
 .app-title {
-  font-size: 1.8rem;
-  font-family: inherit;
-  font-weight: 800;
-  letter-spacing: -1px;
-  color: var(--ion-text-color);
-  text-align: left;
-  margin-left: 0px;
-  margin-right: auto;
+  font-size: 1.5rem !important;
+  font-family: inherit !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.5px !important;
+  color: var(--ion-toolbar-color) !important;
+  text-align: left !important;
+  margin-left: 0px !important;
+  margin-right: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
+/* Menu Button Styling */
+ion-menu-button {
+  --color: var(--ion-toolbar-color) !important;
+  --background: transparent !important;
+  font-size: 24px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* General Toolbar Theme Support */
 ion-toolbar {
-  --background: var(--ion-background-color);
-  --color: var(--ion-text-color);
+  --background: var(--ion-toolbar-background) !important;
+  --color: var(--ion-toolbar-color) !important;
+  background: var(--ion-toolbar-background) !important;
+  color: var(--ion-toolbar-color) !important;
 }
 
+/* Ensure all toolbar text elements follow theme */
+ion-toolbar ion-title {
+  color: var(--ion-toolbar-color) !important;
+}
+
+ion-toolbar ion-button {
+  --color: var(--ion-toolbar-color) !important;
+}
+
+ion-toolbar ion-icon {
+  color: var(--ion-toolbar-color) !important;
+}
+
+/* Tab Bar Theme Support */
 ion-tab-bar {
-  --background: var(--ion-card-background);
-  --color: var(--ion-text-color);
-  border-top: 1px solid var(--ion-input-border);
+  --background: var(--ion-tab-bar-background) !important;
+  --color: var(--ion-tab-bar-color) !important;
+  border-top: 1px solid var(--ion-input-border) !important;
+}
+
+/* Dark Theme Specific Adjustments */
+@media (prefers-color-scheme: dark) {
+  .app-toolbar {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .app-title {
+    color: #ffffff !important;
+  }
+  
+  ion-menu-button {
+    --color: #ffffff !important;
+  }
+  
+  ion-toolbar {
+    --background: var(--ion-toolbar-background) !important;
+    --color: #ffffff !important;
+    background: var(--ion-toolbar-background) !important;
+  }
+  
+  ion-toolbar ion-title,
+  ion-toolbar ion-button,
+  ion-toolbar ion-icon {
+    color: #ffffff !important;
+  }
+}
+
+/* Light Theme Specific Adjustments */
+@media (prefers-color-scheme: light) {
+  .app-toolbar {
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+  }
+  
+  .app-title {
+    color: #333333 !important;
+  }
+  
+  ion-menu-button {
+    --color: #333333 !important;
+  }
+  
+  ion-toolbar {
+    --background: var(--ion-toolbar-background) !important;
+    --color: #333333 !important;
+    background: var(--ion-toolbar-background) !important;
+  }
+  
+  ion-toolbar ion-title,
+  ion-toolbar ion-button,
+  ion-toolbar ion-icon {
+    color: #333333 !important;
+  }
 }
