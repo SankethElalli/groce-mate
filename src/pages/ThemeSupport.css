@@ -14,9 +14,12 @@
   --ion-background-color: #f8f9fa;
   --ion-background-color-rgb: 248, 249, 250;
 
-  /* Light Theme Toolbar Colors */
+  /* Light Theme Toolbar Colors - ENHANCED */
   --ion-toolbar-background: #ffffff;
   --ion-toolbar-color: #333333;
+  --ion-toolbar-border-color: rgba(0, 0, 0, 0.08);
+  --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  
   --ion-tab-bar-background: #ffffff;
   --ion-tab-bar-color: #666666;
   --ion-tab-bar-color-selected: #4caf50;
@@ -40,9 +43,12 @@
     --ion-background-color: #121212;
     --ion-background-color-rgb: 18, 18, 18;
 
-    /* Dark Theme Toolbar Colors */
+    /* Dark Theme Toolbar Colors - ENHANCED */
     --ion-toolbar-background: #1f1f1f;
     --ion-toolbar-color: #ffffff;
+    --ion-toolbar-border-color: rgba(255, 255, 255, 0.1);
+    --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    
     --ion-tab-bar-background: #1f1f1f;
     --ion-tab-bar-color: #999999;
     --ion-tab-bar-color-selected: #66bb6a;
@@ -51,11 +57,24 @@
     --ion-item-background: #2a2a2a;
   }
 
-  /* Enhanced dark theme styling */
-  ion-toolbar {
+  /* Force all toolbars to use dark theme colors */
+  ion-toolbar,
+  .app-toolbar {
     --background: var(--ion-toolbar-background) !important;
     --color: var(--ion-toolbar-color) !important;
     background: var(--ion-toolbar-background) !important;
+    color: var(--ion-toolbar-color) !important;
+    border-bottom-color: var(--ion-toolbar-border-color) !important;
+    box-shadow: var(--ion-toolbar-box-shadow) !important;
+  }
+
+  ion-title,
+  .app-title {
+    color: var(--ion-toolbar-color) !important;
+  }
+
+  ion-menu-button {
+    --color: var(--ion-toolbar-color) !important;
   }
 
   ion-content {
@@ -111,58 +130,27 @@
   }
 }
 
-/* System preference mode transition */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+/* Force light theme colors when not in dark mode */
+@media (prefers-color-scheme: light) {
+  ion-toolbar,
+  .app-toolbar {
+    --background: var(--ion-toolbar-background) !important;
+    --color: var(--ion-toolbar-color) !important;
+    background: var(--ion-toolbar-background) !important;
+    color: var(--ion-toolbar-color) !important;
+    border-bottom-color: var(--ion-toolbar-border-color) !important;
+    box-shadow: var(--ion-toolbar-box-shadow) !important;
+  }
+
+  ion-title,
+  .app-title {
+    color: var(--ion-toolbar-color) !important;
+  }
+
+  ion-menu-button {
+    --color: var(--ion-toolbar-color) !important;
+  }
 }
-  .admin-table table {
-    color: var(--ion-text-color) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  .admin-table th {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  .admin-table td {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  /* Form elements dark mode */
-  input, select, textarea {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: var(--ion-text-color) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  ion-input, ion-textarea, ion-select {
-    --background: rgba(255, 255, 255, 0.1) !important;
-    --color: var(--ion-text-color) !important;
-    --placeholder-color: rgba(255, 255, 255, 0.5) !important;
-  }
-
-/* System preference mode transition */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
-}
-  .admin-table td {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  /* Form elements dark mode */
-  input, select, textarea {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: var(--ion-text-color) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  ion-input, ion-textarea, ion-select {
-    --background: rgba(255, 255, 255, 0.1) !important;
-    --color: var(--ion-text-color) !important;
-    --placeholder-color: rgba(255, 255, 255, 0.5) !important;
-  }
-
 
 /* System preference mode transition */
 * {

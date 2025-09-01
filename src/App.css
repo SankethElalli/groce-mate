@@ -1,11 +1,11 @@
-/* Main App Toolbar - Proper Theme Support */
+/* Main App Toolbar - Enhanced Theme Support */
 .app-toolbar {
   min-height: 56px !important;
   --background: var(--ion-toolbar-background) !important;
   --color: var(--ion-toolbar-color) !important;
   background: var(--ion-toolbar-background) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+  border-bottom: 1px solid var(--ion-toolbar-border-color, rgba(0, 0, 0, 0.08)) !important;
+  box-shadow: var(--ion-toolbar-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.06)) !important;
 }
 
 /* Main App Title */
@@ -62,30 +62,28 @@ ion-tab-bar {
 /* Dark Theme Specific Adjustments */
 @media (prefers-color-scheme: dark) {
   .app-toolbar {
+    --ion-toolbar-border-color: rgba(255, 255, 255, 0.1) !important;
+    --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
     border-bottom-color: rgba(255, 255, 255, 0.1) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
   }
-  
-  .app-title {
-    color: #ffffff !important;
+}
+
+/* Light Theme Specific Adjustments */
+@media (prefers-color-scheme: light) {
+  .app-toolbar {
+    --ion-toolbar-border-color: rgba(0, 0, 0, 0.08) !important;
+    --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
   }
-  
-  ion-menu-button {
-    --color: #ffffff !important;
-  }
-  
-  ion-toolbar {
-    --background: var(--ion-toolbar-background) !important;
-    --color: #ffffff !important;
-    background: var(--ion-toolbar-background) !important;
-  }
+}
   
   ion-toolbar ion-title,
   ion-toolbar ion-button,
   ion-toolbar ion-icon {
     color: #ffffff !important;
   }
-}
 
 /* Light Theme Specific Adjustments */
 @media (prefers-color-scheme: light) {

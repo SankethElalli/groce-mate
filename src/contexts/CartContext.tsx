@@ -1,22 +1,22 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
-export interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  image?: string;
-  category?: {
-    _id: string;
-    name: string;
-  };
-}
-
 export interface CartItem {
   _id: string;
   name: string;
   price: number;
   quantity: number;
   image?: string;
+}
+
+// Define Product interface for type safety
+interface Product {
+  _id: string;
+  name: string;
+  price: number | string;
+  image?: string;
+  category?: {
+    name: string;
+  };
 }
 
 interface CartContextType {
@@ -44,7 +44,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [items]);
 
   // Add product to cart
-  const addToCart = (product: any) => {
+  const addToCart = (product: Product) => {
     setItems(currentItems => {
       // Check if product already exists in cart
       const existingItem = currentItems.find(item => item._id === product._id);
@@ -61,7 +61,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return [...currentItems, { 
           _id: product._id, 
           name: product.name, 
-          price: parseFloat(product.price), 
+          price: typeof product.price === 'string' ? parseFloat(product.price) : product.price, 
           quantity: 1,
           image: product.image
         }];
@@ -107,7 +107,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return items.reduce((total, item) => total + item.quantity, 0);
   };
 
-  const value: CartContextType = {
+  const value = {
     items,
     addToCart,
     removeFromCart,

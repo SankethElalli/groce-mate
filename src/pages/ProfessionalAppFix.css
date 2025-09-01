@@ -30,6 +30,8 @@ ion-toolbar.dark-toolbar ion-icon {
   --color: white !important;
 }
 
+/* REMOVE CONFLICTING TOOLBAR STYLES - Let theme handle this */
+/* 
 .app-toolbar {
   --background: #ffffff !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
@@ -46,6 +48,7 @@ ion-menu-button {
   font-size: 24px !important;
   visibility: visible !important;
 }
+*/
 
 /* Fix for back buttons */
 ion-back-button {
