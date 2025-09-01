@@ -88,13 +88,14 @@ ion-header ion-title {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 15rem 1rem;
+  padding: 4rem 1rem;
   color: var(--ion-color-medium);
+  min-height: 40vh;
 }
 
 .no-orders ion-icon {
   font-size: 4rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: var(--ion-color-medium-tint);
 }
 
@@ -108,7 +109,7 @@ ion-header ion-title {
 
 .no-orders p {
   font-size: 0.95rem;
-  margin: 0 0 1rem 0;
+  margin: 0 0 2rem 0;
   color: var(--ion-color-medium);
 }
 
@@ -333,6 +334,66 @@ ion-header ion-title {
   transform: rotate(180deg);
 }
 
+/* Order Details Modal Styling */
+.order-header-card {
+  margin-bottom: 1rem;
+}
+
+.order-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+}
+
+.order-id-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.order-id-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.order-date-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.order-date-section ion-icon {
+  font-size: 1.1rem;
+  color: var(--ion-color-medium);
+  flex-shrink: 0;
+}
+
+.order-date-section span {
+  line-height: 1.3;
+  text-align: center;
+}
+
 /* Responsive Styles */
 @media (max-width: 600px) {
   .orders-header {
@@ -370,5 +431,43 @@ ion-header ion-title {
   
   .order-items-preview {
     max-width: 140px;
+  }
+  
+  .order-header-content {
+    gap: 0.75rem;
+  }
+  
+  .order-id-section {
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .order-id-section h2 {
+    font-size: 1.25rem;
+  }
+  
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .order-date-section {
+    font-size: 0.85rem;
+    gap: 0.375rem;
+  }
+  
+  .order-date-section ion-icon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .order-id-section {
+    gap: 0.5rem;
+  }
+  
+  .order-id-section h2 {
+    font-size: 1.1rem;
   }
 }

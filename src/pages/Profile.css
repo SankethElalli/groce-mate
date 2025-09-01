@@ -104,13 +104,39 @@
 .profile-role-badge {
   position: absolute;
   bottom: 0;
-  right: 0;
-  background: var(--ion-primary);
-  color: #000;
+  left: 0;
+  background: var(--ion-color-medium);
+  color: white;
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.3rem 0.7rem;
   border-radius: 12px;
+  z-index: 10;
+  transform: translateX(-10%) translateY(10%);
+}
+
+.profile-role-badge ion-chip {
+  margin: 0;
+  background: var(--ion-color-medium);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+}
+
+.profile-role-badge ion-chip.ion-color-primary {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+}
+
+.profile-role-badge ion-chip ion-icon {
+  font-size: 0.9rem;
+  margin-right: 0.25rem;
+}
+
+.profile-role-badge ion-chip ion-label {
+  font-size: 0.75rem;
+  font-weight: 600;
 }
 
 .profile-name {
@@ -316,6 +342,25 @@ ion-footer ion-toolbar {
     margin-left: 0;
     margin-top: 0.3rem;
     display: block;
+  }
+  
+  .profile-role-badge {
+    transform: translateX(-5%) translateY(5%);
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .profile-role-badge ion-chip {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .profile-role-badge ion-chip ion-icon {
+    font-size: 0.8rem;
+  }
+  
+  .profile-role-badge ion-chip ion-label {
+    font-size: 0.7rem;
   }
 }
 

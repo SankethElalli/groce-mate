@@ -84,7 +84,7 @@ const Cart: React.FC = () => {
                 <span>₹{getTotalPrice().toFixed(2)}</span>
               </div>
               <div className="cart-actions">
-                <IonButton expand="block" className="checkout-btn">
+                <IonButton expand="block" className="checkout-btn" routerLink="/checkout">
                   Proceed to Checkout
                 </IonButton>
                 <button className="clear-cart-btn" onClick={clearCart}>

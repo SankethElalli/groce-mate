@@ -32,25 +32,34 @@
 
 .order-header-card ion-card-content {
   padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .order-header-content {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  width: 100%;
 }
 
 .order-id-section {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
 
 .order-id-section h2 {
   font-size: 24px;
   font-weight: 700;
-  margin: 0;
+  margin: 8px 0 4px 0;
+  line-height: 1.2 !important;
   color: var(--ion-text-color);
+  padding-top: 4px;
 }
 
 .status-badge {
@@ -65,6 +74,7 @@
 .order-date-section {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   color: var(--ion-color-medium);
   font-size: 14px;
@@ -212,8 +222,12 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .order-header-content {
-    flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+  }
+  
+  .order-id-section h2 {
+    margin: 6px 0 2px 0;
+    padding-top: 2px;
   }
   
   .order-date-section {

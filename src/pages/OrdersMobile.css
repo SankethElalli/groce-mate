@@ -67,7 +67,23 @@
   }
   
   .orders-page .orders-title {
-    font-size: 1.8rem !important;
+    font-size: 1.6rem !important;
+  }
+  
+  .no-orders {
+    padding: 3rem 1rem !important;
+  }
+  
+  .no-orders ion-icon {
+    font-size: 3.5rem !important;
+  }
+  
+  .no-orders h3 {
+    font-size: 1.1rem !important;
+  }
+  
+  .no-orders p {
+    font-size: 0.9rem !important;
   }
 }
 

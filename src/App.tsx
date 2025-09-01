@@ -29,6 +29,7 @@ import Orders from './pages/Orders';
 import Profile from './pages/Profile';
 import SideMenu from './components/SideMenu';
 import { CartProvider, useCart } from './contexts/CartContext';
+import Checkout from './pages/Checkout';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -153,6 +154,7 @@ const App: React.FC = () => (
               <Route exact path="/" component={Home} />
               <Route exact path="/menu" component={Products} />
               <Route exact path="/cart" component={Cart} />
+              <Route exact path="/checkout" component={Checkout} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/admin" component={AdminDashboard} />
               <Route exact path="/orders" component={Orders} />

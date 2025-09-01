@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { IonContent, IonPage, IonButton, IonInput, IonItem, IonLabel, IonSpinner, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast } from '@ionic/react';
+import { IonContent, IonPage, IonButton, IonInput, IonItem, IonLabel, IonSpinner, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast, IonIcon } from '@ionic/react';
+import { pencilOutline, trashOutline } from 'ionicons/icons';
 import './AdminDashboard.css';
 import './AdminDashboardMobile.css';
 
@@ -320,27 +321,33 @@ const AdminDashboard: React.FC = () => {
                 <>
                   {userForm.id && (
                     <form className="admin-form" onSubmit={handleUserSubmit}>
-                      <IonItem lines="none">
-                        <IonLabel position="stacked">User Role</IonLabel>
-                        <select 
-                          value={userForm.role} 
-                          onChange={e => setUserForm(f => ({ ...f, role: e.target.value }))}
-                        >
-                          <option value="user">User</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                      </IonItem>
-                      <div className="action-buttons">
-                        <IonButton expand="block" type="submit">
-                          Update Role
-                        </IonButton>
-                        <IonButton 
-                          expand="block"
-                          fill="outline" 
-                          onClick={() => setUserForm({ name: '', email: '', role: 'user', id: '' })}
-                        >
-                          Cancel
-                        </IonButton>
+                      <div className="simple-admin-form">
+                        <div className="simple-admin-field">
+                          <label className="simple-admin-label required" htmlFor="userRole">
+                            User Role
+                          </label>
+                          <select 
+                            id="userRole"
+                            className="simple-admin-select"
+                            value={userForm.role} 
+                            onChange={e => setUserForm(f => ({ ...f, role: e.target.value }))}
+                          >
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </div>
+                        <div className="action-buttons">
+                          <button type="submit" className="simple-admin-btn">
+                            Update Role
+                          </button>
+                          <button 
+                            type="button"
+                            className="simple-admin-btn outline" 
+                            onClick={() => setUserForm({ name: '', email: '', role: 'user', id: '' })}
+                          >
+                            Cancel
+                          </button>
+                        </div>
                       </div>
                     </form>
                   )}
@@ -359,8 +366,14 @@ const AdminDashboard: React.FC = () => {
                             <td>{u.email}</td>
                             <td>{u.role}</td>
                             <td>
-                              <IonButton size="small" onClick={() => handleUserEdit(u)}>Edit</IonButton>
-                              <IonButton size="small" color="danger" onClick={() => handleUserDelete(u._id)}>Delete</IonButton>
+                              <div className="table-action-buttons">
+                                <button className="simple-table-btn edit" onClick={() => handleUserEdit(u)}>
+                                  <IonIcon icon={pencilOutline} />
+                                </button>
+                                <button className="simple-table-btn danger" onClick={() => handleUserDelete(u._id)}>
+                                  <IonIcon icon={trashOutline} />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -373,29 +386,35 @@ const AdminDashboard: React.FC = () => {
               {activeTab === 'categories' && (
                 <>
                   <form className="admin-form" onSubmit={handleCategorySubmit}>
-                    <IonItem lines="none">
-                      <IonInput 
-                        label="Category Name" 
-                        labelPlacement="stacked"
-                        value={categoryForm.name} 
-                        onIonInput={e => setCategoryForm(f => ({ ...f, name: e.detail.value || '' }))}
-                        placeholder="Enter category name"
-                        required 
-                      />
-                    </IonItem>
-                    <div className="action-buttons">
-                      <IonButton expand="block" type="submit">
-                        {categoryForm.id ? 'Update' : 'Add'} Category
-                      </IonButton>
-                      {categoryForm.id && (
-                        <IonButton 
-                          expand="block"
-                          fill="outline" 
-                          onClick={() => setCategoryForm({ name: '', id: '' })}
-                        >
-                          Cancel
-                        </IonButton>
-                      )}
+                    <div className="simple-admin-form">
+                      <div className="simple-admin-field">
+                        <label className="simple-admin-label required" htmlFor="categoryName">
+                          Category Name
+                        </label>
+                        <input
+                          id="categoryName"
+                          className="simple-admin-input"
+                          type="text"
+                          value={categoryForm.name}
+                          onChange={e => setCategoryForm(f => ({ ...f, name: e.target.value }))}
+                          placeholder="Enter category name"
+                          required
+                        />
+                      </div>
+                      <div className="action-buttons">
+                        <button type="submit" className="simple-admin-btn">
+                          {categoryForm.id ? 'Update' : 'Add'} Category
+                        </button>
+                        {categoryForm.id && (
+                          <button 
+                            type="button"
+                            className="simple-admin-btn outline" 
+                            onClick={() => setCategoryForm({ name: '', id: '' })}
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </form>
 
@@ -411,8 +430,14 @@ const AdminDashboard: React.FC = () => {
                           <tr key={c._id}>
                             <td>{c.name}</td>
                             <td>
-                              <IonButton size="small" onClick={() => handleCategoryEdit(c)}>Edit</IonButton>
-                              <IonButton size="small" color="danger" onClick={() => handleCategoryDelete(c._id)}>Delete</IonButton>
+                              <div className="table-action-buttons">
+                                <button className="simple-table-btn edit" onClick={() => handleCategoryEdit(c)}>
+                                  <IonIcon icon={pencilOutline} />
+                                </button>
+                                <button className="simple-table-btn danger" onClick={() => handleCategoryDelete(c._id)}>
+                                  <IonIcon icon={trashOutline} />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}
@@ -425,61 +450,79 @@ const AdminDashboard: React.FC = () => {
               {activeTab === 'products' && (
                 <>
                   <form className="admin-form" onSubmit={handleProductSubmit}>
-                    <IonItem lines="none">
-                      <IonInput 
-                        label="Product Name" 
-                        labelPlacement="stacked"
-                        value={productForm.name} 
-                        onIonInput={e => setProductForm(f => ({ ...f, name: e.detail.value || '' }))}
-                        placeholder="Enter product name"
-                        required 
-                      />
-                    </IonItem>
-                    <IonItem lines="none">
-                      <IonInput 
-                        label="Price"
-                        labelPlacement="stacked"
-                        value={productForm.price}
-                        type="number"
-                        onIonInput={e => setProductForm(f => ({ ...f, price: e.detail.value || '' }))}
-                        placeholder="Enter price"
-                        required 
-                      />
-                    </IonItem>
-                    <IonItem lines="none">
-                      <IonInput 
-                        label="Image URL"
-                        labelPlacement="stacked"
-                        value={productForm.image} 
-                        onIonInput={e => setProductForm(f => ({ ...f, image: e.detail.value || '' }))}
-                        placeholder="Enter image URL"
-                      />
-                    </IonItem>
-                    <IonItem lines="none">
-                      <select 
-                        value={productForm.category} 
-                        onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))} 
-                        required
-                      >
-                        <option value="">Select Category</option>
-                        {categories.map(c => (
-                          <option key={c._id} value={c._id}>{c.name}</option>
-                        ))}
-                      </select>
-                    </IonItem>
-                    <div className="action-buttons">
-                      <IonButton expand="block" type="submit">
-                        {productForm.id ? 'Update' : 'Add'} Product
-                      </IonButton>
-                      {productForm.id && (
-                        <IonButton 
-                          expand="block"
-                          fill="outline" 
-                          onClick={() => setProductForm({ name: '', price: '', image: '', category: '', id: '' })}
+                    <div className="simple-admin-form">
+                      <div className="simple-admin-field">
+                        <label className="simple-admin-label required" htmlFor="productName">
+                          Product Name
+                        </label>
+                        <input
+                          id="productName"
+                          className="simple-admin-input"
+                          type="text"
+                          value={productForm.name}
+                          onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))}
+                          placeholder="Enter product name"
+                          required
+                        />
+                      </div>
+                      <div className="simple-admin-field">
+                        <label className="simple-admin-label required" htmlFor="productPrice">
+                          Price
+                        </label>
+                        <input
+                          id="productPrice"
+                          className="simple-admin-input"
+                          type="number"
+                          value={productForm.price}
+                          onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))}
+                          placeholder="Enter price"
+                          required
+                        />
+                      </div>
+                      <div className="simple-admin-field">
+                        <label className="simple-admin-label" htmlFor="productImage">
+                          Image URL
+                        </label>
+                        <input
+                          id="productImage"
+                          className="simple-admin-input"
+                          type="text"
+                          value={productForm.image}
+                          onChange={e => setProductForm(f => ({ ...f, image: e.target.value }))}
+                          placeholder="Enter image URL"
+                        />
+                      </div>
+                      <div className="simple-admin-field">
+                        <label className="simple-admin-label required" htmlFor="productCategory">
+                          Category
+                        </label>
+                        <select
+                          id="productCategory"
+                          className="simple-admin-select"
+                          value={productForm.category}
+                          onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))}
+                          required
                         >
-                          Cancel
-                        </IonButton>
-                      )}
+                          <option value="">Select Category</option>
+                          {categories.map(c => (
+                            <option key={c._id} value={c._id}>{c.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="action-buttons">
+                        <button type="submit" className="simple-admin-btn">
+                          {productForm.id ? 'Update' : 'Add'} Product
+                        </button>
+                        {productForm.id && (
+                          <button 
+                            type="button"
+                            className="simple-admin-btn outline" 
+                            onClick={() => setProductForm({ name: '', price: '', image: '', category: '', id: '' })}
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </form>
 
@@ -498,8 +541,14 @@ const AdminDashboard: React.FC = () => {
                             <td>{p.category?.name || ''}</td>
                             <td>{p.image && <img src={p.image} alt={p.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />}</td>
                             <td>
-                              <IonButton size="small" onClick={() => handleProductEdit(p)}>Edit</IonButton>
-                              <IonButton size="small" color="danger" onClick={() => handleProductDelete(p._id)}>Delete</IonButton>
+                              <div className="table-action-buttons">
+                                <button className="simple-table-btn edit" onClick={() => handleProductEdit(p)}>
+                                  <IonIcon icon={pencilOutline} />
+                                </button>
+                                <button className="simple-table-btn danger" onClick={() => handleProductDelete(p._id)}>
+                                  <IonIcon icon={trashOutline} />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))}

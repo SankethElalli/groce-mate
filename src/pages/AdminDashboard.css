@@ -38,6 +38,7 @@
   --color: #000000;
 }
 
+/* Simple Admin Form - Match Checkout Style */
 .admin-form {
   background: var(--ion-card-background);
   border-radius: 16px;
@@ -46,150 +47,217 @@
   box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 
-.admin-form ion-item {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  margin-bottom: 0.5rem;
+.simple-admin-form {
+  padding: 1rem 0;
+  margin-top: 0.5rem;
 }
 
-.admin-form ion-input,
-.admin-form select {
-  --background: var(--ion-input-background);
-  --color: var(--ion-text-color);
-  --placeholder-color: var(--ion-input-placeholder);
-  border: 1px solid var(--ion-input-border);
-  border-radius: 10px;
-  margin: 0.5rem 0;
-  height: 42px;
-  font-size: 0.9rem;
-  width: 100%;
+.simple-admin-field {
+  margin-bottom: 1.5rem;
 }
 
-.admin-form ion-button {
-  --background: var(--ion-primary);
-  --color: #000000;
+.simple-admin-field:last-child {
+  margin-bottom: 0;
+}
+
+.simple-admin-label {
+  display: block;
+  font-size: 0.85rem;
   font-weight: 600;
+  color: var(--ion-text-color);
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  text-align: left;
+  padding-left: 2px;
 }
 
-.admin-form ion-button[fill="outline"] {
-  --border-color: var(--ion-secondary);
-  --color: var(--ion-secondary);
+.simple-admin-label.required::after {
+  content: ' *';
+  color: #ff6b6b;
+  font-weight: 700;
 }
 
+.simple-admin-input,
+.simple-admin-select {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--ion-text-color);
+  background: var(--ion-card-background);
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  margin-top: 0.25rem;
+}
+
+.simple-admin-input::placeholder {
+  color: var(--ion-color-medium);
+  font-style: normal;
+  text-align: left;
+}
+
+.simple-admin-input:focus,
+.simple-admin-select:focus {
+  border-color: var(--ion-color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+.simple-admin-select {
+  cursor: pointer;
+}
+
+/* Reset ionic form styles */
+.admin-form ion-item,
+.admin-form ion-input,
+.admin-form ion-select {
+  all: unset;
+  display: block;
+}
+
+/* Action buttons styling */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.simple-admin-btn {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  flex: 1;
+}
+
+.simple-admin-btn:hover {
+  opacity: 0.9;
+}
+
+.simple-admin-btn.outline {
+  background: transparent;
+  color: var(--ion-color-primary);
+  border: 2px solid var(--ion-color-primary);
+}
+
+/* Simple Admin Table - Match Overall Style */
 .admin-table {
   background: var(--ion-card-background);
   border-radius: 16px;
   overflow: hidden;
   margin: 1rem 0;
   box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  border: 2px solid #e1e5e9;
 }
 
 .admin-table table {
   min-width: 100%;
   border-collapse: collapse;
+  width: 100%;
 }
 
 .admin-table th {
-  background: var(--ion-primary);
-  color: #000000;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
   font-weight: 600;
   padding: 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .admin-table td {
-  border-bottom: 1px solid var(--ion-input-border);
-  padding: 0.75rem 1rem;
-  font-size: 0.85rem;
-}
-
-.admin-table td ion-button {
-  --padding-start: 0.5rem;
-  --padding-end: 0.5rem;
-  height: 30px;
-  font-size: 0.8rem;
-}
-
-.admin-table tr:hover td {
-  background: rgba(255, 178, 44, 0.05);
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.action-buttons ion-button {
-  --padding-start: 1rem;
-  --padding-end: 1rem;
-  height: 36px;
-  font-size: 0.9rem;
-  --background: var(--ion-primary);
-  --color: #000000;
-}
-
-.action-buttons ion-button[color="danger"] {
-  --background: var(--ion-secondary);
-  --color: #ffffff;
-}
-
-@media (max-width: 768px) {
-  .admin-table {
-    box-shadow: none;
-  }
-  
-  .admin-table td {
-    max-width: 120px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  border-bottom: 2px solid #e1e5e9;
+  padding: 1rem;
+  font-size: 1rem;
+  color: var(--ion-text-color);
+  vertical-align: middle;
 }
 
 .admin-table tr:last-child td {
   border-bottom: none;
 }
 
-@media (max-width: 768px) {
-  .admin-dashboard-full {
-    padding: 1rem;
-  }
-  
-  .admin-dashboard-tabs {
-    width: 100%;
-    overflow-x: auto;
-  }
-  
-  .admin-form ion-item {
-    grid-template-columns: 1fr;
-  }
-  
+/* Simple table action buttons */
+.table-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.simple-table-btn {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.simple-table-btn:hover {
+  opacity: 0.9;
+}
+
+.simple-table-btn.danger {
+  background: #dc3545;
+  color: white;
+}
+
+.simple-table-btn.edit {
+  background: #28a745;
+  color: white;
+}
+
+.simple-table-btn ion-icon {
+  font-size: 1rem;
+}
+
+/* Reset ionic table button styles */
+.admin-table ion-button {
+  all: unset;
+  display: inline-block;
+}
+
+/* Dark mode support for tables */
+@media (prefers-color-scheme: dark) {
   .admin-table {
-    font-size: 0.9rem;
+    border-color: rgba(255, 255, 255, 0.2);
   }
   
-  .admin-table th, 
   .admin-table td {
-    font-size: 0.95rem;
-    padding: 0.5rem 0.2rem;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
   }
-  
-  .admin-dashboard-title {
-    font-size: 1.3rem;
-  }
-  
-  .admin-form {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  /* Form controls for mobile */
-  .admin-form > .ion-item, 
-  .admin-form > ion-item {
+}
+
+.admin-table {
+  font-size: 0.9rem;
+}
+
+
+/* Make form controls stack vertically on mobile */
+@media (max-width: 500px) {
+  .admin-form > .ion-item, .admin-form > ion-item {
     flex-direction: column !important;
     align-items: stretch !important;
   }
-  
   .admin-form input,
   .admin-form select,
   .admin-form button,
@@ -200,19 +268,65 @@
   }
 }
 
+/* Mobile responsive tables */
+@media (max-width: 768px) {
+  .admin-table {
+    box-shadow: none;
+    border: 1px solid #e1e5e9;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .admin-table th {
+    font-size: 0.8rem;
+  }
+  
+  .simple-table-btn {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .simple-table-btn ion-icon {
+    font-size: 0.9rem;
+  }
+  
+  .table-action-buttons {
+    gap: 0.25rem;
+  }
+}
+
 @media (max-width: 600px) {
-  .admin-dashboard-full {
-    padding: 0.5rem 0.1rem;
-    border-radius: 0;
+  .admin-table th,
+  .admin-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.85rem;
   }
-  .admin-dashboard-title {
-    font-size: 1.1rem;
+  
+  .admin-table th {
+    font-size: 0.75rem;
   }
-  .admin-dashboard-tabs {
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  
+  .simple-table-btn {
+    padding: 0.3rem;
+    font-size: 0.8rem;
+    width: 28px;
+    height: 28px;
   }
+  
+  .simple-table-btn ion-icon {
+    font-size: 0.8rem;
+  }
+  
+  .table-action-buttons {
+    gap: 0.2rem;
+  }
+}
   .admin-form {
     flex-direction: column;
     gap: 0.5rem;
@@ -224,7 +338,6 @@
   .admin-table {
     font-size: 0.9rem;
   }
-}
   .admin-table {
     font-size: 0.9rem;
   }

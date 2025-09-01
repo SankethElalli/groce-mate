@@ -28,14 +28,24 @@ interface Order {
   orderNotes?: string;
 }
 
-// Temporary getUserOrders function - replace with actual API call
+// Remove the temporary getUserOrders function and replace with localStorage fetch
 const getUserOrders = async () => {
-  // For now, return empty orders array
-  return {
-    success: true,
-    data: [],
-    message: 'No orders found'
-  };
+  try {
+    // Get orders from localStorage
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    return {
+      success: true,
+      data: orders,
+      message: orders.length === 0 ? 'No orders found' : 'Orders loaded successfully'
+    };
+  } catch (error) {
+    console.error('Error reading orders from localStorage:', error);
+    return {
+      success: false,
+      data: [],
+      message: 'Failed to load orders'
+    };
+  }
 };
 
 const Orders: React.FC = () => {
@@ -53,22 +63,46 @@ const Orders: React.FC = () => {
     fetchOrders();
   }, []);
 
-  // Fetch orders from API
+  // Fetch orders from API/localStorage
   const fetchOrders = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const token = localStorage.getItem('token');
-      if (!token) {
-        history.push('/login');
-        return;
-      }
+      // Remove token check since we're using localStorage
+      // const token = localStorage.getItem('token');
+      // if (!token) {
+      //   history.push('/login');
+      //   return;
+      // }
 
       const response = await getUserOrders();
       
       if (response.success) {
-        setOrders(response.data || []);
+        // Map the order data to match our interface
+        const mappedOrders = response.data.map((order: any) => ({
+          _id: order.orderNumber || order._id || `order_${Date.now()}`,
+          orderNumber: order.orderNumber,
+          createdAt: order.createdAt,
+          total: order.total,
+          status: order.status,
+          items: order.items.map((item: any) => ({
+            _id: item._id,
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            image: item.image
+          })),
+          deliveryAddress: order.deliveryAddress ? 
+            `${order.deliveryAddress.addressLine1}, ${order.deliveryAddress.addressLine2 ? order.deliveryAddress.addressLine2 + ', ' : ''}${order.deliveryAddress.city}, ${order.deliveryAddress.state} ${order.deliveryAddress.pincode}` : 
+            undefined,
+          paymentMethod: order.paymentMethod,
+          phoneNumber: order.deliveryAddress?.phone,
+          estimatedDelivery: order.estimatedDelivery,
+          orderNotes: order.orderNotes
+        }));
+        
+        setOrders(mappedOrders || []);
       } else {
         setError(response.message || 'Failed to fetch orders');
       }
