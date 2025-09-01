@@ -240,8 +240,7 @@ ion-tab-button.tab-selected ion-icon {
   animation: none !important;
   transform: none !important;
 }
-  background: var(--ion-toolbar-background) !important;
-}
+
 
 /* Fix for badge */
 ion-badge {
