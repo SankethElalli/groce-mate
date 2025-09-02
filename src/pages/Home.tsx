@@ -56,8 +56,18 @@ const Home: React.FC = () => {
       <IonContent fullscreen className="home-content">
         {/* Hero Section */}
         <div className="home-bg">
-          <video className="home-video" autoPlay muted loop playsInline>
-            <source src="/assets/videos/grocery-bg.mp4" type="video/mp4" />
+          <video 
+            className="home-video" 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            onError={(e) => console.error('Video failed to load:', e)}
+            onLoadStart={() => console.log('Video loading started')}
+            onCanPlay={() => console.log('Video can play')}
+          >
+            <source src="/prod.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
           <div className="home-overlay"></div>
           <div className="home-center">
@@ -120,23 +130,31 @@ const Home: React.FC = () => {
             
             <IonGrid>
               <IonRow>
-                {featuredProducts.map((product) => (
-                  <IonCol size="6" sizeMd="4" sizeLg="2" key={product._id}>
-                    <IonCard className="product-featured-card">
-                      <div className="product-image-container">
-                        <img src={product.image} alt={product.name} />
-                        <div className="product-badge">
-                          <IonIcon icon={starOutline} />
+                {featuredProducts.map((product, index) => {
+                  // Create different badge types for variety
+                  const badgeTypes = ['Featured', 'Hot', 'New', 'Sale'];
+                  const badgeClasses = ['badge-featured', 'badge-hot', 'badge-new', 'badge-sale'];
+                  const currentBadge = badgeTypes[index % badgeTypes.length];
+                  const currentBadgeClass = badgeClasses[index % badgeClasses.length];
+                  
+                  return (
+                    <IonCol size="6" sizeMd="4" sizeLg="2" key={product._id}>
+                      <IonCard className="product-featured-card">
+                        <div className="product-image-container">
+                          <img src={product.image} alt={product.name} />
+                          <div className={`product-badge ${currentBadgeClass}`}>
+                            <span className="badge-text">{currentBadge}</span>
+                          </div>
                         </div>
-                      </div>
-                      <IonCardContent>
-                        <h3>{product.name}</h3>
-                        <p className="product-category">{product.category?.name}</p>
-                        <div className="product-price">₹{product.price}</div>
-                      </IonCardContent>
-                    </IonCard>
-                  </IonCol>
-                ))}
+                        <IonCardContent>
+                          <h3>{product.name}</h3>
+                          <p className="product-category">{product.category?.name}</p>
+                          <div className="product-price">₹{product.price}</div>
+                        </IonCardContent>
+                      </IonCard>
+                    </IonCol>
+                  );
+                })}
               </IonRow>
             </IonGrid>
             
@@ -229,7 +247,7 @@ const Home: React.FC = () => {
                 </IonCol>
                 <IonCol size="12" sizeLg="6">
                   <div className="about-image">
-                    <img src="/assets/images/about-grocery.jpg" alt="About GroceMate" />
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&h=400&fit=crop&crop=center" alt="About GroceMate" />
                   </div>
                 </IonCol>
               </IonRow>
