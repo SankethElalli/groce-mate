@@ -32,6 +32,14 @@ http://ionicframework.com/docs/theming/ */
   --ion-tab-bar-color: #666666;
   --ion-tab-bar-color-selected: #00809D;
   
+  /* Video Background Support */
+  --video-overlay-color: rgba(0, 0, 0, 0.5);
+  --video-text-color: #ffffff;
+  --video-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  /* Toolbar title theme support */
+  --ion-toolbar-title-color: #333333;
+  
   --ion-input-background: #ffffff;
   --ion-input-border: #e0e0e0;
   --ion-input-text: #000000;
@@ -130,6 +138,14 @@ http://ionicframework.com/docs/theming/ */
     --ion-tab-bar-color: #999999;
     --ion-tab-bar-color-selected: #00809D;
     
+    /* Video Background Support for dark mode */
+    --video-overlay-color: rgba(0, 0, 0, 0.7);
+    --video-text-color: #ffffff;
+    --video-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    
+    /* Toolbar title theme support */
+    --ion-toolbar-title-color: #ffffff;
+
     --ion-input-background: rgba(255, 255, 255, 0.05);
     --ion-input-border: rgba(255, 255, 255, 0.1);
     --ion-input-text: #F7F7F7;

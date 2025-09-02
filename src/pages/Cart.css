@@ -187,7 +187,7 @@
 
 .quantity-btn:hover {
   background: var(--ion-color-primary);
-  color: white;
+  color: var(--ion-color-primary-contrast);
   transform: scale(1.05);
 }
 
@@ -198,6 +198,8 @@
 .quantity-btn ion-icon {
   font-size: 18px;
   --ionicon-stroke-width: 3px;
+  color: inherit !important;
+  --ionicon-stroke-color: currentColor !important;
 }
 
 .quantity-value {
@@ -215,7 +217,7 @@
 }
 
 .cart-item-remove {
-  background: rgba(var(--ion-color-danger-rgb), 0.1);
+  background: rgba(var(--ion-color-danger-rgb), 45%);
   border: none;
   color: var(--ion-color-danger);
   cursor: pointer;
@@ -421,6 +423,23 @@
   
   .cart-item-quantity {
     border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .quantity-btn {
+    background: var(--ion-card-background);
+    color: var(--ion-color-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .quantity-btn:hover {
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+  }
+  
+  .quantity-btn ion-icon {
+    color: inherit !important;
+    --ionicon-stroke-color: currentColor !important;
   }
   
   .cart-summary {

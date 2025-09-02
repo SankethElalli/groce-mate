@@ -64,7 +64,8 @@
 }
 
 .home-search::placeholder {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.8) !important;
+  opacity: 1 !important;
 }
 
 .home-search:focus {
@@ -81,6 +82,10 @@
   .home-search {
     padding: 0.875rem 1.25rem;
     font-size: 1rem;
+  }
+  
+  .home-search::placeholder {
+    color: rgba(255, 255, 255, 0.8) !important;
   }
 }
 

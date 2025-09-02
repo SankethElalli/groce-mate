@@ -1,6 +1,6 @@
 const API_BASE = 'http://localhost:5000/api';
 
-// Helper function to check if server is online
+// Helper function to check server connection
 const checkServerConnection = async () => {
   try {
     const controller = new AbortController();
@@ -14,7 +14,6 @@ const checkServerConnection = async () => {
     clearTimeout(timeoutId);
     return response.ok;
   } catch (error) {
-    console.log("Server connection check failed:", error);
     return false;
   }
 };
@@ -22,11 +21,11 @@ const checkServerConnection = async () => {
 // Auth functions
 export async function login(email: string, password: string, role?: string) {
   try {
-    // Store email for offline fallback
     localStorage.setItem('lastLoginEmail', email);
     
     const body: any = { email, password };
     if (role) body.role = role;
+    
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -40,7 +39,6 @@ export async function login(email: string, password: string, role?: string) {
     
     return res.json();
   } catch (error) {
-    console.error("Login error:", error);
     return { error: true, message: 'Network error. Please check your connection.' };
   }
 }
@@ -67,7 +65,6 @@ export async function getProducts() {
     const data = await res.json();
     return { data, error: false };
   } catch (error) {
-    console.error("Error fetching products:", error);
     return { error: true, message: 'Network error. Please check your connection.' };
   }
 }
@@ -98,33 +95,21 @@ export async function updateProfile(userData: { name: string, email: string }) {
     throw new Error('Authentication token not found');
   }
   
-  // First check if server is reachable
   const isOnline = await checkServerConnection();
   if (!isOnline) {
-    // If server not reachable, handle gracefully by using mock data
-    console.log("Server not reachable, using offline mode");
-    
-    // Get current user from local storage
+    // Offline mode
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    // Update user with new data and timestamp
     const updatedUser = {
       ...currentUser,
       name: userData.name,
       email: userData.email,
       updatedAt: new Date().toISOString()
     };
-    
-    // Save to localStorage for offline persistence
     localStorage.setItem('user', JSON.stringify(updatedUser));
-    
-    // Return the updated user
     return updatedUser;
   }
   
   try {
-    console.log("Making API call to update profile:", userData);
-    
     const res = await fetch(`${API_BASE}/users/profile`, {
       method: 'PUT',
       headers: { 
@@ -135,24 +120,19 @@ export async function updateProfile(userData: { name: string, email: string }) {
     });
     
     if (!res.ok) {
-      // Try to get error details
       let errorMsg = 'Failed to update profile';
       try {
         const errorData = await res.json();
         errorMsg = errorData.message || errorMsg;
       } catch (e) {
-        // If parsing fails, use status text
         errorMsg = res.statusText || errorMsg;
       }
-      
       throw new Error(errorMsg);
     }
     
     const data = await res.json();
-    console.log("Profile update response:", data);
     return data;
   } catch (error) {
-    console.error("Profile update error:", error);
     throw error;
   }
 }
@@ -160,7 +140,6 @@ export async function updateProfile(userData: { name: string, email: string }) {
 export async function changePassword(currentPassword: string, newPassword: string) {
   const token = localStorage.getItem('token');
   
-  // First check if server is reachable
   const isOnline = await checkServerConnection();
   if (!isOnline) {
     throw new Error('Server is not reachable. Please check your connection.');
@@ -186,7 +165,6 @@ export async function changePassword(currentPassword: string, newPassword: strin
 export async function uploadProfileImage(file: File) {
   const token = localStorage.getItem('token');
   
-  // First check if server is reachable
   const isOnline = await checkServerConnection();
   if (!isOnline) {
     throw new Error('Server is not reachable. Please check your connection.');
@@ -214,7 +192,6 @@ export async function uploadProfileImage(file: File) {
 export async function getProfileData() {
   const token = localStorage.getItem('token');
   
-  // Add a timeout to the fetch to avoid long hanging requests
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 5000);
   
@@ -235,10 +212,22 @@ export async function getProfileData() {
     
     return res.json();
   } catch (error) {
-    console.error("Profile fetch error:", error);
     clearTimeout(timeoutId);
     throw error;
   }
 }
 
-// Add more API functions as needed (for admin, products, etc.)
+export const getCategories = async () => {
+  try {
+    const response = await fetch(`${API_BASE}/categories`);
+    
+    if (!response.ok) {
+      return { error: true, message: `Failed to fetch categories: ${response.status}` };
+    }
+    
+    const data = await response.json();
+    return { error: false, data: data };
+  } catch (error) {
+    return { error: true, message: 'Network error' };
+  }
+};

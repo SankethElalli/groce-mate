@@ -74,8 +74,13 @@ router.delete('/users/:id', authenticate, requireAdmin, async (req, res) => {
 
 // Get all categories
 router.get('/categories', authenticate, requireAdmin, async (req, res) => {
-  const categories = await Category.find();
-  res.json(categories);
+  try {
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ message: 'Failed to fetch categories' });
+  }
 });
 
 // Add category
@@ -93,6 +98,7 @@ router.post('/categories', authenticate, requireAdmin, async (req, res) => {
     }
     
     const category = await Category.create({ name: name.trim() });
+    console.log('Category created:', category);
     res.status(201).json(category);
   } catch (error) {
     console.error('Error creating category:', error);

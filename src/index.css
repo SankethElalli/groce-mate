@@ -80,7 +80,7 @@ ion-modal::part(content) {
   button, a {
     border: 1px solid ButtonText;
   }
-}
+
 @media (forced-colors: active) {
   button, a {
     border: 1px solid ButtonText;

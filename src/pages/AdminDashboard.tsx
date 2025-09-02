@@ -46,7 +46,6 @@ async function apiPost(path: string, body: any) {
 
 async function apiPut(path: string, body: any) {
   try {
-    console.log('Making PUT request to:', path, 'with body:', body);
     const res = await fetch(`${API_BASE}${path}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
@@ -58,7 +57,6 @@ async function apiPut(path: string, body: any) {
     }
     return await res.json();
   } catch (error) {
-    console.error('API Put Error:', error);
     return { error: true, message: 'Network error. Please check your connection.' };
   }
 }
@@ -115,10 +113,9 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const updateData = {
-        role: userForm.role
-      };
+      const updateData = { role: userForm.role };
       const response = await apiPut(`/users/${userForm.id}`, updateData);
+      
       if (!response.error) {
         const updatedUsers = users.map(user => 
           user._id === userForm.id ? { ...user, role: userForm.role } : user
@@ -131,7 +128,6 @@ const AdminDashboard: React.FC = () => {
         });
         setUserForm({ name: '', email: '', role: 'user', id: '' });
       } else {
-        console.error('Error updating user role:', response.message);
         setNotification({
           show: true,
           message: response.message || 'Error updating user role',
@@ -139,7 +135,6 @@ const AdminDashboard: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error('Error updating user role:', error);
       setNotification({
         show: true,
         message: 'Network error. Please try again.',
@@ -172,7 +167,6 @@ const AdminDashboard: React.FC = () => {
             type: 'success'
           });
         } else {
-          console.error('Error deleting user:', response.message);
           setNotification({
             show: true,
             message: response.message || 'Error deleting user',
@@ -199,6 +193,7 @@ const AdminDashboard: React.FC = () => {
           message: 'Category name is required',
           type: 'error'
         });
+        setLoading(false);
         return;
       }
 
@@ -207,8 +202,10 @@ const AdminDashboard: React.FC = () => {
         : await apiPost('/categories', categoryForm);
 
       if (!response.error) {
+        // Refresh categories list immediately
         const updatedCategories = await apiGet('/categories');
-        setCategories(updatedCategories);
+        setCategories(Array.isArray(updatedCategories) ? updatedCategories : []);
+        
         setCategoryForm({ name: '', id: '' });
         setNotification({
           show: true,
@@ -216,7 +213,6 @@ const AdminDashboard: React.FC = () => {
           type: 'success'
         });
       } else {
-        console.error('Error with category:', response.message);
         setNotification({
           show: true,
           message: response.message || 'Error processing category',
@@ -234,12 +230,42 @@ const AdminDashboard: React.FC = () => {
       setLoading(false);
     }
   }
+
   function handleCategoryEdit(c: any) {
     setCategoryForm({ name: c.name, id: c._id });
   }
+
   async function handleCategoryDelete(id: string) {
-    await apiDelete(`/categories/${id}`);
-    setCategories(await apiGet('/categories'));
+    if (window.confirm('Are you sure you want to delete this category?')) {
+      setLoading(true);
+      try {
+        const response = await apiDelete(`/categories/${id}`);
+        if (!response.error) {
+          const updatedCategories = await apiGet('/categories');
+          setCategories(Array.isArray(updatedCategories) ? updatedCategories : []);
+          setNotification({
+            show: true,
+            message: 'Category deleted successfully',
+            type: 'success'
+          });
+        } else {
+          setNotification({
+            show: true,
+            message: response.message || 'Error deleting category',
+            type: 'error'
+          });
+        }
+      } catch (error) {
+        console.error('Error deleting category:', error);
+        setNotification({
+          show: true,
+          message: 'Network error. Please try again.',
+          type: 'error'
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
   }
 
   // --- PRODUCTS ---

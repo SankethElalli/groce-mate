@@ -6,6 +6,7 @@
   background: var(--ion-toolbar-background) !important;
   border-bottom: 1px solid var(--ion-toolbar-border-color, rgba(0, 0, 0, 0.08)) !important;
   box-shadow: var(--ion-toolbar-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.06)) !important;
+  z-index: 1000 !important; /* Ensure toolbar is above video */
 }
 
 /* Main App Title */
@@ -14,12 +15,13 @@
   font-family: inherit !important;
   font-weight: 700 !important;
   letter-spacing: -0.5px !important;
-  color: var(--ion-toolbar-color) !important;
+  color: var(--ion-toolbar-title-color) !important;
   text-align: left !important;
   margin-left: 0px !important;
   margin-right: auto !important;
   opacity: 1 !important;
   visibility: visible !important;
+  display: block !important;
 }
 
 /* Menu Button Styling */
@@ -77,20 +79,6 @@ ion-tab-bar {
     border-bottom-color: rgba(0, 0, 0, 0.08) !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
   }
-}
-  
-  ion-toolbar ion-title,
-  ion-toolbar ion-button,
-  ion-toolbar ion-icon {
-    color: #ffffff !important;
-  }
-
-/* Light Theme Specific Adjustments */
-@media (prefers-color-scheme: light) {
-  .app-toolbar {
-    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
-  }
   
   .app-title {
     color: #333333 !important;
@@ -112,3 +100,15 @@ ion-tab-bar {
     color: #333333 !important;
   }
 }
+  ion-toolbar {
+    --background: var(--ion-toolbar-background) !important;
+    --color: #333333 !important;
+    background: var(--ion-toolbar-background) !important;
+  }
+  
+  ion-toolbar ion-title,
+  ion-toolbar ion-button,
+  ion-toolbar ion-icon {
+    color: #333333 !important;
+  }
+

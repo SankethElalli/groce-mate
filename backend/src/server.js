@@ -21,12 +21,24 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Serve static files from the uploads directory
+// Serve static files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Add a health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
   res.status(200).send('OK');
+});
+
+// Categories route
+app.get('/api/categories', async (req, res) => {
+  try {
+    const { default: Category } = await import('./models/Category.js');
+    const categories = await Category.find().select('name');
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ message: 'Failed to fetch categories' });
+  }
 });
 
 // API routes
@@ -35,37 +47,42 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 
-// Create default admin user if not exists
+// Create default admin user
 async function createDefaultAdmin() {
-  const adminEmail = 'admin@grocemate.com';
-  const adminPassword = 'admin123'; // Change this in production!
-  const exists = await User.findOne({ email: adminEmail, role: 'admin' });
-  if (!exists) {
-    const hash = await bcrypt.hash(adminPassword, 10);
-    await User.create({
-      name: 'Admin',
-      email: adminEmail,
-      password: hash,
-      role: 'admin'
-    });
-    console.log('Default admin created:', adminEmail, '/', adminPassword);
+  try {
+    const adminEmail = 'admin@grocemate.com';
+    const adminPassword = 'admin123';
+    const exists = await User.findOne({ email: adminEmail, role: 'admin' });
+    
+    if (!exists) {
+      const hash = await bcrypt.hash(adminPassword, 10);
+      await User.create({
+        name: 'Admin',
+        email: adminEmail,
+        password: hash,
+        role: 'admin'
+      });
+      console.log('Default admin created');
+    }
+  } catch (error) {
+    console.error('Error creating admin:', error);
   }
 }
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
-
-if (!MONGO_URI) {
-  console.error('Error: MONGO_URI is not defined in environment variables.');
-  process.exit(1);
-}
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/groce-mate';
 
 mongoose.connect(MONGO_URI)
   .then(async () => {
-    console.log('MongoDB connected successfully');
+    console.log('MongoDB connected');
     await createDefaultAdmin();
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
   })
   .catch((err) => {
     console.error('MongoDB connection error:', err);
   });
+
+
+export default app;

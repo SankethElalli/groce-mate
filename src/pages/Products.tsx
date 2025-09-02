@@ -1,8 +1,9 @@
-import { IonContent, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast, IonTitle } from '@ionic/react';
+import { IonContent, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast, IonTitle, IonButton, IonIcon, IonList, IonItem, IonLabel, IonCheckbox } from '@ionic/react';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getProducts } from '../api/api';
+import { getProducts, getCategories } from '../api/api';
 import { useCart } from '../contexts/CartContext';
+import { filterOutline, checkmarkOutline, closeOutline } from 'ionicons/icons';
 import './Product.css';
 import './ProductsMobile.css';
 
@@ -11,6 +12,9 @@ const Products: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -21,28 +25,37 @@ const Products: React.FC = () => {
   // Use cart context
   const { addToCart } = useCart();
 
-  // Fetch products from backend
+  // Fetch products and categories from backend
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await getProducts();
-        if (response.error) {
-          setError(response.message);
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          getProducts(),
+          getCategories()
+        ]);
+        
+        if (productsResponse.error) {
+          setError(productsResponse.message);
           setAllProducts([]);
         } else {
-          setAllProducts(response.data || []);
+          setAllProducts(productsResponse.data || []);
           setError(null);
         }
+        
+        if (!categoriesResponse.error) {
+          setCategories(categoriesResponse.data || []);
+        }
       } catch (err) {
-        setError('Failed to fetch products');
+        setError('Failed to fetch data');
         setAllProducts([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   // Handle search and filtering
@@ -50,34 +63,47 @@ const Products: React.FC = () => {
     // Get search term from URL query parameters
     const params = new URLSearchParams(location.search);
     const search = params.get('search') || '';
-    setSearchTerm(search);
+    const category = params.get('category') || 'all';
     
-    // Initialize with all products if no search term
-    if (!search) {
-      setFilteredProducts(allProducts);
-    } else {
-      // Filter products based on search term
-      const filtered = allProducts.filter(product =>
-        product.name.toLowerCase().includes(search.toLowerCase())
-      );
-      setFilteredProducts(filtered);
-    }
+    setSearchTerm(search);
+    setSelectedCategory(category);
+    
+    filterProducts(search, category);
   }, [location.search, allProducts]);
+
+  // Filter products based on search term and category
+  const filterProducts = (search: string, category: string) => {
+    let filtered = allProducts;
+    
+    // Filter by category first
+    if (category && category !== 'all') {
+      filtered = filtered.filter(product => 
+        product.category?._id === category || 
+        product.category?.name?.toLowerCase() === category.toLowerCase()
+      );
+    }
+    
+    // Then filter by search term
+    if (search.trim()) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.category?.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    
+    setFilteredProducts(filtered);
+  };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const search = event.target.value;
     setSearchTerm(search);
-    
-    // Always show all products if search is empty
-    if (!search.trim()) {
-      setFilteredProducts(allProducts);
-      return;
-    }
-    
-    const filtered = allProducts.filter(product =>
-      product.name.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredProducts(filtered);
+    filterProducts(search, selectedCategory);
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    filterProducts(searchTerm, categoryId);
+    setIsCategoryDropdownOpen(false);
   };
 
   // Handle adding product to cart
@@ -87,6 +113,24 @@ const Products: React.FC = () => {
     setShowToast(true);
   };
 
+  // Get product count for each category
+  const getCategoryCount = (categoryId: string) => {
+    if (categoryId === 'all') return allProducts.length;
+    return allProducts.filter(product => product.category?._id === categoryId).length;
+  };
+
+  // Get selected category name
+  const getSelectedCategoryName = () => {
+    if (selectedCategory === 'all') return 'All Products';
+    const category = categories.find(c => c._id === selectedCategory);
+    return category ? category.name : 'All Products';
+  };
+
+  // Handle opening the categories dropdown
+  const handleCategoriesButtonClick = () => {
+    setIsCategoryDropdownOpen(!isCategoryDropdownOpen);
+  };
+
   return (
     <IonPage className="products-page">
       <IonHeader>
@@ -94,11 +138,14 @@ const Products: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/" text="" />
           </IonButtons>
+          <IonTitle>Products</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="products-content">
         <div className="products-header">
           <h1 className="products-title">Products</h1>
+          
+          {/* Search Bar */}
           <input
             className="home-search products-search"
             type="text"
@@ -106,8 +153,54 @@ const Products: React.FC = () => {
             value={searchTerm}
             onChange={handleSearch}
             aria-label="Search products"
+            style={{
+              color: 'var(--ion-text-color)',
+              backgroundColor: 'var(--ion-card-background)',
+              borderColor: 'var(--ion-input-border)'
+            }}
           />
+          
+          {/* Categories Button with Dropdown - Only show if categories exist */}
+          {categories.length > 0 && (
+            <div className="categories-dropdown-container">
+              <button 
+                className="categories-button"
+                onClick={handleCategoriesButtonClick}
+                aria-label="Filter by category"
+              >
+                <IonIcon icon={filterOutline} />
+                <span>Categories</span>
+                <span className="selected-category">({getSelectedCategoryName()})</span>
+              </button>
+              
+              {isCategoryDropdownOpen && (
+                <div className="categories-dropdown">
+                  <div 
+                    className={`category-item ${selectedCategory === 'all' ? 'selected' : ''}`}
+                    onClick={() => handleCategorySelect('all')}
+                  >
+                    <span>All Products</span>
+                    <span className="item-count">({getCategoryCount('all')})</span>
+                    {selectedCategory === 'all' && <IonIcon icon={checkmarkOutline} />}
+                  </div>
+                  
+                  {categories.map(category => (
+                    <div 
+                      key={category._id}
+                      className={`category-item ${selectedCategory === category._id ? 'selected' : ''}`}
+                      onClick={() => handleCategorySelect(category._id)}
+                    >
+                      <span>{category.name}</span>
+                      <span className="item-count">({getCategoryCount(category._id)})</span>
+                      {selectedCategory === category._id && <IonIcon icon={checkmarkOutline} />}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
+        
         <div className="products-list">
           {loading ? (
             <div className="loading-message">Loading products...</div>
@@ -133,7 +226,16 @@ const Products: React.FC = () => {
             ))
           ) : (
             <div className="no-products">
-              <p>No products found matching "{searchTerm}"</p>
+              <p>
+                {searchTerm && selectedCategory !== 'all' 
+                  ? `No products found matching "${searchTerm}" in ${categories.find(c => c._id === selectedCategory)?.name || 'selected category'}`
+                  : searchTerm 
+                    ? `No products found matching "${searchTerm}"`
+                    : selectedCategory !== 'all'
+                      ? `No products found in ${categories.find(c => c._id === selectedCategory)?.name || 'selected category'}`
+                      : 'No products found'
+                }
+              </p>
             </div>
           )}
         </div>

@@ -1,35 +1,257 @@
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent, IonPage, IonButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonGrid, IonRow, IonCol } from '@ionic/react';
+import { searchOutline, leafOutline, bagOutline, heartOutline, starOutline, trophyOutline, shieldCheckmarkOutline, peopleOutline } from 'ionicons/icons';
+import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import { getCategories, getProducts } from '../api/api';
 import './Home.css';
 
 const Home: React.FC = () => {
   const history = useHistory();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
 
-  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && event.currentTarget.value.trim()) {
-      const searchTerm = event.currentTarget.value.trim();
-      history.push(`/menu?search=${encodeURIComponent(searchTerm)}`);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesResponse, productsResponse] = await Promise.all([
+          getCategories(),
+          getProducts()
+        ]);
+        
+        if (!categoriesResponse.error) {
+          setCategories(categoriesResponse.data?.slice(0, 6) || []);
+        }
+        
+        if (!productsResponse.error) {
+          // Get first 6 products as featured
+          setFeaturedProducts(productsResponse.data?.slice(0, 6) || []);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      history.push(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
     }
+  };
+
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    history.push(`/products?category=${categoryId}`);
   };
 
   return (
     <IonPage>
       <IonContent fullscreen className="home-content">
+        {/* Hero Section */}
         <div className="home-bg">
-          <video autoPlay loop muted playsInline className="home-video">
-            <source src="resources/prod.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
+          <video className="home-video" autoPlay muted loop playsInline>
+            <source src="/assets/videos/grocery-bg.mp4" type="video/mp4" />
           </video>
-          <div className="home-overlay" />
+          <div className="home-overlay"></div>
           <div className="home-center">
-            <h1 className="home-title">Your minimalist grocery companion</h1>
+            <h1 className="home-title">Fresh Groceries Delivered</h1>
+            <p className="home-subtitle">Quality products at your doorstep</p>
             <div className="home-search-container">
-              <input
-                className="home-search"
-                type="text"
-                placeholder="Search for groceries..."
-                onKeyPress={handleSearch}
-              />
+              <div className="search-wrapper">
+                <input
+                  className="home-search"
+                  type="text"
+                  placeholder="Search for fresh groceries..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />
+                <IonButton 
+                  fill="clear" 
+                  className="search-btn"
+                  onClick={handleSearch}
+                >
+                  <IonIcon icon={searchOutline} />
+                </IonButton>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Categories Section */}
+        <div className="section categories-section">
+          <div className="container">
+            <h2 className="section-title">Shop by Categories</h2>
+            <p className="section-subtitle">Explore our wide range of fresh products</p>
+            
+            <IonGrid>
+              <IonRow>
+                {categories.map((category, index) => (
+                  <IonCol size="6" sizeMd="4" sizeLg="2" key={category._id}>
+                    <div 
+                      className="category-card"
+                      onClick={() => handleCategoryClick(category._id)}
+                    >
+                      <div className="category-icon">
+                        <IonIcon icon={leafOutline} />
+                      </div>
+                      <h3>{category.name}</h3>
+                      <p>{category.description || 'Fresh & Quality'}</p>
+                    </div>
+                  </IonCol>
+                ))}
+              </IonRow>
+            </IonGrid>
+          </div>
+        </div>
+
+        {/* Featured Products Section */}
+        <div className="section featured-section">
+          <div className="container">
+            <h2 className="section-title">Featured Products</h2>
+            <p className="section-subtitle">Hand-picked fresh items just for you</p>
+            
+            <IonGrid>
+              <IonRow>
+                {featuredProducts.map((product) => (
+                  <IonCol size="6" sizeMd="4" sizeLg="2" key={product._id}>
+                    <IonCard className="product-featured-card">
+                      <div className="product-image-container">
+                        <img src={product.image} alt={product.name} />
+                        <div className="product-badge">
+                          <IonIcon icon={starOutline} />
+                        </div>
+                      </div>
+                      <IonCardContent>
+                        <h3>{product.name}</h3>
+                        <p className="product-category">{product.category?.name}</p>
+                        <div className="product-price">₹{product.price}</div>
+                      </IonCardContent>
+                    </IonCard>
+                  </IonCol>
+                ))}
+              </IonRow>
+            </IonGrid>
+            
+            <div className="section-cta">
+              <IonButton 
+                expand="block" 
+                fill="outline" 
+                className="view-all-btn"
+                routerLink="/products"
+              >
+                View All Products
+              </IonButton>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Section */}
+        <div className="section features-section">
+          <div className="container">
+            <h2 className="section-title">Why Choose GroceMate?</h2>
+            
+            <IonGrid>
+              <IonRow>
+                <IonCol size="12" sizeMd="6" sizeLg="3">
+                  <div className="feature-card">
+                    <IonIcon icon={leafOutline} className="feature-icon" />
+                    <h3>Fresh Quality</h3>
+                    <p>Hand-picked fresh produce delivered daily to ensure the highest quality</p>
+                  </div>
+                </IonCol>
+                <IonCol size="12" sizeMd="6" sizeLg="3">
+                  <div className="feature-card">
+                    <IonIcon icon={trophyOutline} className="feature-icon" />
+                    <h3>Best Prices</h3>
+                    <p>Competitive pricing with regular discounts and offers for our customers</p>
+                  </div>
+                </IonCol>
+                <IonCol size="12" sizeMd="6" sizeLg="3">
+                  <div className="feature-card">
+                    <IonIcon icon={shieldCheckmarkOutline} className="feature-icon" />
+                    <h3>Safe Delivery</h3>
+                    <p>Contactless delivery with proper hygiene and safety measures</p>
+                  </div>
+                </IonCol>
+                <IonCol size="12" sizeMd="6" sizeLg="3">
+                  <div className="feature-card">
+                    <IonIcon icon={peopleOutline} className="feature-icon" />
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock customer support to help you with any queries</p>
+                  </div>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </div>
+        </div>
+
+        {/* About Us Section */}
+        <div className="section about-section">
+          <div className="container">
+            <IonGrid>
+              <IonRow className="ion-align-items-center">
+                <IonCol size="12" sizeLg="6">
+                  <div className="about-content">
+                    <h2 className="section-title">About GroceMate</h2>
+                    <p className="about-text">
+                      We're passionate about bringing fresh, quality groceries right to your doorstep. 
+                      Founded with a mission to make grocery shopping convenient and accessible for everyone, 
+                      GroceMate connects you with the finest local suppliers and farmers.
+                    </p>
+                    <p className="about-text">
+                      Our commitment to quality, freshness, and customer satisfaction drives everything we do. 
+                      From farm-fresh vegetables to premium pantry staples, we ensure every product meets 
+                      our high standards before it reaches your home.
+                    </p>
+                    <div className="about-stats">
+                      <div className="stat">
+                        <h4>10K+</h4>
+                        <p>Happy Customers</p>
+                      </div>
+                      <div className="stat">
+                        <h4>500+</h4>
+                        <p>Products</p>
+                      </div>
+                      <div className="stat">
+                        <h4>50+</h4>
+                        <p>Categories</p>
+                      </div>
+                    </div>
+                  </div>
+                </IonCol>
+                <IonCol size="12" sizeLg="6">
+                  <div className="about-image">
+                    <img src="/assets/images/about-grocery.jpg" alt="About GroceMate" />
+                  </div>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="section cta-section">
+          <div className="container">
+            <div className="cta-content">
+              <h2>Start Shopping Today!</h2>
+              <p>Join thousands of satisfied customers who trust GroceMate for their daily needs</p>
+              <IonButton 
+                expand="block" 
+                size="large" 
+                className="cta-btn"
+                routerLink="/products"
+              >
+                <IonIcon icon={bagOutline} slot="start" />
+                Shop Now
+              </IonButton>
             </div>
           </div>
         </div>

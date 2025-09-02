@@ -20,6 +20,9 @@
   --ion-toolbar-border-color: rgba(0, 0, 0, 0.08);
   --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   
+  /* Toolbar title specific */
+  --ion-toolbar-title-color: #333333;
+  
   --ion-tab-bar-background: #ffffff;
   --ion-tab-bar-color: #666666;
   --ion-tab-bar-color-selected: #00809D;
@@ -49,6 +52,9 @@
     --ion-toolbar-border-color: rgba(255, 255, 255, 0.1);
     --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     
+    /* Toolbar title specific */
+    --ion-toolbar-title-color: #ffffff;
+    
     --ion-tab-bar-background: #1f1f1f;
     --ion-tab-bar-color: #999999;
     --ion-tab-bar-color-selected: #00809D;
@@ -69,8 +75,9 @@
   }
 
   ion-title,
-  .app-title {
-    color: var(--ion-toolbar-color) !important;
+  .app-title,
+  .toolbar-title {
+    color: var(--ion-toolbar-title-color) !important;
   }
 
   ion-menu-button {
@@ -143,8 +150,9 @@
   }
 
   ion-title,
-  .app-title {
-    color: var(--ion-toolbar-color) !important;
+  .app-title,
+  .toolbar-title {
+    color: var(--ion-toolbar-title-color) !important;
   }
 
   ion-menu-button {
