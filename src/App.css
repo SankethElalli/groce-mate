@@ -81,34 +81,23 @@ ion-tab-bar {
   }
   
   .app-title {
-    color: #333333 !important;
+    color: var(--ion-toolbar-color) !important;
   }
   
   ion-menu-button {
-    --color: #333333 !important;
+    --color: var(--ion-toolbar-color) !important;
   }
   
   ion-toolbar {
     --background: var(--ion-toolbar-background) !important;
-    --color: #333333 !important;
+    --color: var(--ion-toolbar-color) !important;
     background: var(--ion-toolbar-background) !important;
   }
   
   ion-toolbar ion-title,
   ion-toolbar ion-button,
   ion-toolbar ion-icon {
-    color: #333333 !important;
+    color: var(--ion-toolbar-color) !important;
   }
 }
-  ion-toolbar {
-    --background: var(--ion-toolbar-background) !important;
-    --color: #333333 !important;
-    background: var(--ion-toolbar-background) !important;
-  }
-  
-  ion-toolbar ion-title,
-  ion-toolbar ion-button,
-  ion-toolbar ion-icon {
-    color: #333333 !important;
-  }
 

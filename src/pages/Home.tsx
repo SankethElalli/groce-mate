@@ -121,11 +121,7 @@ const Home: React.FC = () => {
                       className="category-card"
                       onClick={() => handleCategoryClick(category._id)}
                     >
-                      <div className="category-icon">
-                        <IonIcon icon={leafOutline} />
-                      </div>
                       <h3>{category.name}</h3>
-                      <p>{category.description || 'Fresh & Quality'}</p>
                     </div>
                   </IonCol>
                 ))}
