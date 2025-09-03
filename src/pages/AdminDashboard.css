@@ -87,27 +87,52 @@
   font-size: 1rem;
   color: var(--ion-text-color);
   background: var(--ion-card-background);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   font-family: inherit;
   outline: none;
   box-sizing: border-box;
   margin-top: 0.25rem;
-}
-
-.simple-admin-input::placeholder {
-  color: var(--ion-color-medium);
-  font-style: normal;
-  text-align: left;
-}
-
-.simple-admin-input:focus,
-.simple-admin-select:focus {
-  border-color: var(--ion-color-primary);
-  box-shadow: 0 0 0 2px rgba(var(--ion-color-primary-rgb), 0.1);
+  appearance: none;
 }
 
 .simple-admin-select {
   cursor: pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 1rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 3rem;
+  background-color: var(--ion-card-background);
+}
+
+.simple-admin-select:hover {
+  border-color: var(--ion-color-primary);
+  background-color: rgba(var(--ion-color-primary-rgb), 0.02);
+}
+
+.simple-admin-select:focus {
+  border-color: var(--ion-color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.1);
+  background-color: var(--ion-card-background);
+}
+
+/* Style dropdown options */
+.simple-admin-select option {
+  padding: 0.75rem 1rem;
+  background: var(--ion-card-background);
+  color: var(--ion-text-color);
+  border: none;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.simple-admin-select option:hover {
+  background: rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+.simple-admin-select option:checked {
+  background: var(--ion-color-primary);
+  color: white;
 }
 
 /* Reset ionic form styles */
@@ -356,5 +381,77 @@
   .admin-form .ion-select {
     width: 100% !important;
     margin-bottom: 0.5rem;
+  }
+}
+
+/* Featured checkbox - Simple & Clean */
+.featured-field {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.featured-checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.simple-admin-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.simple-admin-checkbox-label {
+  font-size: 0.9rem;
+  color: var(--ion-text-color);
+  cursor: pointer;
+}
+
+/* Featured description styling */
+.featured-description {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-left: 2px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .featured-description {
+    color: #999;
+  }
+  
+  .simple-admin-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%9ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-color: var(--ion-card-background);
+  }
+  
+  .simple-admin-select:hover {
+    background-color: rgba(var(--ion-color-primary-rgb), 0.05);
+  }
+  
+  .simple-admin-input,
+  .simple-admin-select {
+    background: var(--ion-card-background);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--ion-text-color);
+  }
+  
+  .simple-admin-input:focus,
+  .simple-admin-select:focus {
+    border-color: var(--ion-color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.2);
+    background-color: var(--ion-card-background);
+  }
+  
+  .simple-admin-select option {
+    background: var(--ion-card-background);
+    color: var(--ion-text-color);
   }
 }

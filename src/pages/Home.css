@@ -267,6 +267,33 @@
   transform: scale(1.05);
 }
 
+/* No products message */
+.no-products-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ion-color-medium);
+  font-size: 1rem;
+  width: 100%;
+}
+
+/* Loading and empty states for featured products */
+.loading-placeholder {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ion-color-medium);
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+}
+
+.no-products-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--ion-color-medium);
+  font-size: 1rem;
+  width: 100%;
+}
+
 /* Badge Variations */
 .badge-featured {
   background: linear-gradient(135deg, #ff6b6b, #ee5a24);

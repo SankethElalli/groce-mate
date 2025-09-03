@@ -1,5 +1,17 @@
 const API_BASE = 'http://localhost:5000/api';
 
+// Extend the Window interface to include ENV_API_URL
+declare global {
+  interface Window {
+    ENV_API_URL?: string;
+  }
+}
+
+// Fix the process not defined error
+const API_URL = typeof window !== 'undefined' && window.ENV_API_URL 
+  ? window.ENV_API_URL 
+  : 'http://localhost:5000/api';
+
 // Helper function to check server connection
 const checkServerConnection = async () => {
   try {
@@ -228,6 +240,88 @@ export const getCategories = async () => {
     const data = await response.json();
     return { error: false, data: data };
   } catch (error) {
+    return { error: true, message: 'Network error' };
+  }
+};
+
+// Get product by ID
+export const getProductById = async (id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/products/${id}`);
+    const data = await response.json();
+    
+    return response.ok 
+      ? { error: false, data } 
+      : { error: true, message: data.message || 'Failed to fetch product' };
+  } catch (error) {
+    console.error('API error:', error);
+    return { error: true, message: 'Network error' };
+  }
+};
+
+// Add product
+export const addProduct = async (productData: {
+  name: string;
+  description?: string;
+  price: number;
+  category: string;
+  image: string;
+  featured: boolean;
+}) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return { error: true, message: 'Authentication required' };
+
+    const response = await fetch(`${API_URL}/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(productData)
+    });
+
+    const data = await response.json();
+    return response.ok 
+      ? { error: false, data } 
+      : { error: true, message: data.message || 'Failed to add product' };
+  } catch (error) {
+    console.error('API error:', error);
+    return { error: true, message: 'Network error' };
+  }
+};
+
+// Update product
+export const updateProduct = async (
+  id: string, 
+  productData: {
+    name?: string;
+    description?: string;
+    price?: number;
+    category?: string;
+    image?: string;
+    featured?: boolean;
+  }
+) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return { error: true, message: 'Authentication required' };
+
+    const response = await fetch(`${API_URL}/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(productData)
+    });
+
+    const data = await response.json();
+    return response.ok 
+      ? { error: false, data } 
+      : { error: true, message: data.message || 'Failed to update product' };
+  } catch (error) {
+    console.error('API error:', error);
     return { error: true, message: 'Network error' };
   }
 };

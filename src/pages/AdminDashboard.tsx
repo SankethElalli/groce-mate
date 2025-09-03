@@ -89,7 +89,14 @@ const AdminDashboard: React.FC = () => {
   // Form states
   const [userForm, setUserForm] = useState({ name: '', email: '', role: 'user', id: '' });
   const [categoryForm, setCategoryForm] = useState({ name: '', id: '' });
-  const [productForm, setProductForm] = useState({ name: '', price: '', image: '', category: '', id: '' });
+  const [productForm, setProductForm] = useState({ 
+    name: '', 
+    price: '', 
+    image: '', 
+    category: '', 
+    featured: false, // Add featured field
+    id: '' 
+  });
 
   // Fetch all data
   useEffect(() => {
@@ -276,7 +283,7 @@ const AdminDashboard: React.FC = () => {
     } else {
       await apiPost('/products', productForm);
     }
-    setProductForm({ name: '', price: '', image: '', category: '', id: '' });
+    setProductForm({ name: '', price: '', image: '', category: '', featured: false, id: '' });
     setProducts(await apiGet('/products'));
   }
   function handleProductEdit(p: any) {
@@ -285,6 +292,7 @@ const AdminDashboard: React.FC = () => {
       price: p.price,
       image: p.image,
       category: p.category?._id || '',
+      featured: p.featured || false, // Set featured status from existing product
       id: p._id
     });
   }
@@ -535,6 +543,26 @@ const AdminDashboard: React.FC = () => {
                           ))}
                         </select>
                       </div>
+                      
+                      {/* Featured product dropdown - replacing checkbox */}
+                      <div className="simple-admin-field">
+                        <label className="simple-admin-label" htmlFor="productFeatured">
+                          Featured Product
+                        </label>
+                        <select
+                          id="productFeatured"
+                          className="simple-admin-select"
+                          value={productForm.featured ? 'yes' : 'no'}
+                          onChange={e => setProductForm(f => ({ ...f, featured: e.target.value === 'yes' }))}
+                        >
+                          <option value="no">No</option>
+                          <option value="yes">Yes</option>
+                        </select>
+                        <p className="featured-description">
+                          Featured products will appear on the homepage
+                        </p>
+                      </div>
+                      
                       <div className="action-buttons">
                         <button type="submit" className="simple-admin-btn">
                           {productForm.id ? 'Update' : 'Add'} Product
@@ -543,7 +571,7 @@ const AdminDashboard: React.FC = () => {
                           <button 
                             type="button"
                             className="simple-admin-btn outline" 
-                            onClick={() => setProductForm({ name: '', price: '', image: '', category: '', id: '' })}
+                            onClick={() => setProductForm({ name: '', price: '', image: '', category: '', featured: false, id: '' })}
                           >
                             Cancel
                           </button>
@@ -556,7 +584,7 @@ const AdminDashboard: React.FC = () => {
                     <table>
                       <thead>
                         <tr>
-                          <th>Name</th><th>Price</th><th>Category</th><th>Image</th><th>Actions</th>
+                          <th>Name</th><th>Price</th><th>Category</th><th>Featured</th><th>Image</th><th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -565,6 +593,7 @@ const AdminDashboard: React.FC = () => {
                             <td>{p.name}</td>
                             <td>{p.price}</td>
                             <td>{p.category?.name || ''}</td>
+                            <td>{p.featured ? 'Yes' : 'No'}</td>
                             <td>{p.image && <img src={p.image} alt={p.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />}</td>
                             <td>
                               <div className="table-action-buttons">

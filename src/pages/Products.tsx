@@ -17,6 +17,7 @@ const Products: React.FC = () => {
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
   
   // Add toast notification state
   const [showToast, setShowToast] = useState(false);
@@ -64,18 +65,25 @@ const Products: React.FC = () => {
     const params = new URLSearchParams(location.search);
     const search = params.get('search') || '';
     const category = params.get('category') || 'all';
+    const featured = params.get('featured') === 'true';
     
     setSearchTerm(search);
     setSelectedCategory(category);
+    setShowFeaturedOnly(featured);
     
-    filterProducts(search, category);
+    filterProducts(search, category, featured);
   }, [location.search, allProducts]);
 
-  // Filter products based on search term and category
-  const filterProducts = (search: string, category: string) => {
+  // Filter products based on search term, category and featured status
+  const filterProducts = (search: string, category: string, featured: boolean = false) => {
     let filtered = allProducts;
     
-    // Filter by category first
+    // Filter by featured if requested
+    if (featured) {
+      filtered = filtered.filter(product => product.featured === true);
+    }
+    
+    // Filter by category
     if (category && category !== 'all') {
       filtered = filtered.filter(product => 
         product.category?._id === category || 
@@ -83,7 +91,7 @@ const Products: React.FC = () => {
       );
     }
     
-    // Then filter by search term
+    // Filter by search term
     if (search.trim()) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -97,12 +105,12 @@ const Products: React.FC = () => {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const search = event.target.value;
     setSearchTerm(search);
-    filterProducts(search, selectedCategory);
+    filterProducts(search, selectedCategory, showFeaturedOnly);
   };
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    filterProducts(searchTerm, categoryId);
+    filterProducts(searchTerm, categoryId, showFeaturedOnly);
     setIsCategoryDropdownOpen(false);
   };
 
@@ -195,6 +203,24 @@ const Products: React.FC = () => {
                       {selectedCategory === category._id && <IonIcon icon={checkmarkOutline} />}
                     </div>
                   ))}
+                  
+                  {/* Featured products filter */}
+                  <div 
+                    className="category-item featured-filter"
+                    onClick={() => {
+                      setShowFeaturedOnly(!showFeaturedOnly);
+                      filterProducts(searchTerm, selectedCategory, !showFeaturedOnly);
+                    }}
+                  >
+                    <span>Featured Products Only</span>
+                    <IonCheckbox 
+                      checked={showFeaturedOnly} 
+                      onIonChange={(e) => {
+                        setShowFeaturedOnly(e.detail.checked);
+                        filterProducts(searchTerm, selectedCategory, e.detail.checked);
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>

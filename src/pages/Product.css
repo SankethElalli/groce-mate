@@ -516,6 +516,19 @@
   color: var(--ion-color-primary);
 }
 
+.featured-filter {
+  background: rgba(var(--ion-color-warning-rgb), 0.05);
+  border-top: 1px solid rgba(var(--ion-color-warning-rgb), 0.2);
+  margin-top: 4px;
+}
+
+.featured-filter ion-checkbox {
+  margin: 0;
+  --size: 20px;
+  --checkbox-background-checked: var(--ion-color-warning);
+  --border-color-checked: var(--ion-color-warning);
+}
+
 @media (max-width: 600px) {
   .products-header {
     padding: 0.75rem 1rem 0.5rem;

@@ -10,6 +10,7 @@ const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState<any[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,11 +25,22 @@ const Home: React.FC = () => {
         }
         
         if (!productsResponse.error) {
-          // Get first 6 products as featured
-          setFeaturedProducts(productsResponse.data?.slice(0, 6) || []);
+          // Filter only featured products
+          const featured = productsResponse.data?.filter(
+            (product: any) => product.featured === true
+          ) || [];
+          
+          // If no featured products available, fall back to showing first 6 products
+          const productsToShow = featured.length > 0 
+            ? featured.slice(0, 6) 
+            : productsResponse.data?.slice(0, 6) || [];
+        
+          setFeaturedProducts(productsToShow);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -130,31 +142,41 @@ const Home: React.FC = () => {
             
             <IonGrid>
               <IonRow>
-                {featuredProducts.map((product, index) => {
-                  // Create different badge types for variety
-                  const badgeTypes = ['Featured', 'Hot', 'New', 'Sale'];
-                  const badgeClasses = ['badge-featured', 'badge-hot', 'badge-new', 'badge-sale'];
-                  const currentBadge = badgeTypes[index % badgeTypes.length];
-                  const currentBadgeClass = badgeClasses[index % badgeClasses.length];
-                  
-                  return (
-                    <IonCol size="6" sizeMd="4" sizeLg="2" key={product._id}>
-                      <IonCard className="product-featured-card">
-                        <div className="product-image-container">
-                          <img src={product.image} alt={product.name} />
-                          <div className={`product-badge ${currentBadgeClass}`}>
-                            <span className="badge-text">{currentBadge}</span>
+                {loading ? (
+                  <IonCol size="12">
+                    <div className="loading-placeholder">Loading featured products...</div>
+                  </IonCol>
+                ) : featuredProducts.length > 0 ? (
+                  featuredProducts.map((product, index) => {
+                    // Create different badge types for variety
+                    const badgeTypes = ['Featured', 'Hot', 'New', 'Sale'];
+                    const badgeClasses = ['badge-featured', 'badge-hot', 'badge-new', 'badge-sale'];
+                    const currentBadge = badgeTypes[index % badgeTypes.length];
+                    const currentBadgeClass = badgeClasses[index % badgeClasses.length];
+                    
+                    return (
+                      <IonCol size="6" sizeMd="4" sizeLg="2" key={product._id}>
+                        <IonCard className="product-featured-card">
+                          <div className="product-image-container">
+                            <img src={product.image} alt={product.name} />
+                            <div className={`product-badge ${currentBadgeClass}`}>
+                              <span className="badge-text">{currentBadge}</span>
+                            </div>
                           </div>
-                        </div>
-                        <IonCardContent>
-                          <h3>{product.name}</h3>
-                          <p className="product-category">{product.category?.name}</p>
-                          <div className="product-price">₹{product.price}</div>
-                        </IonCardContent>
-                      </IonCard>
-                    </IonCol>
-                  );
-                })}
+                          <IonCardContent>
+                            <h3>{product.name}</h3>
+                            <p className="product-category">{product.category?.name}</p>
+                            <div className="product-price">₹{product.price}</div>
+                          </IonCardContent>
+                        </IonCard>
+                      </IonCol>
+                    );
+                  })
+                ) : (
+                  <IonCol size="12">
+                    <div className="no-products-message">No featured products available.</div>
+                  </IonCol>
+                )}
               </IonRow>
             </IonGrid>
             
