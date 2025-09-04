@@ -10,8 +10,8 @@ const Menu: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar className="app-toolbar">
-          <IonTitle className="app-title">GroceMate</IonTitle>
+        <IonToolbar className="themed-toolbar">
+          <IonTitle>GroceMate</IonTitle>
           <IonButtons slot="end">
             <IonButton routerLink="/cart" fill="clear">
               <div style={{ position: 'relative' }}>

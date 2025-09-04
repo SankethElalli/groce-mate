@@ -6,8 +6,11 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  padding: 12px;
+  padding: 16px;
   overflow-x: hidden;
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* Make back button more visible in profile page */
@@ -55,7 +58,11 @@
 
 .profile-avatar-container {
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile-avatar {
@@ -64,6 +71,9 @@
   margin-bottom: 0.5rem;
   position: relative;
   cursor: pointer;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0px 30px rgba(255, 255, 255, 0.2);
 }
 
 .avatar-upload-overlay {
@@ -94,69 +104,106 @@
   justify-content: center;
   background: var(--ion-primary);
   border-radius: 50%;
+  /* Add glow effect container styling */
+  position: relative;
+  overflow: visible;
 }
 
 .profile-avatar-placeholder ion-icon {
   font-size: 64px;
-  color: #000;
+  color: var(--ion-text-color);
+  /* Add black glow in light theme */
+  filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.5)) !important;
+  /* Make sure icon is properly visible */
+  visibility: visible !important;
+  opacity: 1 !important;
+  stroke: currentColor !important;
 }
 
-.profile-role-badge {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background: var(--ion-color-medium);
-  color: white;
-  font-size: 0.8rem;
+.profile-avatar-placeholder ion-icon svg path {
+  stroke: currentColor !important;
+  stroke-width: 32px !important;
+}
+
+/* Dark theme specific styles */
+@media (prefers-color-scheme: light) {
+  .profile-avatar{
+    /* Use white glow in dark theme */
+    box-shadow: 0 0px 30px rgba(0, 0, 0, 0.2) !important;
+  }
+}
+
+.avatar-change-btn {
+  margin-top: 0.5rem;
+  --border-radius: 20px;
+  --color: var(--ion-color-light);
   font-weight: 600;
-  padding: 0.3rem 0.7rem;
-  border-radius: 12px;
-  z-index: 10;
-  transform: translateX(-10%) translateY(10%);
-}
-
-.profile-role-badge ion-chip {
-  margin: 0;
-  background: var(--ion-color-medium);
-  color: white;
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-}
-
-.profile-role-badge ion-chip.ion-color-primary {
-  background: var(--ion-color-primary);
-  color: var(--ion-color-primary-contrast);
-}
-
-.profile-role-badge ion-chip ion-icon {
-  font-size: 0.9rem;
-  margin-right: 0.25rem;
-}
-
-.profile-role-badge ion-chip ion-label {
-  font-size: 0.75rem;
-  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-name {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--ion-text-color);
-  margin: 0.5rem 0;
+  margin: 0.5rem 0 0;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 16px;
+  border-radius: 20px;
+  position: relative;
+}
+
+.name-text {
+  position: relative;
+  z-index: 2;
+}
+
+.profile-name.admin-role {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.15);
+  color: var(--ion-color-primary-shade);
+  box-shadow: 0 2px 6px rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+.profile-name.user-role {
+  background-color: rgba(var(--ion-color-medium-rgb), 0.1);
+  color: var(--ion-color-medium-shade);
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ion-color-primary);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.admin-badge ion-icon {
+  font-size: 1.2rem;
 }
 
 .profile-email {
   font-size: 1rem;
   color: var(--ion-color-step-600);
-  margin: 0;
+  margin: 0.75rem 0 0;
+  text-align: center;
 }
 
 .profile-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--ion-card-background);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .profile-card {
@@ -332,6 +379,17 @@ ion-footer ion-toolbar {
   
   .profile-name {
     font-size: 1.4rem;
+    padding: 3px 12px;
+    border-radius: 16px;
+  }
+  
+  .admin-badge {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .admin-badge ion-icon {
+    font-size: 1rem;
   }
   
   .profile-header {
@@ -344,23 +402,8 @@ ion-footer ion-toolbar {
     display: block;
   }
   
-  .profile-role-badge {
-    transform: translateX(-5%) translateY(5%);
-    font-size: 0.7rem;
-    padding: 0.25rem 0.5rem;
-  }
-  
-  .profile-role-badge ion-chip {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
-  }
-  
-  .profile-role-badge ion-chip ion-icon {
-    font-size: 0.8rem;
-  }
-  
-  .profile-role-badge ion-chip ion-label {
-    font-size: 0.7rem;
+  .admin-badge ion-icon {
+    font-size: 1rem;
   }
 }
 

@@ -55,8 +55,6 @@ const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   // Fetch orders on component mount
   useEffect(() => {
@@ -114,20 +112,9 @@ const Orders: React.FC = () => {
     }
   };
 
-  // Handle opening the modal with order details
+  // Navigate to order details page
   const handleViewDetails = (order: Order) => {
-    if (isModalOpen) return;
-    
-    setTimeout(() => {
-      setSelectedOrder(order);
-      setIsModalOpen(true);
-    }, 50);
-  };
-
-  // Handle closing the modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedOrder(null);
+    history.push(`/order-details/${order.orderNumber || order._id}`);
   };
 
   // Handle refresh when pulled down
@@ -260,92 +247,6 @@ const Orders: React.FC = () => {
           )}
         </div>
       </IonContent>
-      
-      {/* Order Details Modal */}
-      <IonModal 
-        isOpen={isModalOpen} 
-        onDidDismiss={handleCloseModal}
-        backdropDismiss={true}
-        className="order-details-modal"
-      >
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Order Details</IonTitle>
-            <IonButtons slot="end">
-              <IonButton 
-                onClick={handleCloseModal}
-                fill="clear"
-                aria-label="Close order details"
-              >
-                <IonIcon icon={closeOutline} />
-              </IonButton>
-            </IonButtons>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          {selectedOrder ? (
-            <>
-              {/* Order Header */}
-              <IonCard className="order-header-card">
-                <IonCardContent>
-                  <div className="order-header-content">
-                    <div className="order-id-section">
-                      <h2>#{selectedOrder.orderNumber}</h2>
-                      <IonBadge 
-                        color={getStatusColor(selectedOrder.status)}
-                        className="status-badge"
-                      >
-                        {selectedOrder.status}
-                      </IonBadge>
-                    </div>
-                    <div className="order-date-section">
-                      <IonIcon icon={timeOutline} />
-                      <span>{new Date(selectedOrder.createdAt).toLocaleDateString('en-US', { 
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}</span>
-                    </div>
-                  </div>
-                </IonCardContent>
-              </IonCard>
-
-              {/* Items Section */}
-              <IonCard className="items-card">
-                <IonCardHeader>
-                  <h3 className="section-title">Order Items</h3>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonGrid className="items-grid">
-                    <IonRow className="items-header">
-                      <IonCol size="6">Item</IonCol>
-                      <IonCol size="2">Qty</IonCol>
-                      <IonCol size="4" className="text-right">Price</IonCol>
-                    </IonRow>
-                    {selectedOrder.items.map((item: OrderItem, index: number) => (
-                      <IonRow key={index} className="item-row">
-                        <IonCol size="6" className="item-name">{item.name}</IonCol>
-                        <IonCol size="2" className="item-qty">{item.quantity}</IonCol>
-                        <IonCol size="4" className="text-right item-price">₹{(item.price * item.quantity).toFixed(2)}</IonCol>
-                      </IonRow>
-                    ))}
-                    <IonRow className="total-row">
-                      <IonCol size="8" className="total-label"><strong>Total Amount</strong></IonCol>
-                      <IonCol size="4" className="text-right total-price"><strong>₹{selectedOrder.total.toFixed(2)}</strong></IonCol>
-                    </IonRow>
-                  </IonGrid>
-                </IonCardContent>
-              </IonCard>
-            </>
-          ) : (
-            <div className="no-order-selected">
-              <p>No order selected</p>
-            </div>
-          )}
-        </IonContent>
-      </IonModal>
     </IonPage>
   );
 };

@@ -20,6 +20,18 @@
   --ion-toolbar-border-color: rgba(0, 0, 0, 0.08);
   --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
   
+  /* Feature Cards Light Theme */
+  --feature-card-bg: #ffffff;
+  --feature-card-border: rgba(0, 0, 0, 0.05);
+  --feature-card-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  --feature-card-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --feature-icon-bg: rgba(0, 128, 157, 0.1);
+  --feature-icon-shadow: 0 4px 10px rgba(0, 128, 157, 0.15);
+  
+  /* Features Section Light Theme */
+  --features-section-bg: #f8f9fa;
+  --features-section-border: rgba(0, 0, 0, 0.05);
+  
   --ion-tab-bar-background: #ffffff;
   --ion-tab-bar-color: #666666;
   --ion-tab-bar-color-selected: #00809D;
@@ -48,6 +60,18 @@
     --ion-toolbar-color: #ffffff;
     --ion-toolbar-border-color: rgba(255, 255, 255, 0.1);
     --ion-toolbar-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    
+    /* Feature Cards Dark Theme */
+    --feature-card-bg: #1f1f1f;
+    --feature-card-border: rgba(255, 255, 255, 0.05);
+    --feature-card-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    --feature-card-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.4);
+    --feature-icon-bg: rgba(0, 128, 157, 0.2);
+    --feature-icon-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    
+    /* Features Section Dark Theme */
+    --features-section-bg: #141414;
+    --features-section-border: rgba(255, 255, 255, 0.03);
     
     --ion-tab-bar-background: #1f1f1f;
     --ion-tab-bar-color: #999999;
@@ -154,11 +178,82 @@
 
 /* System preference mode transition */
 * {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, stroke 0.3s ease !important;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, stroke 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.features-section {
+  transition: background-color 0.5s ease, border-color 0.5s ease !important;
 }
 
 /* Force tab bar colors in both themes */
 :root {
   --ion-tab-bar-color-force: var(--ion-tab-bar-color) !important;
   --ion-tab-bar-color-selected-force: var(--ion-tab-bar-color) !important; /* Same as non-selected */
+}
+
+/* Features Section Theme Support */
+.features-section {
+  background-color: var(--features-section-bg) !important;
+}
+
+/* Section Title Theme Support */
+.section-title {
+  color: var(--ion-text-color) !important;
+}
+
+.section-title::after {
+  background-color: var(--ion-color-primary) !important;
+}
+
+/* Dark mode specific adjustments for section titles */
+@media (prefers-color-scheme: dark) {
+  .section-title {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .features-section .section-title::after {
+    opacity: 0.9;
+  }
+}
+
+/* Feature Card Theme Support */
+.feature-card {
+  background-color: var(--feature-card-bg) !important;
+  border: 1px solid var(--feature-card-border) !important;
+  box-shadow: var(--feature-card-shadow) !important;
+}
+
+.feature-card:hover,
+.feature-card:focus {
+  box-shadow: var(--feature-card-shadow-hover) !important;
+}
+
+.feature-icon {
+  background-color: var(--feature-icon-bg) !important;
+  box-shadow: var(--feature-icon-shadow) !important;
+}
+
+/* Custom rupee icon styling */
+ion-icon[src*="rupee"] {
+  --ionicon-stroke-width: 32px;
+  stroke: var(--ion-color-primary) !important;
+  color: var(--ion-color-primary) !important;
+  font-size: 3.2rem !important;
+}
+
+/* Enhance contrast in dark mode for feature card text */
+@media (prefers-color-scheme: dark) {
+  .feature-card p {
+    opacity: 0.9;
+  }
+  
+  .feature-card h3::after {
+    opacity: 0.9;
+  }
+  
+  /* Add subtle focus outline in dark mode for accessibility */
+  .feature-card:focus {
+    outline: 2px solid var(--ion-color-primary);
+    outline-offset: 2px;
+  }
 }

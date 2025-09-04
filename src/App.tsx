@@ -26,6 +26,7 @@ import Cart from './pages/Cart';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import Orders from './pages/Orders';
+import OrderDetails from './pages/OrderDetails';
 import Profile from './pages/Profile';
 import SideMenu from './components/SideMenu';
 import { CartProvider, useCart } from './contexts/CartContext';
@@ -60,12 +61,14 @@ import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './theme/ToolbarThemeFix.css';
 import './App.css';
 import './pages/EmergencyFix.css';
 import './pages/ProfessionalAppFix.css';
 import './pages/ThemeSupport.css';
 import './pages/IconFix.css';
 import './pages/TabBarFix.css';
+import './pages/MenuSmoothnessFix.css';
 
 // Add custom style for focus management
 const style = document.createElement('style');
@@ -137,13 +140,7 @@ const App: React.FC = () => (
             <IonButtons slot="end">
               <IonMenuButton 
                 aria-label="Menu"
-                onClick={() => {
-                  // When menu is activated, make main content inert
-                  const mainContent = document.getElementById('main-content');
-                  if (mainContent) {
-                    mainContent.setAttribute('inert', '');
-                  }
-                }}
+                className="smooth-menu-button"
               />
             </IonButtons>
           </IonToolbar>
@@ -158,6 +155,7 @@ const App: React.FC = () => (
               <Route exact path="/login" component={Login} />
               <Route exact path="/admin" component={AdminDashboard} />
               <Route exact path="/orders" component={Orders} />
+              <Route exact path="/order-details/:orderId" component={OrderDetails} />
               <Route exact path="/profile" component={Profile} />
             </IonRouterOutlet>
             <TabBar />

@@ -79,10 +79,11 @@ async function apiDelete(path: string) {
 }
 
 const AdminDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'users' | 'categories' | 'products'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'categories' | 'products' | 'orders'>('users');
   const [users, setUsers] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
 
@@ -97,6 +98,12 @@ const AdminDashboard: React.FC = () => {
     featured: false, // Add featured field
     id: '' 
   });
+  const [orderStatusForm, setOrderStatusForm] = useState({ 
+    id: '', 
+    status: '',
+    orderNumber: '',
+    customerName: ''
+  });
 
   // Fetch all data
   useEffect(() => {
@@ -109,9 +116,11 @@ const AdminDashboard: React.FC = () => {
     const usersRes = await apiGet('/users');
     const categoriesRes = await apiGet('/categories');
     const productsRes = await apiGet('/products');
+    const ordersRes = await apiGet('/orders');
     setUsers(Array.isArray(usersRes) ? usersRes : []);
     setCategories(Array.isArray(categoriesRes) ? categoriesRes : []);
     setProducts(Array.isArray(productsRes) ? productsRes : []);
+    setOrders(Array.isArray(ordersRes) ? ordersRes : []);
     setLoading(false);
   }
 
@@ -275,6 +284,67 @@ const AdminDashboard: React.FC = () => {
     }
   }
 
+  // --- ORDERS ---
+  async function handleOrderStatusUpdate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!orderStatusForm.id || !orderStatusForm.status) {
+      setNotification({
+        show: true,
+        message: 'Please select an order and status',
+        type: 'error'
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await apiPut(`/orders/${orderStatusForm.id}/status`, {
+        deliveryStatus: orderStatusForm.status
+      });
+
+      if (!response.error) {
+        // Update order in the state
+        const updatedOrders = orders.map(order => 
+          order._id === orderStatusForm.id ? { 
+            ...order, 
+            deliveryStatus: orderStatusForm.status 
+          } : order
+        );
+
+        setOrders(updatedOrders);
+        setNotification({
+          show: true,
+          message: 'Order status updated successfully',
+          type: 'success'
+        });
+        setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' });
+      } else {
+        setNotification({
+          show: true,
+          message: response.message || 'Error updating order status',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      setNotification({
+        show: true,
+        message: 'Network error. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleOrderEdit(order: any) {
+    setOrderStatusForm({
+      id: order._id,
+      status: order.deliveryStatus || 'pending',
+      orderNumber: order._id.substring(order._id.length - 6).toUpperCase(),
+      customerName: order.user?.name || 'Unknown Customer'
+    });
+  }
+
   // --- PRODUCTS ---
   async function handleProductSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -342,6 +412,13 @@ const AdminDashboard: React.FC = () => {
               onClick={() => setActiveTab('products')}
             >
               Products
+            </IonButton>
+            <IonButton 
+              expand="block"
+              fill={activeTab === 'orders' ? 'solid' : 'outline'} 
+              onClick={() => setActiveTab('orders')}
+            >
+              Orders
             </IonButton>
           </div>
 
@@ -602,6 +679,108 @@ const AdminDashboard: React.FC = () => {
                                 </button>
                                 <button className="simple-table-btn danger" onClick={() => handleProductDelete(p._id)}>
                                   <IonIcon icon={trashOutline} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+              
+              {activeTab === 'orders' && (
+                <>
+                  <h2>Order Management</h2>
+                  
+                  {/* Order Status Update Form */}
+                  <form onSubmit={handleOrderStatusUpdate} className="admin-form">
+                    <div className="form-wrapper">
+                      <h3>{orderStatusForm.id ? 'Update Order Status' : 'Select an Order'}</h3>
+                      
+                      {orderStatusForm.id && (
+                        <>
+                          <div className="simple-admin-field">
+                            <label className="simple-admin-label">Order Number</label>
+                            <p>{orderStatusForm.orderNumber}</p>
+                          </div>
+                          
+                          <div className="simple-admin-field">
+                            <label className="simple-admin-label">Customer</label>
+                            <p>{orderStatusForm.customerName}</p>
+                          </div>
+                          
+                          <div className="simple-admin-field">
+                            <label className="simple-admin-label required" htmlFor="orderStatus">
+                              Status
+                            </label>
+                            <select
+                              id="orderStatus"
+                              className="simple-admin-select"
+                              value={orderStatusForm.status}
+                              onChange={e => setOrderStatusForm(f => ({ ...f, status: e.target.value }))}
+                              required
+                            >
+                              <option value="">Select Status</option>
+                              <option value="pending">Pending</option>
+                              <option value="processing">Processing</option>
+                              <option value="shipped">On Its Way</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="cancelled">Cancelled</option>
+                            </select>
+                          </div>
+                          
+                          <div className="action-buttons">
+                            <button type="submit" className="simple-admin-btn">
+                              Update Status
+                            </button>
+                            <button 
+                              type="button"
+                              className="simple-admin-btn outline" 
+                              onClick={() => setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' })}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </form>
+
+                  <div className="admin-table">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Order ID</th>
+                          <th>Customer</th>
+                          <th>Date</th>
+                          <th>Total</th>
+                          <th>Status</th>
+                          <th>Items</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders.map(order => (
+                          <tr key={order._id}>
+                            <td>{order._id}</td>
+                            <td>{order.user?.name || 'Unknown'}</td>
+                            <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                            <td>₹{order.total}</td>
+                            <td>
+                              <span className={`status-badge status-${order.deliveryStatus}`}>
+                                {order.deliveryStatus}
+                              </span>
+                            </td>
+                            <td>{order.products?.length || 0} items</td>
+                            <td>
+                              <div className="table-action-buttons">
+                                <button 
+                                  className="simple-table-btn edit" 
+                                  onClick={() => handleOrderEdit(order)}
+                                >
+                                  <IonIcon icon={pencilOutline} />
                                 </button>
                               </div>
                             </td>

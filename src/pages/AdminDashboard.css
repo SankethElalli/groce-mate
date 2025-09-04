@@ -455,3 +455,38 @@
     color: var(--ion-text-color);
   }
 }
+
+/* Order status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background-color: rgba(var(--ion-color-warning-rgb), 0.2);
+  color: var(--ion-color-warning-shade);
+}
+
+.status-processing {
+  background-color: rgba(var(--ion-color-tertiary-rgb), 0.2);
+  color: var(--ion-color-tertiary-shade);
+}
+
+.status-shipped {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.2);
+  color: var(--ion-color-primary-shade);
+}
+
+.status-delivered {
+  background-color: rgba(var(--ion-color-success-rgb), 0.2);
+  color: var(--ion-color-success-shade);
+}
+
+.status-cancelled {
+  background-color: rgba(var(--ion-color-danger-rgb), 0.2);
+  color: var(--ion-color-danger-shade);
+}

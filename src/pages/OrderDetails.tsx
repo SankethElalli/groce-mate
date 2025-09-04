@@ -1,7 +1,7 @@
-import React from 'react';
-import {
-  IonModal,
-  IonHeader,
+import React, { useState, useEffect } from 'react';
+import { 
+  IonPage, 
+  IonHeader, 
   IonToolbar,
   IonTitle,
   IonContent,
@@ -15,10 +15,12 @@ import {
   IonRow,
   IonCol,
   IonBadge,
-  IonText
+  IonText,
+  IonBackButton
 } from '@ionic/react';
+import { useParams, useHistory } from 'react-router-dom';
 import { closeOutline, locationOutline, callOutline, timeOutline, cardOutline } from 'ionicons/icons';
-import './OrderDetailsModal.css';
+import './OrderDetails.css';
 
 interface OrderItem {
   name: string;
@@ -39,17 +41,11 @@ interface OrderDetails {
   orderNotes?: string;
 }
 
-interface OrderDetailsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  order: OrderDetails | null;
-}
-
-const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  order 
-}) => {
+const OrderDetailsPage: React.FC = () => {
+  const { orderId } = useParams<{ orderId: string }>();
+  const history = useHistory();
+  const [order, setOrder] = useState<OrderDetails | null>(null);
+  
   // Helper function to get status color
   const getStatusColor = (status: string): string => {
     switch(status.toLowerCase()) {
@@ -72,32 +68,88 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
-  // If order is null, don't render the modal at all
+  // Fetch order details on component mount
+  useEffect(() => {
+    const fetchOrderDetails = () => {
+      try {
+        // Get orders from localStorage
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        
+        // Find the order with matching ID
+        const matchedOrder = orders.find((o: any) => o.orderNumber === orderId || o._id === orderId);
+        
+        if (matchedOrder) {
+          setOrder({
+            id: matchedOrder.orderNumber,
+            date: matchedOrder.createdAt,
+            total: `₹${matchedOrder.total.toFixed(2)}`,
+            status: matchedOrder.status,
+            items: matchedOrder.items.map((item: any) => ({
+              name: item.name,
+              quantity: item.quantity,
+              price: `₹${item.price.toFixed(2)}`
+            })),
+            deliveryAddress: matchedOrder.deliveryAddress ? 
+              `${matchedOrder.deliveryAddress.addressLine1}, ${matchedOrder.deliveryAddress.addressLine2 ? matchedOrder.deliveryAddress.addressLine2 + ', ' : ''}${matchedOrder.deliveryAddress.city}, ${matchedOrder.deliveryAddress.state} ${matchedOrder.deliveryAddress.pincode}` : 
+              undefined,
+            paymentMethod: matchedOrder.paymentMethod,
+            phoneNumber: matchedOrder.deliveryAddress?.phone,
+            estimatedDelivery: matchedOrder.estimatedDelivery,
+            orderNotes: matchedOrder.orderNotes
+          });
+        } else {
+          console.error('Order not found');
+          history.push('/orders');
+        }
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderId, history]);
+
+  const handleGoBack = () => {
+    history.push('/orders');
+  };
+  
+  // If order is still loading, show a loading message
   if (!order) {
-    return null;
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar>
+            <IonButtons slot="start">
+              <IonBackButton defaultHref="/orders" />
+            </IonButtons>
+            <IonTitle>Order Details</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <div className="loading-container">
+            <p>Loading order details...</p>
+          </div>
+        </IonContent>
+      </IonPage>
+    );
   }
 
   return (
-    <IonModal 
-      isOpen={isOpen} 
-      onDidDismiss={onClose}
-      className="order-details-modal"
-      backdropDismiss={true}
-      showBackdrop={true}
-    >
+    <IonPage className="order-details-page">
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/orders" />
+          </IonButtons>
           <IonTitle>Order Details</IonTitle>
           <IonButtons slot="end">
-            <IonButton 
-              onClick={onClose}
-              fill="clear"
-            >
+            <IonButton onClick={handleGoBack}>
               <IonIcon icon={closeOutline} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
+      
       <IonContent className="ion-padding">
         <div className="order-details-container">
           {/* Order ID and Status */}
@@ -200,8 +252,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           )}
         </div>
       </IonContent>
-    </IonModal>
+    </IonPage>
   );
 };
 
-export default OrderDetailsModal;
+export default OrderDetailsPage;

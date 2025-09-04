@@ -25,7 +25,8 @@ import {
   IonCol,
   IonCheckbox,
   IonToast,
-  IonSpinner
+  IonSpinner,
+  IonModal
 } from '@ionic/react';
 import {
   locationOutline,
@@ -34,7 +35,9 @@ import {
   cardOutline,
   cashOutline,
   timeOutline,
-  checkmarkCircleOutline
+  checkmarkCircleOutline,
+  bagCheckOutline,
+  arrowForward
 } from 'ionicons/icons';
 import { useCart } from '../contexts/CartContext';
 import './Checkout.css';
@@ -44,10 +47,6 @@ interface DeliveryAddress {
   phone: string;
   email: string;
   addressLine1: string;
-  addressLine2: string;
-  city: string;
-  state: string;
-  pincode: string;
 }
 
 const Checkout: React.FC = () => {
@@ -58,11 +57,7 @@ const Checkout: React.FC = () => {
     fullName: '',
     phone: '',
     email: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    pincode: ''
+    addressLine1: ''
   });
   
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'online'>('cod');
@@ -71,6 +66,9 @@ const Checkout: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  // Add new state for success modal
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
   
   // Calculate totals
   const subtotal = getTotalPrice();
@@ -99,14 +97,6 @@ const Checkout: React.FC = () => {
       showError('Address is required');
       return false;
     }
-    if (!deliveryAddress.city.trim()) {
-      showError('City is required');
-      return false;
-    }
-    if (!deliveryAddress.pincode.trim() || deliveryAddress.pincode.length !== 6) {
-      showError('Valid pincode is required');
-      return false;
-    }
     return true;
   };
   
@@ -116,6 +106,12 @@ const Checkout: React.FC = () => {
     setShowToast(true);
   };
   
+  // Navigate to orders page
+  const goToOrders = () => {
+    setShowSuccessModal(false);
+    history.push('/orders');
+  };
+  
   // Handle order placement
   const handlePlaceOrder = async () => {
     if (!validateForm()) return;
@@ -123,13 +119,20 @@ const Checkout: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Set the modal to show before the API call to make it appear immediately
+      setShowSuccessModal(true);
+      
+      // Generate order number
+      const generatedOrderNumber = `ORD${Date.now()}`;
+      setOrderNumber(generatedOrderNumber);
+      
+      // Simulate API call (reduced delay)
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Create order object with proper structure
       const order = {
         _id: `order_${Date.now()}`,
-        orderNumber: `ORD${Date.now()}`,
+        orderNumber: generatedOrderNumber,
         items: items.map(item => ({
           _id: item._id,
           name: item.name,
@@ -141,11 +144,7 @@ const Checkout: React.FC = () => {
           fullName: deliveryAddress.fullName,
           phone: deliveryAddress.phone,
           email: deliveryAddress.email,
-          addressLine1: deliveryAddress.addressLine1,
-          addressLine2: deliveryAddress.addressLine2,
-          city: deliveryAddress.city,
-          state: deliveryAddress.state,
-          pincode: deliveryAddress.pincode
+          addressLine1: deliveryAddress.addressLine1
         },
         paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment',
         orderNotes: orderNotes,
@@ -153,6 +152,7 @@ const Checkout: React.FC = () => {
         deliveryFee: deliveryFee,
         total: total,
         status: 'Processing',
+        deliveryStatus: 'pending', // Add explicit delivery status
         createdAt: new Date().toISOString(),
         estimatedDelivery: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       };
@@ -169,13 +169,7 @@ const Checkout: React.FC = () => {
       // Clear cart
       clearCart();
       
-      // Show success and redirect
-      setToastMessage('Order placed successfully!');
-      setShowToast(true);
-      
-      setTimeout(() => {
-        history.push('/orders');
-      }, 1500);
+      // Success modal is already shown
       
     } catch (error) {
       console.error('Error placing order:', error);
@@ -332,65 +326,6 @@ const Checkout: React.FC = () => {
                     required
                   />
                 </div>
-
-                <div className="simple-form-field">
-                  <label className="simple-form-label" htmlFor="address2">
-                    Area & Landmark
-                  </label>
-                  <input
-                    id="address2"
-                    className="simple-form-input"
-                    type="text"
-                    value={deliveryAddress.addressLine2}
-                    onChange={e => handleAddressChange('addressLine2', e.target.value)}
-                    placeholder="Area, Landmark (Optional)"
-                  />
-                </div>
-
-                <div className="simple-form-row">
-                  <div className="simple-form-field">
-                    <label className="simple-form-label required" htmlFor="city">
-                      City
-                    </label>
-                    <input
-                      id="city"
-                      className="simple-form-input"
-                      type="text"
-                      value={deliveryAddress.city}
-                      onChange={e => handleAddressChange('city', e.target.value)}
-                      placeholder="Your city"
-                      required
-                    />
-                  </div>
-                  <div className="simple-form-field">
-                    <label className="simple-form-label" htmlFor="state">
-                      State
-                    </label>
-                    <input
-                      id="state"
-                      className="simple-form-input"
-                      type="text"
-                      value={deliveryAddress.state}
-                      onChange={e => handleAddressChange('state', e.target.value)}
-                      placeholder="Your state"
-                    />
-                  </div>
-                  <div className="simple-form-field">
-                    <label className="simple-form-label required" htmlFor="pincode">
-                      PIN Code
-                    </label>
-                    <input
-                      id="pincode"
-                      className="simple-form-input"
-                      type="number"
-                      value={deliveryAddress.pincode}
-                      onChange={e => handleAddressChange('pincode', e.target.value)}
-                      placeholder="6-digit PIN"
-                      maxLength={6}
-                      required
-                    />
-                  </div>
-                </div>
               </div>
             </IonCardContent>
           </IonCard>
@@ -483,6 +418,32 @@ const Checkout: React.FC = () => {
           duration={3000}
           position="top"
         />
+        
+        {/* Order Success Modal */}
+        <IonModal 
+          isOpen={showSuccessModal}
+          backdropDismiss={false}
+          className="order-success-modal"
+        >
+          <div className="order-success-content">
+            <div className="success-icon">
+              <IonIcon icon={bagCheckOutline} />
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p className="order-number">Order #{orderNumber}</p>
+            <p className="success-message">
+              Thank you for your order. We've received your order and will begin processing it soon.
+            </p>
+            <IonButton 
+              expand="block"
+              className="view-orders-btn"
+              onClick={goToOrders}
+            >
+              <span>View My Orders</span>
+              <IonIcon icon={arrowForward} slot="end" />
+            </IonButton>
+          </div>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

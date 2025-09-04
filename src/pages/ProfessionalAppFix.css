@@ -18,16 +18,16 @@ ion-toolbar {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Dark toolbar with white text and icons */
-ion-toolbar.dark-toolbar {
-  --background: #333333 !important;
-  --color: white !important;
+/* Theme-aware toolbar that changes with dark/light mode */
+ion-toolbar.themed-toolbar {
+  --background: var(--ion-toolbar-background) !important;
+  --color: var(--ion-toolbar-color) !important;
 }
 
-ion-toolbar.dark-toolbar ion-back-button,
-ion-toolbar.dark-toolbar ion-button,
-ion-toolbar.dark-toolbar ion-icon {
-  --color: white !important;
+ion-toolbar.themed-toolbar ion-back-button,
+ion-toolbar.themed-toolbar ion-button,
+ion-toolbar.themed-toolbar ion-icon {
+  --color: var(--ion-toolbar-color) !important;
 }
 
 /* REMOVE CONFLICTING TOOLBAR STYLES - Let theme handle this */

@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getCategories, getProducts } from '../api/api';
 import './Home.css';
+import './FeatureMobile.css';
+import './ThemeSupport.css';
+import rupeeOutline from '../utils/custom-icons';
 
 const Home: React.FC = () => {
   const history = useHistory();
@@ -46,6 +49,8 @@ const Home: React.FC = () => {
 
     fetchData();
   }, []);
+  
+  // No animation effects - keeping it simple and static
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -61,6 +66,31 @@ const Home: React.FC = () => {
 
   const handleCategoryClick = (categoryId: string) => {
     history.push(`/products?category=${categoryId}`);
+  };
+
+  const getCategoryIcon = (categoryName: string) => {
+    const iconMap: { [key: string]: string } = {
+      'vegetables': 'leaf-outline',
+      'fruits': 'nutrition-outline',
+      'dairy': 'water-outline',
+      'meat': 'restaurant-outline',
+      'bakery': 'cafe-outline',
+      'beverages': 'wine-outline',
+      'snacks': 'fast-food-outline',
+      'frozen': 'snow-outline',
+      'pharmacy': 'medical-outline',
+      'household': 'home-outline'
+    };
+    
+    const lowerName = categoryName.toLowerCase();
+    return iconMap[lowerName] || 'storefront-outline';
+  };
+
+  // Function to determine which side (left or right) the category comes from
+  const getCategoryPosition = (index: number) => {
+    // Alternate between left and right or use random if preferred
+    // Using alternating pattern for predictable design
+    return index % 2 === 0 ? 'from-left' : 'from-right';
   };
 
   return (
@@ -95,13 +125,6 @@ const Home: React.FC = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyPress={handleKeyPress}
                 />
-                <IonButton 
-                  fill="clear" 
-                  className="search-btn"
-                  onClick={handleSearch}
-                >
-                  <IonIcon icon={searchOutline} />
-                </IonButton>
               </div>
             </div>
           </div>
@@ -110,23 +133,26 @@ const Home: React.FC = () => {
         {/* Categories Section */}
         <div className="section categories-section">
           <div className="container">
-            <h2 className="section-title">Shop by Categories</h2>
-            <p className="section-subtitle">Explore our wide range of fresh products</p>
-            
-            <IonGrid>
-              <IonRow>
-                {categories.map((category, index) => (
-                  <IonCol size="6" sizeMd="4" sizeLg="2" key={category._id}>
-                    <div 
-                      className="category-card"
-                      onClick={() => handleCategoryClick(category._id)}
-                    >
+            <h2 className="section-title">Shop by Category</h2>
+            <div className="categories-grid">
+              {loading ? (
+                <div className="loading-placeholder">Loading categories...</div>
+              ) : categories.length > 0 ? (
+                categories.map((category, index) => (
+                  <div 
+                    key={category._id} 
+                    className={`category-card ${getCategoryPosition(index)}`}
+                    onClick={() => handleCategoryClick(category._id)}
+                  >
+                    <div className="category-content">
                       <h3>{category.name}</h3>
                     </div>
-                  </IonCol>
-                ))}
-              </IonRow>
-            </IonGrid>
+                  </div>
+                ))
+              ) : (
+                <div className="no-categories-message">No categories available</div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -181,7 +207,7 @@ const Home: React.FC = () => {
                 expand="block" 
                 fill="outline" 
                 className="view-all-btn"
-                routerLink="/products"
+                routerLink="/menu"
               >
                 View All Products
               </IonButton>
@@ -194,7 +220,7 @@ const Home: React.FC = () => {
           <div className="container">
             <h2 className="section-title">Why Choose GroceMate?</h2>
             
-            <IonGrid>
+            <IonGrid className="features-grid">
               <IonRow>
                 <IonCol size="12" sizeMd="6" sizeLg="3">
                   <div className="feature-card">
@@ -205,7 +231,7 @@ const Home: React.FC = () => {
                 </IonCol>
                 <IonCol size="12" sizeMd="6" sizeLg="3">
                   <div className="feature-card">
-                    <IonIcon icon={trophyOutline} className="feature-icon" />
+                    <IonIcon icon={rupeeOutline} className="feature-icon" />
                     <h3>Best Prices</h3>
                     <p>Competitive pricing with regular discounts and offers for our customers</p>
                   </div>
@@ -247,20 +273,6 @@ const Home: React.FC = () => {
                       From farm-fresh vegetables to premium pantry staples, we ensure every product meets 
                       our high standards before it reaches your home.
                     </p>
-                    <div className="about-stats">
-                      <div className="stat">
-                        <h4>10K+</h4>
-                        <p>Happy Customers</p>
-                      </div>
-                      <div className="stat">
-                        <h4>500+</h4>
-                        <p>Products</p>
-                      </div>
-                      <div className="stat">
-                        <h4>50+</h4>
-                        <p>Categories</p>
-                      </div>
-                    </div>
                   </div>
                 </IonCol>
                 <IonCol size="12" sizeLg="6">
@@ -283,9 +295,8 @@ const Home: React.FC = () => {
                 expand="block" 
                 size="large" 
                 className="cta-btn"
-                routerLink="/products"
+                routerLink="/menu"
               >
-                <IonIcon icon={bagOutline} slot="start" />
                 Shop Now
               </IonButton>
             </div>

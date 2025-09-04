@@ -31,6 +31,7 @@ import { pencilOutline, logOutOutline, personOutline, keyOutline, shieldOutline,
 import { useHistory } from 'react-router-dom';
 import { updateProfile, changePassword, uploadProfileImage, getProfileData } from '../api/api';
 import './Profile.css';
+import '../pages/IconFix.css'; // Import IconFix.css for proper icon theming
 
 interface UserProfile {
   _id?: string;
@@ -362,13 +363,12 @@ const Profile: React.FC = () => {
               <IonAvatar 
                 className="profile-avatar" 
                 onClick={!isOfflineMode ? openFilePicker : undefined}
-                style={{ width: '120px', height: '120px', margin: '0 auto 1rem' }}
               >
                 {avatarUrl ? (
                   <img src={avatarUrl} alt="avatar" />
                 ) : (
                   <div className="profile-avatar-placeholder">
-                    <IonIcon icon={personOutline} style={{ fontSize: '2em' }} />
+                    <IonIcon icon={personOutline} />
                   </div>
                 )}
               </IonAvatar>
@@ -385,19 +385,20 @@ const Profile: React.FC = () => {
                   size="small" 
                   onClick={openFilePicker}
                   disabled={uploading}
+                  className="avatar-change-btn"
                 >
-                  <IonIcon slot="start" icon={cameraOutline} />
-                  {uploading ? 'Uploading...' : 'Change Picture'}
+                {uploading ? 'Uploading...' : 'Change Picture'}
                 </IonButton>
               )}
-              <div className="profile-role-badge">
-                <IonChip color={user.role === 'admin' ? 'primary' : 'medium'}>
-                  <IonIcon icon={user.role === 'admin' ? shieldOutline : personOutline} />
-                  <IonLabel>{user.role === 'admin' ? 'Admin' : 'User'}</IonLabel>
-                </IonChip>
-              </div>
             </div>
-            <h2 className="profile-name">{user.name}</h2>
+            <h2 className={`profile-name ${user.role}-role`}>
+              <span className="name-text">{user.name}</span>
+              {user.role === 'admin' && (
+                <span className="admin-badge">
+                  <IonIcon icon={shieldOutline} />
+                </span>
+              )}
+            </h2>
             <p className="profile-email">{user.email}</p>
           </div>
 

@@ -54,28 +54,40 @@ const SideMenu: React.FC = () => {
       contentId="main-content"
       menuId="main-menu"
       swipeGesture={false}
+      className="smooth-menu-transition"
+      onIonWillOpen={() => {
+        // Add a small delay before setting inert to allow animation to start
+        setTimeout(() => {
+          const mainContent = document.getElementById('main-content');
+          if (mainContent) {
+            mainContent.setAttribute('inert', '');
+          }
+        }, 50);
+      }}
       onIonDidOpen={() => {
         // When menu opens, find first focusable item and focus it
         const firstItem = document.querySelector('ion-menu[menu-id="main-menu"] ion-item') as HTMLElement;
         if (firstItem) {
-          setTimeout(() => firstItem.focus(), 100);
+          setTimeout(() => firstItem.focus(), 150);
         }
       }}
-      onIonDidClose={() => {
-        // When menu closes, remove inert from main content
+      onIonWillClose={() => {
+        // Remove inert as soon as close animation starts
         const mainContent = document.getElementById('main-content');
         if (mainContent) {
           mainContent.removeAttribute('inert');
-          // Return focus to menu button
-          const menuButton = document.querySelector('ion-menu-button') as HTMLElement;
-          if (menuButton) {
-            menuButton.focus();
-          }
+        }
+      }}
+      onIonDidClose={() => {
+        // Return focus to menu button
+        const menuButton = document.querySelector('ion-menu-button') as HTMLElement;
+        if (menuButton) {
+          menuButton.focus();
         }
       }}
     >
       <IonHeader>
-        <IonToolbar className="dark-toolbar">
+        <IonToolbar className="themed-toolbar">
           <IonTitle>Menu</IonTitle>
         </IonToolbar>
       </IonHeader>
