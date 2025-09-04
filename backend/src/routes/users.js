@@ -44,7 +44,7 @@ router.get('/products', async (req, res) => {
   try {
     const products = await Product.find()
       .populate('category')
-      .select('name price image category');
+      .select('name price image category featured');
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);

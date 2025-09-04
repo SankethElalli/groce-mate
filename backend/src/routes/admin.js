@@ -140,17 +140,17 @@ router.get('/products', authenticate, requireAdmin, async (req, res) => {
 
 // Add product
 router.post('/products', authenticate, requireAdmin, async (req, res) => {
-  const { name, price, image, category } = req.body;
-  const product = await Product.create({ name, price, image, category });
+  const { name, price, image, category, featured } = req.body;
+  const product = await Product.create({ name, price, image, category, featured });
   res.status(201).json(product);
 });
 
 // Edit product
 router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
-  const { name, price, image, category } = req.body;
+  const { name, price, image, category, featured } = req.body;
   const product = await Product.findByIdAndUpdate(
     req.params.id,
-    { name, price, image, category },
+    { name, price, image, category, featured },
     { new: true }
   );
   if (!product) return res.status(404).json({ message: 'Product not found' });

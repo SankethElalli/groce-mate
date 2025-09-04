@@ -1,4 +1,4 @@
-import { IonContent, IonPage, IonButton, IonIcon, IonCard, IonCardContent, IonCardHeader, IonCardTitle, IonGrid, IonRow, IonCol } from '@ionic/react';
+import { IonContent, IonPage, IonButton, IonIcon, IonGrid, IonRow, IonCol } from '@ionic/react';
 import { searchOutline, leafOutline, bagOutline, heartOutline, starOutline, trophyOutline, shieldCheckmarkOutline, peopleOutline } from 'ionicons/icons';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -33,10 +33,10 @@ const Home: React.FC = () => {
             (product: any) => product.featured === true
           ) || [];
           
-          // If no featured products available, fall back to showing first 6 products
+          // Show all featured products, or fallback to first 12 if no featured products
           const productsToShow = featured.length > 0 
-            ? featured.slice(0, 6) 
-            : productsResponse.data?.slice(0, 6) || [];
+            ? featured // Show ALL featured products
+            : productsResponse.data?.slice(0, 12) || [];
         
           setFeaturedProducts(productsToShow);
         }
@@ -162,14 +162,12 @@ const Home: React.FC = () => {
             <h2 className="section-title">Featured Products</h2>
             <p className="section-subtitle">Hand-picked fresh items just for you</p>
             
-            <IonGrid>
-              <IonRow>
-                {loading ? (
-                  <IonCol size="12">
-                    <div className="loading-placeholder">Loading featured products...</div>
-                  </IonCol>
-                ) : featuredProducts.length > 0 ? (
-                  featuredProducts.map((product, index) => {
+            <div className="featured-products-horizontal-container">
+              {loading ? (
+                <div className="loading-placeholder">Loading featured products...</div>
+              ) : featuredProducts.length > 0 ? (
+                <div className="featured-products-horizontal-scroll">
+                  {featuredProducts.map((product, index) => {
                     // Create different badge types for variety
                     const badgeTypes = ['Featured', 'Hot', 'New', 'Sale'];
                     const badgeClasses = ['badge-featured', 'badge-hot', 'badge-new', 'badge-sale'];
@@ -177,30 +175,26 @@ const Home: React.FC = () => {
                     const currentBadgeClass = badgeClasses[index % badgeClasses.length];
                     
                     return (
-                      <IonCol size="6" sizeMd="4" sizeLg="2" key={product._id}>
-                        <IonCard className="product-featured-card">
-                          <div className="product-image-container">
-                            <img src={product.image} alt={product.name} />
-                            <div className={`product-badge ${currentBadgeClass}`}>
-                              <span className="badge-text">{currentBadge}</span>
-                            </div>
+                      <div className="featured-product-card" key={product._id}>
+                        <div className="featured-product-image">
+                          <img src={product.image} alt={product.name} />
+                          <div className={`product-badge ${currentBadgeClass}`}>
+                            <span className="badge-text">{currentBadge}</span>
                           </div>
-                          <IonCardContent>
-                            <h3>{product.name}</h3>
-                            <p className="product-category">{product.category?.name}</p>
-                            <div className="product-price">₹{product.price}</div>
-                          </IonCardContent>
-                        </IonCard>
-                      </IonCol>
+                        </div>
+                        <div className="featured-product-info">
+                          <h3 className="featured-product-name">{product.name}</h3>
+                          <p className="featured-product-category">{product.category?.name}</p>
+                          <div className="featured-product-price">₹{product.price}</div>
+                        </div>
+                      </div>
                     );
-                  })
-                ) : (
-                  <IonCol size="12">
-                    <div className="no-products-message">No featured products available.</div>
-                  </IonCol>
-                )}
-              </IonRow>
-            </IonGrid>
+                  })}
+                </div>
+              ) : (
+                <div className="no-products-message">No featured products available.</div>
+              )}
+            </div>
             
             <div className="section-cta">
               <IonButton 

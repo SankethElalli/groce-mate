@@ -301,6 +301,117 @@
   background: var(--ion-color-light);
 }
 
+/* Horizontal Featured Products Container */
+.featured-products-horizontal-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.featured-products-horizontal-scroll {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 1rem 0 2rem 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ion-color-primary) transparent;
+  
+  /* Hide scrollbar on WebKit browsers but keep functionality */
+  -webkit-overflow-scrolling: touch;
+}
+
+.featured-products-horizontal-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.featured-products-horizontal-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.featured-products-horizontal-scroll::-webkit-scrollbar-thumb {
+  background: var(--ion-color-primary);
+  border-radius: 3px;
+}
+
+.featured-products-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ion-color-primary-shade);
+}
+
+.featured-product-card {
+  min-width: 280px;
+  max-width: 280px;
+  height: 350px;
+  background: var(--ion-card-background);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.featured-product-image {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.featured-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-product-info {
+  padding: 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.featured-product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.featured-product-category {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin: 0 0 1rem 0;
+  text-transform: capitalize;
+}
+
+.featured-product-price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin: 0;
+}
+
+/* Legacy grid styles for backwards compatibility */
 .product-featured-card {
   height: 100%;
   border-radius: 16px;
@@ -680,14 +791,92 @@
 .section *,
 .category-card,
 .feature-card,
-.product-featured-card {
+.product-featured-card,
+.featured-product-card {
   visibility: visible !important;
   opacity: 1 !important;
-
 }
 
 .section ion-grid {
   display: block !important;
+}
+
+/* Mobile Responsive Styles for Horizontal Featured Products */
+@media (max-width: 768px) {
+  .featured-products-horizontal-container {
+    padding: 0 0.5rem;
+  }
+  
+  .featured-products-horizontal-scroll {
+    gap: 1rem;
+    padding: 0.75rem 0 1.5rem 0;
+  }
+  
+  .featured-product-card {
+    min-width: 240px;
+    max-width: 240px;
+    height: 320px;
+  }
+  
+  .featured-product-image {
+    height: 160px;
+  }
+  
+  .featured-product-info {
+    padding: 1rem;
+  }
+  
+  .featured-product-name {
+    font-size: 1rem;
+  }
+  
+  .featured-product-category {
+    font-size: 0.85rem;
+  }
+  
+  .featured-product-price {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-products-horizontal-scroll {
+    gap: 0.75rem;
+    padding: 0.5rem 0 1rem 0;
+  }
+  
+  .featured-product-card {
+    min-width: 200px;
+    max-width: 200px;
+    height: 280px;
+  }
+  
+  .featured-product-image {
+    height: 140px;
+  }
+  
+  .featured-product-info {
+    padding: 0.75rem;
+  }
+  
+  .featured-product-name {
+    font-size: 0.95rem;
+  }
+  
+  .featured-product-category {
+    font-size: 0.8rem;
+  }
+  
+  .featured-product-price {
+    font-size: 1rem;
+  }
+  
+  .product-badge {
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
 }
 
 .section ion-row {
