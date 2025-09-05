@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
-import './pages/VideoFix.css'; // Add the new VideoFix CSS
+import './styles/VideoFix.css'; // Add the new VideoFix CSS
 
 // Add these accessibility improvements
 document.addEventListener('DOMContentLoaded', () => {

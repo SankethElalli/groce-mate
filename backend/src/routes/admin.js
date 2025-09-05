@@ -218,11 +218,36 @@ router.delete('/products/:id', authenticate, requireAdmin, async (req, res) => {
 // Get all orders
 router.get('/orders', authenticate, requireAdmin, async (req, res) => {
   try {
+    // Get all orders, newest first
     const orders = await Order.find()
       .populate('user', 'name email')
       .populate('products.product')
       .sort({ createdAt: -1 });
-    res.json(orders);
+    
+    // Normalize the response format
+    const normalizedOrders = orders.map(order => {
+      const orderObj = order.toObject();
+      
+      // Ensure we have an items array
+      if (!orderObj.items || !orderObj.items.length) {
+        // If no items array but we have products, convert them
+        if (orderObj.products && orderObj.products.length) {
+          orderObj.items = orderObj.products.map(item => ({
+            _id: item.product?._id || `product_${Date.now()}`,
+            name: item.product?.name || 'Unknown Product',
+            quantity: item.quantity || 1,
+            price: item.product?.price || 0,
+            image: item.product?.image || ''
+          }));
+        } else {
+          orderObj.items = [];
+        }
+      }
+      
+      return orderObj;
+    });
+    
+    res.json(normalizedOrders);
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ message: 'Failed to fetch orders' });
@@ -240,7 +265,26 @@ router.get('/orders/:id', authenticate, requireAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    res.json(order);
+    // Normalize the order format
+    const orderObj = order.toObject();
+    
+    // Ensure we have an items array
+    if (!orderObj.items || !orderObj.items.length) {
+      // If no items array but we have products, convert them
+      if (orderObj.products && orderObj.products.length) {
+        orderObj.items = orderObj.products.map(item => ({
+          _id: item.product?._id || `product_${Date.now()}`,
+          name: item.product?.name || 'Unknown Product',
+          quantity: item.quantity || 1,
+          price: item.product?.price || 0,
+          image: item.product?.image || ''
+        }));
+      } else {
+        orderObj.items = [];
+      }
+    }
+    
+    res.json(orderObj);
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({ message: 'Failed to fetch order' });
@@ -264,9 +308,23 @@ router.put('/orders/:id/status', authenticate, requireAdmin, async (req, res) =>
       });
     }
     
+    // Create a user-friendly status for display
+    let displayStatus;
+    switch(deliveryStatus) {
+      case 'pending': displayStatus = 'Pending'; break;
+      case 'processing': displayStatus = 'Processing'; break;
+      case 'shipped': displayStatus = 'Shipped'; break;
+      case 'delivered': displayStatus = 'Delivered'; break;
+      case 'cancelled': displayStatus = 'Cancelled'; break;
+      default: displayStatus = 'Processing';
+    }
+    
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { deliveryStatus },
+      { 
+        deliveryStatus, 
+        status: displayStatus // Update both status fields
+      },
       { new: true }
     ).populate('user', 'name email');
     
@@ -274,10 +332,66 @@ router.put('/orders/:id/status', authenticate, requireAdmin, async (req, res) =>
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    res.json(order);
+    // Normalize the response format
+    const orderObj = order.toObject();
+    
+    // Ensure we have an items array
+    if (!orderObj.items || !orderObj.items.length) {
+      // If no items array but we have products, convert them
+      if (orderObj.products && orderObj.products.length) {
+        orderObj.items = orderObj.products.map(item => ({
+          _id: item.product?._id || `product_${Date.now()}`,
+          name: item.product?.name || 'Unknown Product',
+          quantity: item.quantity || 1,
+          price: item.product?.price || 0,
+          image: item.product?.image || ''
+        }));
+      } else {
+        orderObj.items = [];
+      }
+    }
+    
+    res.json(orderObj);
   } catch (error) {
     console.error('Error updating order status:', error);
     res.status(500).json({ message: 'Failed to update order status' });
+  }
+});
+
+// Find order by orderNumber
+router.get('/orders/find/:orderNumber', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findOne({ orderNumber: req.params.orderNumber })
+      .populate('user', 'name email')
+      .populate('products.product');
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    
+    // Normalize the order format
+    const orderObj = order.toObject();
+    
+    // Ensure we have an items array
+    if (!orderObj.items || !orderObj.items.length) {
+      // If no items array but we have products, convert them
+      if (orderObj.products && orderObj.products.length) {
+        orderObj.items = orderObj.products.map(item => ({
+          _id: item.product?._id || `product_${Date.now()}`,
+          name: item.product?.name || 'Unknown Product',
+          quantity: item.quantity || 1,
+          price: item.product?.price || 0,
+          image: item.product?.image || ''
+        }));
+      } else {
+        orderObj.items = [];
+      }
+    }
+    
+    res.json(orderObj);
+  } catch (error) {
+    console.error('Error fetching order by number:', error);
+    res.status(500).json({ message: 'Failed to fetch order' });
   }
 });
 

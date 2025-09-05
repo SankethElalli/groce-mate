@@ -1,7 +1,7 @@
 import { IonContent, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonButton, IonIcon } from '@ionic/react';
 import { addOutline, removeOutline, trashOutline, cartOutline } from 'ionicons/icons';
 import { useCart } from '../contexts/CartContext';
-import './Cart.css';
+import '../styles/Cart.css';
 
 const Cart: React.FC = () => {
   const { items, updateQuantity, removeFromCart, clearCart, getTotalPrice } = useCart();

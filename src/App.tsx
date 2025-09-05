@@ -60,15 +60,15 @@ import '@ionic/react/css/display.css';
 import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
-import './theme/variables.css';
-import './theme/ToolbarThemeFix.css';
-import './App.css';
-import './pages/EmergencyFix.css';
-import './pages/ProfessionalAppFix.css';
-import './pages/ThemeSupport.css';
-import './pages/IconFix.css';
-import './pages/TabBarFix.css';
-import './pages/MenuSmoothnessFix.css';
+import './styles/variables.css';
+import './styles/ToolbarThemeFix.css';
+import './styles/App.css';
+import './styles/EmergencyFix.css';
+import './styles/ProfessionalAppFix.css';
+import './styles/ThemeSupport.css';
+import './styles/IconFix.css';
+import './styles/TabBarFix.css';
+import './styles/MenuSmoothnessFix.css';
 
 // Add custom style for focus management
 const style = document.createElement('style');

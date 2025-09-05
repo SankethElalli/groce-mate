@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
-import { IonContent, IonPage, IonButton, IonInput, IonItem, IonLabel, IonSpinner, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast, IonIcon } from '@ionic/react';
-import { pencilOutline, trashOutline } from 'ionicons/icons';
-import './AdminDashboard.css';
-import './AdminDashboardMobile.css';
+import { IonContent, IonPage, IonButton, IonInput, IonItem, IonLabel, IonSpinner, IonHeader, IonToolbar, IonButtons, IonBackButton, IonToast, IonIcon, IonModal, IonList, IonGrid, IonRow, IonCol, IonTitle } from '@ionic/react';
+import { pencilOutline, trashOutline, closeCircleOutline, eyeOutline } from 'ionicons/icons';
+import '../styles/AdminDashboard.css';
+import '../styles/AdminDashboardMobile.css';
+import { 
+  getAllOrders, 
+  getOrderById, 
+  updateOrderStatus,
+  formatOrdersForAdmin 
+} from '../utils/mockOrdersApi';
 
 const API_BASE = 'http://localhost:5000/api/admin';
 
@@ -86,6 +92,10 @@ const AdminDashboard: React.FC = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
+  
+  // Order items modal state
+  const [orderItemsModalOpen, setOrderItemsModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   // Form states
   const [userForm, setUserForm] = useState({ name: '', email: '', role: 'user', id: '' });
@@ -113,6 +123,33 @@ const AdminDashboard: React.FC = () => {
 
   async function fetchAll() {
     setLoading(true);
+    
+    // For local storage implementation
+    if (window.location.hostname === 'localhost' && !window.location.port.includes('5000')) {
+      try {
+        // Get users, categories, and products from mock data
+        const usersRes = await apiGet('/users');
+        const categoriesRes = await apiGet('/categories');
+        const productsRes = await apiGet('/products');
+        
+        // Get orders from our mock API
+        const ordersFromStorage = await getAllOrders();
+        
+        setUsers(Array.isArray(usersRes) ? usersRes : []);
+        setCategories(Array.isArray(categoriesRes) ? categoriesRes : []);
+        setProducts(Array.isArray(productsRes) ? productsRes : []);
+        setOrders(formatOrdersForAdmin(ordersFromStorage));
+        
+        console.log('Orders loaded from mock API:', ordersFromStorage);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+      
+      setLoading(false);
+      return;
+    }
+    
+    // For API implementation
     const usersRes = await apiGet('/users');
     const categoriesRes = await apiGet('/categories');
     const productsRes = await apiGet('/products');
@@ -285,8 +322,42 @@ const AdminDashboard: React.FC = () => {
   }
 
   // --- ORDERS ---
-  async function handleOrderStatusUpdate(e: React.FormEvent) {
-    e.preventDefault();
+  function showOrderItems(order: any) {
+    // Ensure we have product items properly formatted for display
+    // This works with both localStorage orders and API orders
+    const formattedOrder = {
+      ...order,
+      // Handle different possible order item structures
+      orderItems: order.products?.map((item: any) => ({
+        product: item.product || item,
+        quantity: item.quantity
+      })) || order.items?.map((item: any) => ({
+        product: {
+          _id: item._id,
+          name: item.name,
+          price: item.price,
+          image: item.image
+        },
+        quantity: item.quantity
+      })) || []
+    };
+    
+    console.log('Showing order details:', formattedOrder);
+    setSelectedOrder(formattedOrder);
+    setOrderItemsModalOpen(true);
+  }
+
+  function closeOrderItemsModal() {
+    setOrderItemsModalOpen(false);
+    setSelectedOrder(null);
+  }
+  
+  async function handleOrderStatusUpdate(e: React.FormEvent | { preventDefault: () => void }) {
+    // If event is provided, prevent default form submission
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
+    
     if (!orderStatusForm.id || !orderStatusForm.status) {
       setNotification({
         show: true,
@@ -298,6 +369,40 @@ const AdminDashboard: React.FC = () => {
 
     setLoading(true);
     try {
+      // For local storage implementation
+      if (window.location.hostname === 'localhost' && !window.location.port.includes('5000')) {
+        // Use our mock API to update the order
+        const updatedOrder = await updateOrderStatus(orderStatusForm.id, orderStatusForm.status);
+        
+        // Refresh the orders list
+        const refreshedOrders = await getAllOrders();
+        setOrders(formatOrdersForAdmin(refreshedOrders));
+        
+        setNotification({
+          show: true,
+          message: 'Order status updated successfully',
+          type: 'success'
+        });
+        
+        // If there is a selected order, update its status too
+        if (selectedOrder && (selectedOrder._id === orderStatusForm.id || selectedOrder.orderNumber === orderStatusForm.id)) {
+          setSelectedOrder({
+            ...selectedOrder,
+            status: updatedOrder.status,
+            deliveryStatus: updatedOrder.deliveryStatus
+          });
+        }
+        
+        // Only clear the form if it's a regular form submission
+        if ('target' in e) {
+          setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' });
+        }
+        
+        setLoading(false);
+        return;
+      }
+    
+      // For API implementation
       const response = await apiPut(`/orders/${orderStatusForm.id}/status`, {
         deliveryStatus: orderStatusForm.status
       });
@@ -307,17 +412,32 @@ const AdminDashboard: React.FC = () => {
         const updatedOrders = orders.map(order => 
           order._id === orderStatusForm.id ? { 
             ...order, 
-            deliveryStatus: orderStatusForm.status 
+            deliveryStatus: orderStatusForm.status,
+            status: orderStatusForm.status
           } : order
         );
 
         setOrders(updatedOrders);
+        
+        // If there is a selected order, update its status too
+        if (selectedOrder && selectedOrder._id === orderStatusForm.id) {
+          setSelectedOrder({
+            ...selectedOrder,
+            status: orderStatusForm.status,
+            deliveryStatus: orderStatusForm.status
+          });
+        }
+        
         setNotification({
           show: true,
           message: 'Order status updated successfully',
           type: 'success'
         });
-        setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' });
+        
+        // Only clear the form if it's a regular form submission
+        if ('target' in e) {
+          setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' });
+        }
       } else {
         setNotification({
           show: true,
@@ -340,8 +460,9 @@ const AdminDashboard: React.FC = () => {
     setOrderStatusForm({
       id: order._id,
       status: order.deliveryStatus || 'pending',
-      orderNumber: order._id.substring(order._id.length - 6).toUpperCase(),
-      customerName: order.user?.name || 'Unknown Customer'
+      orderNumber: order.orderNumber || (order._id.substring(order._id.length - 6).toUpperCase()),
+      // Improve customer name logic to use delivery address name when user name is not available
+      customerName: order.user?.name || order.deliveryAddress?.fullName || 'Unknown Customer'
     });
   }
 
@@ -522,10 +643,16 @@ const AdminDashboard: React.FC = () => {
                       <tbody>
                         {users.map(u => (
                           <tr key={u._id}>
-                            <td>{u.name}</td>
-                            <td>{u.email}</td>
-                            <td>{u.role}</td>
-                            <td>
+                            <td data-label="Name">
+                              <div className="cell-content">{u.name}</div>
+                            </td>
+                            <td data-label="Email">
+                              <div className="cell-content">{u.email}</div>
+                            </td>
+                            <td data-label="Role">
+                              <div className="cell-content">{u.role}</div>
+                            </td>
+                            <td data-label="Actions">
                               <div className="table-action-buttons">
                                 <button className="simple-table-btn edit" onClick={() => handleUserEdit(u)}>
                                   <IonIcon icon={pencilOutline} />
@@ -588,8 +715,10 @@ const AdminDashboard: React.FC = () => {
                       <tbody>
                         {categories.map(c => (
                           <tr key={c._id}>
-                            <td>{c.name}</td>
-                            <td>
+                            <td data-label="Name">
+                              <div className="cell-content">{c.name}</div>
+                            </td>
+                            <td data-label="Actions">
                               <div className="table-action-buttons">
                                 <button className="simple-table-btn edit" onClick={() => handleCategoryEdit(c)}>
                                   <IonIcon icon={pencilOutline} />
@@ -716,12 +845,24 @@ const AdminDashboard: React.FC = () => {
                       <tbody>
                         {products.map(p => (
                           <tr key={p._id}>
-                            <td>{p.name}</td>
-                            <td>{p.price}</td>
-                            <td>{p.category?.name || ''}</td>
-                            <td>{p.featured ? 'Yes' : 'No'}</td>
-                            <td>{p.image && <img src={p.image} alt={p.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />}</td>
-                            <td>
+                            <td data-label="Name">
+                              <div className="cell-content">{p.name}</div>
+                            </td>
+                            <td data-label="Price">
+                              <div className="cell-content">₹{p.price}</div>
+                            </td>
+                            <td data-label="Category">
+                              <div className="cell-content">{p.category?.name || ''}</div>
+                            </td>
+                            <td data-label="Featured">
+                              <div className="cell-content">{p.featured ? 'Yes' : 'No'}</div>
+                            </td>
+                            <td data-label="Image">
+                              <div className="cell-content">
+                                {p.image && <img src={p.image} alt={p.name} style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 4 }} />}
+                              </div>
+                            </td>
+                            <td data-label="Actions">
                               <div className="table-action-buttons">
                                 <button className="simple-table-btn edit" onClick={() => handleProductEdit(p)}>
                                   <IonIcon icon={pencilOutline} />
@@ -743,91 +884,114 @@ const AdminDashboard: React.FC = () => {
                 <>
                   <h2>Order Management</h2>
                   
-                  {/* Order Status Update Form */}
-                  <form onSubmit={handleOrderStatusUpdate} className="admin-form">
-                    <div className="form-wrapper">
-                      <h3>{orderStatusForm.id ? 'Update Order Status' : 'Select an Order'}</h3>
-                      
-                      {orderStatusForm.id && (
-                        <>
-                          <div className="simple-admin-field">
-                            <label className="simple-admin-label">Order Number</label>
-                            <p>{orderStatusForm.orderNumber}</p>
-                          </div>
-                          
-                          <div className="simple-admin-field">
-                            <label className="simple-admin-label">Customer</label>
-                            <p>{orderStatusForm.customerName}</p>
-                          </div>
-                          
-                          <div className="simple-admin-field">
-                            <label className="simple-admin-label required" htmlFor="orderStatus">
-                              Status
-                            </label>
-                            <select
-                              id="orderStatus"
-                              className="simple-admin-select"
-                              value={orderStatusForm.status}
-                              onChange={e => setOrderStatusForm(f => ({ ...f, status: e.target.value }))}
-                              required
-                            >
-                              <option value="">Select Status</option>
-                              <option value="pending">Pending</option>
-                              <option value="processing">Processing</option>
-                              <option value="shipped">On Its Way</option>
-                              <option value="delivered">Delivered</option>
-                              <option value="cancelled">Cancelled</option>
-                            </select>
-                          </div>
-                          
-                          <div className="action-buttons">
-                            <button type="submit" className="simple-admin-btn">
-                              Update Status
-                            </button>
-                            <button 
-                              type="button"
-                              className="simple-admin-btn outline" 
-                              onClick={() => setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' })}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </form>
+                  {/* Order Status Update Form - only show when order is selected */}
+                  {orderStatusForm.id && (
+                    <form onSubmit={handleOrderStatusUpdate} className="admin-form">
+                      <div className="form-wrapper">
+                        <h3>Update Order Status</h3>
+                        
+                        <div className="simple-admin-field">
+                          <label className="simple-admin-label">Order Number</label>
+                          <p>{orderStatusForm.orderNumber}</p>
+                        </div>
+                        
+                        <div className="simple-admin-field">
+                          <label className="simple-admin-label">Customer</label>
+                          <p>{orderStatusForm.customerName}</p>
+                        </div>
+                        
+                        <div className="simple-admin-field">
+                          <label className="simple-admin-label required" htmlFor="orderStatus">
+                            Status
+                          </label>
+                          <select
+                            id="orderStatus"
+                            className="simple-admin-select"
+                            value={orderStatusForm.status}
+                            onChange={e => setOrderStatusForm(f => ({ ...f, status: e.target.value }))}
+                            required
+                          >
+                            <option value="">Select Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">On Its Way</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                        </div>
+                        
+                        <div className="action-buttons">
+                          <button type="submit" className="simple-admin-btn">
+                            Update Status
+                          </button>
+                          <button 
+                            type="button"
+                            className="simple-admin-btn outline" 
+                            onClick={() => setOrderStatusForm({ id: '', status: '', orderNumber: '', customerName: '' })}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  )}
 
                   <div className="admin-table">
                     <table>
                       <thead>
                         <tr>
-                          <th>Order ID</th>
+                          <th>Order Number</th>
                           <th>Customer</th>
                           <th>Date</th>
                           <th>Total</th>
                           <th>Status</th>
-                          <th>Items</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {orders.map(order => (
-                          <tr key={order._id}>
-                            <td>{order._id}</td>
-                            <td>{order.user?.name || 'Unknown'}</td>
-                            <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                            <td>₹{order.total}</td>
-                            <td>
-                              <span className={`status-badge status-${order.deliveryStatus}`}>
-                                {order.deliveryStatus}
-                              </span>
+                          <tr key={order._id || order.orderNumber}>
+                            <td data-label="Order Number">
+                              <div className="cell-content">
+                                <span 
+                                  className="order-number-link" 
+                                  onClick={() => showOrderItems(order)}
+                                >
+                                  {order.orderNumber || order._id.substring(order._id.length - 6).toUpperCase()}
+                                </span>
+                              </div>
                             </td>
-                            <td>{order.products?.length || 0} items</td>
-                            <td>
+                            <td data-label="Customer">
+                              <div className="cell-content">
+                                {order.user?.name || order.deliveryAddress?.fullName || 'Unknown Customer'}
+                              </div>
+                            </td>
+                            <td data-label="Date">
+                              <div className="cell-content">{new Date(order.createdAt).toLocaleDateString()}</div>
+                            </td>
+                            <td data-label="Total">
+                              <div className="cell-content">₹{order.total}</div>
+                            </td>
+                            <td data-label="Status">
+                              <div className="cell-content">
+                                <span className={`status-badge status-${order.deliveryStatus}`}>
+                                  {order.status || order.deliveryStatus}
+                                </span>
+                              </div>
+                            </td>
+                            <td data-label="Actions">
                               <div className="table-action-buttons">
+                                <button 
+                                  className="simple-table-btn view-icon" 
+                                  onClick={() => showOrderItems(order)}
+                                  title="View Order Details"
+                                >
+                                  <IonIcon icon={eyeOutline} />
+                                </button>
                                 <button 
                                   className="simple-table-btn edit" 
                                   onClick={() => handleOrderEdit(order)}
+                                  title="Edit Order Status"
                                 >
                                   <IonIcon icon={pencilOutline} />
                                 </button>
@@ -843,6 +1007,154 @@ const AdminDashboard: React.FC = () => {
             </>
           )}
         </div>
+        
+        {/* Order Items Modal */}
+        <IonModal 
+          isOpen={orderItemsModalOpen} 
+          onDidDismiss={closeOrderItemsModal}
+          className="order-items-modal"
+        >
+          <IonHeader>
+            <IonToolbar>
+              <IonButtons slot="end">
+                <IonButton 
+                  onClick={closeOrderItemsModal}
+                  className="x-close-button"
+                  aria-label="Close"
+                >
+                  {/* No icon needed - X is added via CSS */}
+                </IonButton>
+              </IonButtons>
+              <IonTitle>Order Details</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="ion-padding">
+            {selectedOrder && (
+              <div className="order-details-container">
+                <div className="order-header">
+                  <h2>Order #{selectedOrder.orderNumber || selectedOrder._id}</h2>
+                  <p className="order-date">{new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                  <div className="order-status">
+                    <span className={`status-badge status-${selectedOrder.status?.toLowerCase() || selectedOrder.deliveryStatus?.toLowerCase() || 'pending'}`}>
+                      {selectedOrder.status || selectedOrder.deliveryStatus || 'Pending'}
+                    </span>
+                  </div>
+                  <div className="order-customer">
+                    <strong>Customer:</strong> {selectedOrder.user?.name || selectedOrder.deliveryAddress?.fullName || 'Unknown'}
+                  </div>
+                  <div className="order-customer">
+                    <strong>Contact:</strong> {selectedOrder.user?.phone || selectedOrder.deliveryAddress?.phone || 'Not provided'}
+                  </div>
+                  <div className="order-customer">
+                    <strong>Address:</strong> {selectedOrder.deliveryAddress?.addressLine1 || 'Not provided'}
+                  </div>
+                  <div className="order-total">
+                    <strong>Total:</strong> ₹{selectedOrder.total?.toFixed(2) || 0}
+                  </div>
+                </div>
+
+                <div className="order-items">
+                  <h3>Items</h3>
+                  <IonGrid>
+                    <IonRow className="header-row">
+                      <IonCol size="2">Image</IonCol>
+                      <IonCol size="4">Product</IonCol>
+                      <IonCol size="2">Price</IonCol>
+                      <IonCol size="2">Qty</IonCol>
+                      <IonCol size="2">Subtotal</IonCol>
+                    </IonRow>
+                    
+                    {/* Handle different order item structures */}
+                    {selectedOrder.items?.map((item: any, index: number) => (
+                      <IonRow key={`item-${item._id || index}`} className="item-row">
+                        <IonCol size="2">
+                          {item.image ? (
+                            <img 
+                              src={item.image} 
+                              alt={item.name} 
+                              className="product-thumbnail" 
+                            />
+                          ) : (
+                            <div className="no-image">No Image</div>
+                          )}
+                        </IonCol>
+                        <IonCol size="4">{item.name || 'Unknown Product'}</IonCol>
+                        <IonCol size="2">₹{(item.price || 0).toFixed(2)}</IonCol>
+                        <IonCol size="2">{item.quantity}</IonCol>
+                        <IonCol size="2">₹{((item.price || 0) * item.quantity).toFixed(2)}</IonCol>
+                      </IonRow>
+                    ))}
+                    
+                    {/* Handle API format */}
+                    {selectedOrder.products?.map((item: any, index: number) => (
+                      <IonRow key={`product-${item.product?._id || index}`} className="item-row">
+                        <IonCol size="2">
+                          {item.product?.image ? (
+                            <img 
+                              src={item.product.image} 
+                              alt={item.product.name} 
+                              className="product-thumbnail" 
+                            />
+                          ) : (
+                            <div className="no-image">No Image</div>
+                          )}
+                        </IonCol>
+                        <IonCol size="4">{item.product?.name || 'Unknown Product'}</IonCol>
+                        <IonCol size="2">₹{(item.product?.price || 0).toFixed(2)}</IonCol>
+                        <IonCol size="2">{item.quantity}</IonCol>
+                        <IonCol size="2">₹{((item.product?.price || 0) * item.quantity).toFixed(2)}</IonCol>
+                      </IonRow>
+                    ))}
+                    
+                    {/* Handle our normalized format */}
+                    {selectedOrder.orderItems?.map((item: any, index: number) => (
+                      <IonRow key={`orderItem-${item.product?._id || index}`} className="item-row">
+                        <IonCol size="2">
+                          {item.product?.image ? (
+                            <img 
+                              src={item.product.image} 
+                              alt={item.product.name} 
+                              className="product-thumbnail" 
+                            />
+                          ) : (
+                            <div className="no-image">No Image</div>
+                          )}
+                        </IonCol>
+                        <IonCol size="4">{item.product?.name || 'Unknown Product'}</IonCol>
+                        <IonCol size="2">₹{(item.product?.price || 0).toFixed(2)}</IonCol>
+                        <IonCol size="2">{item.quantity}</IonCol>
+                        <IonCol size="2">₹{((item.product?.price || 0) * item.quantity).toFixed(2)}</IonCol>
+                      </IonRow>
+                    ))}
+                  </IonGrid>
+                </div>
+
+                <div className="order-actions">
+                  <h3>Update Status</h3>
+                  <div className="status-buttons">
+                    {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
+                      <button 
+                        key={`status-${status}`}
+                        className={`status-button ${(selectedOrder.status?.toLowerCase() === status || selectedOrder.deliveryStatus?.toLowerCase() === status) ? 'active' : ''}`}
+                        onClick={() => {
+                          setOrderStatusForm({
+                            id: selectedOrder._id || selectedOrder.orderNumber,
+                            status,
+                            orderNumber: selectedOrder.orderNumber || (selectedOrder._id?.substring(selectedOrder._id.length - 6).toUpperCase() || ''),
+                            customerName: selectedOrder.user?.name || selectedOrder.deliveryAddress?.fullName || 'Unknown Customer'
+                          });
+                          handleOrderStatusUpdate({ preventDefault: () => {} } as React.FormEvent);
+                        }}
+                      >
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

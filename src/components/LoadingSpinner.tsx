@@ -1,5 +1,6 @@
 import React from 'react';
-import './LoadingSpinner.css';
+import { IonSpinner } from '@ionic/react';
+import '../styles/LoadingSpinner.css';
 
 interface LoadingSpinnerProps {
   message?: string;
@@ -15,12 +16,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <div className={`loading-spinner-container ${fullPage ? 'full-page' : ''}`}>
       <div className={`loading-spinner ${size}`}>
-        <div className="spinner-ring">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+        <IonSpinner name="crescent" />
         <div className="loading-dots">
           <div className="dot dot1"></div>
           <div className="dot dot2"></div>

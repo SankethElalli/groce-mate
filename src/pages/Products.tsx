@@ -5,8 +5,8 @@ import { getProducts, getCategories } from '../api/api';
 import { useCart } from '../contexts/CartContext';
 import { filterOutline, checkmarkOutline, closeOutline } from 'ionicons/icons';
 import LoadingSpinner from '../components/LoadingSpinner';
-import './Product.css';
-import './ProductsMobile.css';
+import '../styles/Product.css';
+import '../styles/ProductsMobile.css';
 
 const Products: React.FC = () => {
   const location = useLocation();
@@ -277,7 +277,7 @@ const Products: React.FC = () => {
           onDidDismiss={() => setShowToast(false)}
           message={toastMessage}
           duration={2000}
-          position="bottom"
+          position="top"
           color="success"
           buttons={[
             {

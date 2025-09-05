@@ -1,0 +1,19 @@
+/* Copy the existing Checkout.css content here if it exists in the pages folder */
+/* If the file doesn't exist, it needs to be created with the checkout page styles */
+
+/* Checkout Page - Clean Minimal Design */
+.checkout-content {
+  --background: var(--ion-background-color);
+  padding: 0;
+}
+
+.checkout-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Continue with the rest of the Checkout.css styles... */

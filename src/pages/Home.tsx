@@ -5,9 +5,9 @@ import { useHistory } from 'react-router-dom';
 import { getCategories, getProducts } from '../api/api';
 import { useCart } from '../contexts/CartContext';
 import LoadingSpinner from '../components/LoadingSpinner';
-import './Home.css';
-import './FeatureMobile.css';
-import './ThemeSupport.css';
+import '../styles/Home.css';
+import '../styles/FeatureMobile.css';
+import '../styles/ThemeSupport.css';
 import rupeeOutline from '../utils/custom-icons';
 
 const Home: React.FC = () => {
@@ -325,7 +325,7 @@ const Home: React.FC = () => {
           onDidDismiss={() => setShowToast(false)}
           message={toastMessage}
           duration={2000}
-          position="bottom"
+          position="top"
           color="success"
           buttons={[
             {

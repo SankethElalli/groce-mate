@@ -20,9 +20,9 @@ import {
   useIonViewDidEnter
 } from '@ionic/react';
 import { useParams, useHistory } from 'react-router-dom';
-import { closeOutline, locationOutline, callOutline, timeOutline, cardOutline } from 'ionicons/icons';
-import './OrderDetails.css';
-import '../theme/PageThemeForce.css';
+import { closeOutline, locationOutline, callOutline, timeOutline, cardOutline, checkmarkCircleOutline, hourglassOutline, closeCircleOutline, alertCircleOutline } from 'ionicons/icons';
+import '../styles/OrderDetails.css';
+import '../styles/PageThemeForce.css';
 
 interface OrderItem {
   name: string;
@@ -62,8 +62,20 @@ const OrderDetailsPage: React.FC = () => {
     switch(status.toLowerCase()) {
       case 'delivered': return 'success';
       case 'processing': return 'warning';
+      case 'shipped': return 'tertiary';
       case 'cancelled': return 'danger';
       default: return 'medium';
+    }
+  };
+
+  // Helper function to get status icon
+  const getStatusIcon = (status: string): string => {
+    switch(status.toLowerCase()) {
+      case 'delivered': return checkmarkCircleOutline;
+      case 'processing': return hourglassOutline;
+      case 'shipped': return timeOutline;
+      case 'cancelled': return closeCircleOutline;
+      default: return alertCircleOutline;
     }
   };
 
@@ -127,18 +139,22 @@ const OrderDetailsPage: React.FC = () => {
   // If order is still loading, show a loading message
   if (!order) {
     return (
-      <IonPage className="order-details-page ion-page-force-theme">
+      <IonPage className="order-details-page admin-page">
         <IonHeader>
           <IonToolbar className="themed-toolbar">
             <IonButtons slot="start">
-              <IonBackButton defaultHref="/orders" />
+              <IonBackButton defaultHref="/orders" text="" />
             </IonButtons>
-            <IonTitle>Order Details</IonTitle>
+            <IonTitle className="admin-dashboard-title">Order Details</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent className="ion-padding" color="background">
-          <div className="loading-container">
-            <p>Loading order details...</p>
+        <IonContent className="admin-dashboard-content" color="background">
+          <div className="admin-dashboard-full">
+            <div className="loading-container">
+              <div className="admin-form">
+                <p>Loading order details...</p>
+              </div>
+            </div>
           </div>
         </IonContent>
       </IonPage>
@@ -146,121 +162,202 @@ const OrderDetailsPage: React.FC = () => {
   }
 
   return (
-    <IonPage className="order-details-page ion-page-force-theme">
+    <IonPage className="order-details-page admin-page">
       <IonHeader>
         <IonToolbar className="themed-toolbar">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/orders" />
+            <IonBackButton defaultHref="/orders" text="" />
           </IonButtons>
-          <IonTitle>Order Details</IonTitle>
+          <IonTitle className="admin-dashboard-title">Order Details</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={handleGoBack}>
+            <IonButton onClick={handleGoBack} fill="clear">
               <IonIcon icon={closeOutline} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       
-      <IonContent className="ion-padding" color="background">
-        <div className="order-details-container">
-          {/* Order ID and Status */}
-          <div className="order-details-header">
-            <div className="order-details-id">
-              <h2>#{order.id}</h2>
-              <IonBadge color={getStatusColor(order.status)} className="order-details-status">
-                {order.status}
-              </IonBadge>
-            </div>
-            <div className="order-details-date">
-              <IonIcon icon={timeOutline} />
-              <span>{formatDate(order.date)}</span>
+      <IonContent className="admin-dashboard-content" color="background">
+        <div className="admin-dashboard-full">
+          {/* Order Status Summary Card */}
+          <div className="order-summary-card">
+            <div className="order-summary-header">
+              <div className="order-id-section">
+                <h1>#{order.id}</h1>
+                <IonBadge color={getStatusColor(order.status)} className="status-badge-large">
+                  <IonIcon icon={getStatusIcon(order.status)} />
+                  {order.status}
+                </IonBadge>
+              </div>
+              
+              {/* Status Progress Indicator */}
+              <div className="status-progress">
+                <div className="progress-steps">
+                  <div className={`progress-step ${['pending', 'processing', 'shipped', 'delivered'].includes(order.status.toLowerCase()) ? 'completed' : ''}`}>
+                    <div className="step-icon">
+                      <IonIcon icon={alertCircleOutline} />
+                    </div>
+                    <span>Pending</span>
+                  </div>
+                  <div className="progress-line"></div>
+                  <div className={`progress-step ${['processing', 'shipped', 'delivered'].includes(order.status.toLowerCase()) ? 'completed' : ''}`}>
+                    <div className="step-icon">
+                      <IonIcon icon={hourglassOutline} />
+                    </div>
+                    <span>Processing</span>
+                  </div>
+                  <div className="progress-line"></div>
+                  <div className={`progress-step ${['shipped', 'delivered'].includes(order.status.toLowerCase()) ? 'completed' : ''}`}>
+                    <div className="step-icon">
+                      <IonIcon icon={timeOutline} />
+                    </div>
+                    <span>Shipped</span>
+                  </div>
+                  <div className="progress-line"></div>
+                  <div className={`progress-step ${order.status.toLowerCase() === 'delivered' ? 'completed' : ''}`}>
+                    <div className="step-icon">
+                      <IonIcon icon={checkmarkCircleOutline} />
+                    </div>
+                    <span>Delivered</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="order-meta">
+                <div className="order-date-info">
+                  <IonIcon icon={timeOutline} />
+                  <span>{formatDate(order.date)}</span>
+                </div>
+                <div className="order-total-info">
+                  <span className="total-label">Total Amount</span>
+                  <span className="total-amount">{order.total}</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Items List */}
-          <div className="order-details-section">
-            <h3 className="section-title">Order Items</h3>
-            <div className="order-details-items">
-              <IonGrid className="items-grid">
-                <IonRow className="item-header">
-                  <IonCol size="6">Item</IonCol>
-                  <IonCol size="2">Qty</IonCol>
-                  <IonCol size="4" className="price-col">Price</IonCol>
-                </IonRow>
-                {order.items.map((item, index) => (
-                  <IonRow key={index} className="item-row">
-                    <IonCol size="6">{item.name}</IonCol>
-                    <IonCol size="2">{item.quantity}</IonCol>
-                    <IonCol size="4" className="price-col">{item.price}</IonCol>
-                  </IonRow>
-                ))}
-                <IonRow className="total-row">
-                  <IonCol size="6" offset="2"><strong>Total</strong></IonCol>
-                  <IonCol size="4" className="price-col"><strong>{order.total}</strong></IonCol>
-                </IonRow>
-              </IonGrid>
+          {/* Order Items Section */}
+          <div className="admin-form">
+            <h2 className="section-title-admin">
+              <IonIcon icon={cardOutline} />
+              Order Items
+            </h2>
+            <div className="admin-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {order.items.map((item, index) => (
+                    <tr key={index}>
+                      <td data-label="Item">{item.name}</td>
+                      <td data-label="Quantity">{item.quantity}</td>
+                      <td data-label="Price">{item.price}</td>
+                      <td data-label="Subtotal">₹{(parseFloat(item.price.replace('₹', '')) * item.quantity).toFixed(2)}</td>
+                    </tr>
+                  ))}
+                  <tr className="total-row-admin">
+                    <td colSpan={3}><strong>Total</strong></td>
+                    <td><strong>{order.total}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* Delivery Details */}
+          {/* Delivery Information */}
           {order.deliveryAddress && (
-            <div className="order-details-section">
-              <h3 className="section-title">Delivery Details</h3>
-              <IonList lines="none" className="details-list">
-                <IonItem>
-                  <IonIcon icon={locationOutline} slot="start" color="primary" />
-                  <IonLabel className="ion-text-wrap">
-                    <IonText color="medium">Address</IonText>
-                    <p>{order.deliveryAddress}</p>
-                  </IonLabel>
-                </IonItem>
+            <div className="admin-form">
+              <h2 className="section-title-admin">
+                <IonIcon icon={locationOutline} />
+                Delivery Information
+              </h2>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label className="simple-admin-label">Address</label>
+                  <p className="info-value">{order.deliveryAddress}</p>
+                </div>
                 {order.phoneNumber && (
-                  <IonItem>
-                    <IonIcon icon={callOutline} slot="start" color="primary" />
-                    <IonLabel>
-                      <IonText color="medium">Phone</IonText>
-                      <p>{order.phoneNumber}</p>
-                    </IonLabel>
-                  </IonItem>
+                  <div className="info-item">
+                    <label className="simple-admin-label">Phone Number</label>
+                    <p className="info-value">{order.phoneNumber}</p>
+                  </div>
                 )}
                 {order.estimatedDelivery && (
-                  <IonItem>
-                    <IonIcon icon={timeOutline} slot="start" color="primary" />
-                    <IonLabel>
-                      <IonText color="medium">Estimated Delivery</IonText>
-                      <p>{order.estimatedDelivery}</p>
-                    </IonLabel>
-                  </IonItem>
+                  <div className="info-item">
+                    <label className="simple-admin-label">Estimated Delivery</label>
+                    <p className="info-value">{order.estimatedDelivery}</p>
+                  </div>
                 )}
-              </IonList>
+              </div>
             </div>
           )}
 
-          {/* Payment Details */}
+          {/* Payment Information */}
           {order.paymentMethod && (
-            <div className="order-details-section">
-              <h3 className="section-title">Payment Details</h3>
-              <IonList lines="none" className="details-list">
-                <IonItem>
-                  <IonIcon icon={cardOutline} slot="start" color="primary" />
-                  <IonLabel>
-                    <IonText color="medium">Payment Method</IonText>
-                    <p>{order.paymentMethod}</p>
-                  </IonLabel>
-                </IonItem>
-              </IonList>
+            <div className="admin-form">
+              <h2 className="section-title-admin">
+                <IonIcon icon={cardOutline} />
+                Payment Information
+              </h2>
+              <div className="info-grid">
+                <div className="info-item">
+                  <label className="simple-admin-label">Payment Method</label>
+                  <p className="info-value">{order.paymentMethod}</p>
+                </div>
+              </div>
             </div>
           )}
 
           {/* Order Notes */}
           {order.orderNotes && (
-            <div className="order-details-section">
-              <h3 className="section-title">Notes</h3>
-              <div className="order-notes">
+            <div className="admin-form">
+              <h2 className="section-title-admin">
+                <IonIcon icon={alertCircleOutline} />
+                Special Instructions
+              </h2>
+              <div className="order-notes-admin">
                 <p>{order.orderNotes}</p>
               </div>
             </div>
           )}
+
+          {/* Quick Actions */}
+          <div className="admin-form">
+            <h2 className="section-title-admin">
+              <IonIcon icon={alertCircleOutline} />
+              Quick Actions
+            </h2>
+            <div className="action-buttons">
+              <button 
+                className="simple-admin-btn" 
+                onClick={handleGoBack}
+              >
+                <IonIcon icon={locationOutline} />
+                Back to Orders
+              </button>
+              {order.phoneNumber && (
+                <button 
+                  className="simple-admin-btn outline"
+                  onClick={() => window.open(`tel:${order.phoneNumber}`)}
+                >
+                  <IonIcon icon={callOutline} />
+                  Call Customer
+                </button>
+              )}
+              <button 
+                className="simple-admin-btn outline"
+                onClick={() => window.print()}
+              >
+                Print Order
+              </button>
+            </div>
+          </div>
         </div>
       </IonContent>
     </IonPage>
