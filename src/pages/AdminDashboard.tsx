@@ -348,13 +348,62 @@ const AdminDashboard: React.FC = () => {
   // --- PRODUCTS ---
   async function handleProductSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (productForm.id) {
-      await apiPut(`/products/${productForm.id}`, productForm);
-    } else {
-      await apiPost('/products', productForm);
+    setLoading(true);
+    try {
+      console.log('Submitting product form:', productForm); // Debug log
+      
+      if (!productForm.name.trim() || !productForm.price || !productForm.category) {
+        setNotification({
+          show: true,
+          message: 'Name, price, and category are required',
+          type: 'error'
+        });
+        setLoading(false);
+        return;
+      }
+
+      const productData = {
+        name: productForm.name.trim(),
+        price: parseFloat(productForm.price),
+        image: productForm.image.trim(),
+        category: productForm.category,
+        featured: productForm.featured // Ensure this is included
+      };
+
+      console.log('Product data being sent:', productData); // Debug log
+
+      const response = productForm.id 
+        ? await apiPut(`/products/${productForm.id}`, productData)
+        : await apiPost('/products', productData);
+
+      if (!response.error) {
+        // Refresh products list
+        const updatedProducts = await apiGet('/products');
+        setProducts(Array.isArray(updatedProducts) ? updatedProducts : []);
+        
+        setProductForm({ name: '', price: '', image: '', category: '', featured: false, id: '' });
+        setNotification({
+          show: true,
+          message: `Product ${productForm.id ? 'updated' : 'created'} successfully`,
+          type: 'success'
+        });
+      } else {
+        setNotification({
+          show: true,
+          message: response.message || 'Error processing product',
+          type: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('Error processing product:', error);
+      setNotification({
+        show: true,
+        message: 'Network error. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
     }
-    setProductForm({ name: '', price: '', image: '', category: '', featured: false, id: '' });
-    setProducts(await apiGet('/products'));
   }
   function handleProductEdit(p: any) {
     setProductForm({

@@ -16,11 +16,13 @@ import {
   IonCol,
   IonBadge,
   IonText,
-  IonBackButton
+  IonBackButton,
+  useIonViewDidEnter
 } from '@ionic/react';
 import { useParams, useHistory } from 'react-router-dom';
 import { closeOutline, locationOutline, callOutline, timeOutline, cardOutline } from 'ionicons/icons';
 import './OrderDetails.css';
+import '../theme/PageThemeForce.css';
 
 interface OrderItem {
   name: string;
@@ -45,6 +47,15 @@ const OrderDetailsPage: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const history = useHistory();
   const [order, setOrder] = useState<OrderDetails | null>(null);
+  
+  // Force page to apply correct theme on view enter
+  useIonViewDidEnter(() => {
+    // Trigger a re-render to apply current theme
+    document.querySelector('.order-details-page')?.classList.add('theme-applied');
+    setTimeout(() => {
+      document.querySelector('.order-details-page')?.classList.remove('theme-applied');
+    }, 10);
+  });
   
   // Helper function to get status color
   const getStatusColor = (status: string): string => {
@@ -116,16 +127,16 @@ const OrderDetailsPage: React.FC = () => {
   // If order is still loading, show a loading message
   if (!order) {
     return (
-      <IonPage>
+      <IonPage className="order-details-page ion-page-force-theme">
         <IonHeader>
-          <IonToolbar>
+          <IonToolbar className="themed-toolbar">
             <IonButtons slot="start">
               <IonBackButton defaultHref="/orders" />
             </IonButtons>
             <IonTitle>Order Details</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent className="ion-padding">
+        <IonContent className="ion-padding" color="background">
           <div className="loading-container">
             <p>Loading order details...</p>
           </div>
@@ -135,9 +146,9 @@ const OrderDetailsPage: React.FC = () => {
   }
 
   return (
-    <IonPage className="order-details-page">
+    <IonPage className="order-details-page ion-page-force-theme">
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar className="themed-toolbar">
           <IonButtons slot="start">
             <IonBackButton defaultHref="/orders" />
           </IonButtons>
@@ -150,7 +161,7 @@ const OrderDetailsPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       
-      <IonContent className="ion-padding">
+      <IonContent className="ion-padding" color="background">
         <div className="order-details-container">
           {/* Order ID and Status */}
           <div className="order-details-header">

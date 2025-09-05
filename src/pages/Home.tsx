@@ -1,8 +1,10 @@
-import { IonContent, IonPage, IonButton, IonIcon, IonGrid, IonRow, IonCol } from '@ionic/react';
-import { searchOutline, leafOutline, bagOutline, heartOutline, starOutline, trophyOutline, shieldCheckmarkOutline, peopleOutline } from 'ionicons/icons';
+import { IonContent, IonPage, IonButton, IonIcon, IonGrid, IonRow, IonCol, IonToast } from '@ionic/react';
+import { searchOutline, leafOutline, bagOutline, heartOutline, starOutline, trophyOutline, shieldCheckmarkOutline, peopleOutline, addOutline } from 'ionicons/icons';
 import { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getCategories, getProducts } from '../api/api';
+import { useCart } from '../contexts/CartContext';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './Home.css';
 import './FeatureMobile.css';
 import './ThemeSupport.css';
@@ -10,10 +12,15 @@ import rupeeOutline from '../utils/custom-icons';
 
 const Home: React.FC = () => {
   const history = useHistory();
+  const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState<any[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Toast notification state
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,17 +35,16 @@ const Home: React.FC = () => {
         }
         
         if (!productsResponse.error) {
-          // Filter only featured products
+          // Filter only featured products - fix the filtering logic
           const featured = productsResponse.data?.filter(
             (product: any) => product.featured === true
           ) || [];
           
-          // Show all featured products, or fallback to first 12 if no featured products
-          const productsToShow = featured.length > 0 
-            ? featured // Show ALL featured products
-            : productsResponse.data?.slice(0, 12) || [];
-        
-          setFeaturedProducts(productsToShow);
+          console.log('All products:', productsResponse.data); // Debug log
+          console.log('Featured products:', featured); // Debug log
+          
+          // Only show featured products, don't fallback to other products
+          setFeaturedProducts(featured);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -54,7 +60,7 @@ const Home: React.FC = () => {
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
-      history.push(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
+      history.push(`/menu?search=${encodeURIComponent(searchTerm.trim())}`);
     }
   };
 
@@ -65,7 +71,7 @@ const Home: React.FC = () => {
   };
 
   const handleCategoryClick = (categoryId: string) => {
-    history.push(`/products?category=${categoryId}`);
+    history.push(`/menu?category=${categoryId}`);
   };
 
   const getCategoryIcon = (categoryName: string) => {
@@ -91,6 +97,14 @@ const Home: React.FC = () => {
     // Alternate between left and right or use random if preferred
     // Using alternating pattern for predictable design
     return index % 2 === 0 ? 'from-left' : 'from-right';
+  };
+
+  // Handle adding product to cart
+  const handleAddToCart = (product: any, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent any parent click handlers
+    addToCart(product);
+    setToastMessage(`${product.name} added to cart!`);
+    setShowToast(true);
   };
 
   return (
@@ -136,7 +150,7 @@ const Home: React.FC = () => {
             <h2 className="section-title">Shop by Category</h2>
             <div className="categories-grid">
               {loading ? (
-                <div className="loading-placeholder">Loading categories...</div>
+                <LoadingSpinner message="Loading categories..." size="medium" />
               ) : categories.length > 0 ? (
                 categories.map((category, index) => (
                   <div 
@@ -164,7 +178,7 @@ const Home: React.FC = () => {
             
             <div className="featured-products-horizontal-container">
               {loading ? (
-                <div className="loading-placeholder">Loading featured products...</div>
+                <LoadingSpinner message="Loading featured products..." size="large" />
               ) : featuredProducts.length > 0 ? (
                 <div className="featured-products-horizontal-scroll">
                   {featuredProducts.map((product, index) => {
@@ -186,6 +200,14 @@ const Home: React.FC = () => {
                           <h3 className="featured-product-name">{product.name}</h3>
                           <p className="featured-product-category">{product.category?.name}</p>
                           <div className="featured-product-price">₹{product.price}</div>
+                          <button 
+                            className="featured-add-to-cart-btn"
+                            onClick={(e) => handleAddToCart(product, e)}
+                            aria-label={`Add ${product.name} to cart`}
+                          >
+                            <IonIcon icon={addOutline} />
+                            Add to Cart
+                          </button>
                         </div>
                       </div>
                     );
@@ -296,6 +318,22 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Toast notification for cart additions */}
+        <IonToast
+          isOpen={showToast}
+          onDidDismiss={() => setShowToast(false)}
+          message={toastMessage}
+          duration={2000}
+          position="bottom"
+          color="success"
+          buttons={[
+            {
+              text: 'Dismiss',
+              role: 'cancel'
+            }
+          ]}
+        />
       </IonContent>
     </IonPage>
   );

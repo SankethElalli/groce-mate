@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { getProducts, getCategories } from '../api/api';
 import { useCart } from '../contexts/CartContext';
 import { filterOutline, checkmarkOutline, closeOutline } from 'ionicons/icons';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './Product.css';
 import './ProductsMobile.css';
 
@@ -150,121 +151,125 @@ const Products: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="products-content">
-        <div className="products-header">
-          <h1 className="products-title">Products</h1>
-          
-          {/* Search Bar */}
-          <input
-            className="home-search products-search"
-            type="text"
-            placeholder="Search groceries..."
-            value={searchTerm}
-            onChange={handleSearch}
-            aria-label="Search products"
-            style={{
-              color: 'var(--ion-text-color)',
-              backgroundColor: 'var(--ion-card-background)',
-              borderColor: 'var(--ion-input-border)'
-            }}
-          />
-          
-          {/* Categories Button with Dropdown - Only show if categories exist */}
-          {categories.length > 0 && (
-            <div className="categories-dropdown-container">
-              <button 
-                className="categories-button"
-                onClick={handleCategoriesButtonClick}
-                aria-label="Filter by category"
-              >
-                <IonIcon icon={filterOutline} />
-                <span>Categories</span>
-                <span className="selected-category">({getSelectedCategoryName()})</span>
-              </button>
+        {loading ? (
+          <LoadingSpinner message="Loading products..." size="large" fullPage={true} />
+        ) : (
+          <>
+            <div className="products-header">
+              <h1 className="products-title">Products</h1>
               
-              {isCategoryDropdownOpen && (
-                <div className="categories-dropdown">
-                  <div 
-                    className={`category-item ${selectedCategory === 'all' ? 'selected' : ''}`}
-                    onClick={() => handleCategorySelect('all')}
+              {/* Search Bar */}
+              <input
+                className="home-search products-search"
+                type="text"
+                placeholder="Search groceries..."
+                value={searchTerm}
+                onChange={handleSearch}
+                aria-label="Search products"
+                style={{
+                  color: 'var(--ion-text-color)',
+                  backgroundColor: 'var(--ion-card-background)',
+                  borderColor: 'var(--ion-input-border)'
+                }}
+              />
+              
+              {/* Categories Button with Dropdown - Only show if categories exist */}
+              {categories.length > 0 && (
+                <div className="categories-dropdown-container">
+                  <button 
+                    className="categories-button"
+                    onClick={handleCategoriesButtonClick}
+                    aria-label="Filter by category"
                   >
-                    <span>All Products</span>
-                    <span className="item-count">({getCategoryCount('all')})</span>
-                    {selectedCategory === 'all' && <IonIcon icon={checkmarkOutline} />}
-                  </div>
+                    <IonIcon icon={filterOutline} />
+                    <span>Categories</span>
+                    <span className="selected-category">({getSelectedCategoryName()})</span>
+                  </button>
                   
-                  {categories.map(category => (
-                    <div 
-                      key={category._id}
-                      className={`category-item ${selectedCategory === category._id ? 'selected' : ''}`}
-                      onClick={() => handleCategorySelect(category._id)}
-                    >
-                      <span>{category.name}</span>
-                      <span className="item-count">({getCategoryCount(category._id)})</span>
-                      {selectedCategory === category._id && <IonIcon icon={checkmarkOutline} />}
+                  {isCategoryDropdownOpen && (
+                    <div className="categories-dropdown">
+                      <div 
+                        className={`category-item ${selectedCategory === 'all' ? 'selected' : ''}`}
+                        onClick={() => handleCategorySelect('all')}
+                      >
+                        <span>All Products</span>
+                        <span className="item-count">({getCategoryCount('all')})</span>
+                        {selectedCategory === 'all' && <IonIcon icon={checkmarkOutline} />}
+                      </div>
+                      
+                      {categories.map(category => (
+                        <div 
+                          key={category._id}
+                          className={`category-item ${selectedCategory === category._id ? 'selected' : ''}`}
+                          onClick={() => handleCategorySelect(category._id)}
+                        >
+                          <span>{category.name}</span>
+                          <span className="item-count">({getCategoryCount(category._id)})</span>
+                          {selectedCategory === category._id && <IonIcon icon={checkmarkOutline} />}
+                        </div>
+                      ))}
+                      
+                      {/* Featured products filter */}
+                      <div 
+                        className="category-item featured-filter"
+                        onClick={() => {
+                          setShowFeaturedOnly(!showFeaturedOnly);
+                          filterProducts(searchTerm, selectedCategory, !showFeaturedOnly);
+                        }}
+                      >
+                        <span>Featured Products Only</span>
+                        <IonCheckbox 
+                          checked={showFeaturedOnly} 
+                          onIonChange={(e) => {
+                            setShowFeaturedOnly(e.detail.checked);
+                            filterProducts(searchTerm, selectedCategory, e.detail.checked);
+                          }}
+                        />
+                      </div>
                     </div>
-                  ))}
-                  
-                  {/* Featured products filter */}
-                  <div 
-                    className="category-item featured-filter"
-                    onClick={() => {
-                      setShowFeaturedOnly(!showFeaturedOnly);
-                      filterProducts(searchTerm, selectedCategory, !showFeaturedOnly);
-                    }}
-                  >
-                    <span>Featured Products Only</span>
-                    <IonCheckbox 
-                      checked={showFeaturedOnly} 
-                      onIonChange={(e) => {
-                        setShowFeaturedOnly(e.detail.checked);
-                        filterProducts(searchTerm, selectedCategory, e.detail.checked);
-                      }}
-                    />
-                  </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
-        
-        <div className="products-list">
-          {loading ? (
-            <div className="loading-message">Loading products...</div>
-          ) : error ? (
-            <div className="error-message">{error}</div>
-          ) : filteredProducts.length > 0 ? (
-            filteredProducts.map(product => (
-              <div className="product-card" key={product._id}>
-                <img className="product-image" src={product.image} alt={product.name} />
-                <div className="product-info">
-                  <div className="product-name">{product.name}</div>
-                  <div className="product-price">₹{product.price}</div>
-                  <div className="product-category">{product.category?.name}</div>
+            
+            <div className="products-list">
+              {error ? (
+                <div className="error-message">{error}</div>
+              ) : filteredProducts.length > 0 ? (
+                filteredProducts.map(product => (
+                  <div className="product-card" key={product._id}>
+                    <img className="product-image" src={product.image} alt={product.name} />
+                    <div className="product-info">
+                      <div className="product-name">{product.name}</div>
+                      <div className="product-price">₹{product.price}</div>
+                      <div className="product-category">{product.category?.name}</div>
+                    </div>
+                    <button 
+                      className="product-add-btn" 
+                      onClick={() => handleAddToCart(product)}
+                      aria-label={`Add ${product.name} to cart`}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="no-products">
+                  <p>
+                    {searchTerm && selectedCategory !== 'all' 
+                      ? `No products found matching "${searchTerm}" in ${categories.find(c => c._id === selectedCategory)?.name || 'selected category'}`
+                      : searchTerm 
+                        ? `No products found matching "${searchTerm}"`
+                        : selectedCategory !== 'all'
+                          ? `No products found in ${categories.find(c => c._id === selectedCategory)?.name || 'selected category'}`
+                          : 'No products found'
+                    }
+                  </p>
                 </div>
-                <button 
-                  className="product-add-btn" 
-                  onClick={() => handleAddToCart(product)}
-                  aria-label={`Add ${product.name} to cart`}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="no-products">
-              <p>
-                {searchTerm && selectedCategory !== 'all' 
-                  ? `No products found matching "${searchTerm}" in ${categories.find(c => c._id === selectedCategory)?.name || 'selected category'}`
-                  : searchTerm 
-                    ? `No products found matching "${searchTerm}"`
-                    : selectedCategory !== 'all'
-                      ? `No products found in ${categories.find(c => c._id === selectedCategory)?.name || 'selected category'}`
-                      : 'No products found'
-                }
-              </p>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
         
         {/* Toast notification for cart additions */}
         <IonToast

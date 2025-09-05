@@ -1,6 +1,26 @@
 /* Order Details Page Styling */
 .order-details-page {
-  --ion-background-color: var(--ion-background-color);
+  --background: var(--ion-background-color) !important;
+  background: var(--ion-background-color) !important;
+  color: var(--ion-text-color) !important;
+}
+
+/* Force theme refresh class */
+.order-details-page.theme-applied {
+  transition: background-color 0.01s;
+}
+
+/* Fix the background-content element that's not following theme */
+.order-details-page #background-content,
+.order-details-page [part="background"],
+.order-details-page ion-app,
+.order-details-page ion-content::part(background) {
+  background: var(--ion-background-color) !important;
+}
+
+.order-details-page ion-content {
+  --background: var(--ion-background-color) !important;
+  background: var(--ion-background-color) !important;
 }
 
 .order-details-page ion-toolbar {
@@ -20,17 +40,18 @@
 
 .order-details-container {
   padding: 16px;
-  background-color: var(--ion-background-color);
-  min-height: 200px;
+  background-color: var(--ion-background-color) !important;
+  min-height: 100vh;
 }
 
-/* Order Header */
+/* Order Header - Fixed for theme support */
 .order-details-header {
-  background: var(--ion-color-light);
+  background: var(--ion-card-background);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--ion-toolbar-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.05));
+  border: 1px solid var(--ion-toolbar-border-color, rgba(0, 0, 0, 0.04)); /* Improved border for theme support */
 }
 
 .order-details-id {
@@ -64,15 +85,17 @@
 
 .order-details-date ion-icon {
   font-size: 16px;
+  color: var(--ion-color-medium);
 }
 
-/* Section styling */
+/* Section styling - Fixed for theme support */
 .order-details-section {
-  background: #fff;
+  background: var(--ion-card-background);
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--ion-toolbar-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.05));
+  border: 1px solid var(--ion-toolbar-border-color, rgba(0, 0, 0, 0.04)); /* Improved border for theme support */
 }
 
 .section-title {
@@ -81,7 +104,7 @@
   margin: 0 0 12px 0;
   color: var(--ion-text-color);
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--ion-color-light);
+  border-bottom: 1px solid var(--ion-toolbar-border-color, var(--ion-color-light-shade)); /* Improved theme support */
 }
 
 /* Items Grid Styling */
@@ -99,8 +122,9 @@
 
 .item-row {
   padding: 10px 0;
-  border-bottom: 1px solid var(--ion-color-light-shade);
+  border-bottom: 1px solid var(--ion-toolbar-border-color, var(--ion-color-light-shade)); /* Improved theme support */
   font-size: 14px;
+  color: var(--ion-text-color); /* Added for theme support */
 }
 
 .item-row:last-child {
@@ -114,6 +138,7 @@
 .total-row {
   padding-top: 12px;
   font-size: 16px;
+  color: var(--ion-text-color); /* Added for theme support */
 }
 
 /* Details List Styling */
@@ -127,6 +152,7 @@
   --inner-padding-end: 0;
   --min-height: auto;
   margin-bottom: 12px;
+  --color: var(--ion-text-color); /* Added for theme support */
 }
 
 .details-list ion-icon {
@@ -136,6 +162,7 @@
 
 .details-list ion-label {
   white-space: normal;
+  color: var(--ion-text-color); /* Added for theme support */
 }
 
 .details-list p {
@@ -144,8 +171,9 @@
   color: var(--ion-text-color);
 }
 
+/* Order notes - Fixed for theme support */
 .order-notes {
-  background: var(--ion-color-light);
+  background: var(--ion-color-light-shade); /* Updated for better theme support */
   padding: 12px;
   border-radius: 8px;
 }
@@ -155,6 +183,7 @@
   font-size: 14px;
   line-height: 1.5;
   white-space: pre-wrap;
+  color: var(--ion-text-color);
 }
 
 /* Loading Container */
@@ -163,4 +192,62 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  color: var(--ion-text-color); /* Added for theme support */
+}
+
+/* Global ion-app and ion-router-outlet background fix */
+ion-app, 
+ion-router-outlet {
+  background: var(--ion-background-color) !important;
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  /* Force the background element to follow dark theme */
+  .order-details-page,
+  .order-details-page #background-content,
+  .order-details-page [part="background"],
+  .order-details-page ion-app,
+  .order-details-page ion-router-outlet,
+  .order-details-page ion-content::part(background),
+  .order-details-page ion-modal {
+    background: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+  }
+  
+  .order-details-page ion-content {
+    --background: var(--ion-background-color) !important;
+    background: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+  }
+  
+  .order-details-container {
+    background-color: var(--ion-background-color) !important;
+    color: var(--ion-text-color) !important;
+  }
+  
+  .order-details-header {
+    background: var(--ion-card-background);
+    border-color: var(--ion-toolbar-border-color, rgba(255, 255, 255, 0.08));
+    box-shadow: var(--ion-toolbar-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+  
+  .order-details-section {
+    background: var(--ion-card-background);
+    border-color: var(--ion-toolbar-border-color, rgba(255, 255, 255, 0.08));
+    box-shadow: var(--ion-toolbar-box-shadow, 0 2px 4px rgba(0, 0, 0, 0.2));
+  }
+  
+  .section-title {
+    border-bottom-color: var(--ion-toolbar-border-color, rgba(255, 255, 255, 0.1));
+  }
+  
+  .item-row {
+    border-bottom-color: var(--ion-toolbar-border-color, rgba(255, 255, 255, 0.1));
+  }
+  
+  .order-notes {
+    background: var(--ion-color-step-100, rgba(255, 255, 255, 0.05));
+    color: var(--ion-text-color);
+  }
 }

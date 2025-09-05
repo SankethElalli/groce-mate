@@ -140,21 +140,70 @@ router.get('/products', authenticate, requireAdmin, async (req, res) => {
 
 // Add product
 router.post('/products', authenticate, requireAdmin, async (req, res) => {
-  const { name, price, image, category, featured } = req.body;
-  const product = await Product.create({ name, price, image, category, featured });
-  res.status(201).json(product);
+  try {
+    const { name, price, image, category, featured } = req.body;
+    
+    console.log('Creating product with data:', { name, price, image, category, featured }); // Debug log
+    
+    if (!name || !price || !category) {
+      return res.status(400).json({ message: 'Name, price, and category are required' });
+    }
+    
+    const productData = {
+      name: name.trim(),
+      price: parseFloat(price),
+      image: image ? image.trim() : '',
+      category,
+      featured: Boolean(featured) // Ensure it's a boolean
+    };
+    
+    const product = await Product.create(productData);
+    console.log('Product created:', product); // Debug log
+    
+    res.status(201).json(product);
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.status(500).json({ 
+      message: 'Error creating product', 
+      error: error.message 
+    });
+  }
 });
 
 // Edit product
 router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
-  const { name, price, image, category, featured } = req.body;
-  const product = await Product.findByIdAndUpdate(
-    req.params.id,
-    { name, price, image, category, featured },
-    { new: true }
-  );
-  if (!product) return res.status(404).json({ message: 'Product not found' });
-  res.json(product);
+  try {
+    const { name, price, image, category, featured } = req.body;
+    
+    console.log('Updating product with data:', { name, price, image, category, featured }); // Debug log
+    
+    const updateData = {
+      name: name.trim(),
+      price: parseFloat(price),
+      image: image ? image.trim() : '',
+      category,
+      featured: Boolean(featured) // Ensure it's a boolean
+    };
+    
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    ).populate('category');
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    console.log('Product updated:', product); // Debug log
+    res.json(product);
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({ 
+      message: 'Error updating product', 
+      error: error.message 
+    });
+  }
 });
 
 // Delete product
