@@ -33,6 +33,9 @@ const Home: React.FC = () => {
             (product: any) => product.featured === true
           ) || [];
           
+          console.log('All products from API:', productsResponse.data?.map((p: any) => ({ name: p.name, featured: p.featured })));
+          console.log('Filtered featured products:', featured.map((p: any) => ({ name: p.name, featured: p.featured })));
+          
           // Show all featured products, or fallback to first 12 if no featured products
           const productsToShow = featured.length > 0 
             ? featured // Show ALL featured products

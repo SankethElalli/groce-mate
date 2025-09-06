@@ -131,6 +131,7 @@ router.delete('/categories/:id', authenticate, requireAdmin, async (req, res) =>
 router.get('/products', authenticate, requireAdmin, async (req, res) => {
   try {
     const products = await Product.find().populate('category');
+    console.log('Admin products query result:', products.map(p => ({ name: p.name, featured: p.featured })));
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -141,18 +142,22 @@ router.get('/products', authenticate, requireAdmin, async (req, res) => {
 // Add product
 router.post('/products', authenticate, requireAdmin, async (req, res) => {
   const { name, price, image, category, featured } = req.body;
+  console.log('Creating product with data:', { name, price, image, category, featured });
   const product = await Product.create({ name, price, image, category, featured });
+  console.log('Created product:', product);
   res.status(201).json(product);
 });
 
 // Edit product
 router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
   const { name, price, image, category, featured } = req.body;
+  console.log('Updating product with data:', { name, price, image, category, featured });
   const product = await Product.findByIdAndUpdate(
     req.params.id,
     { name, price, image, category, featured },
     { new: true }
   );
+  console.log('Updated product:', product);
   if (!product) return res.status(404).json({ message: 'Product not found' });
   res.json(product);
 });
