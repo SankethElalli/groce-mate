@@ -141,13 +141,6 @@ router.get('/products', authenticate, requireAdmin, async (req, res) => {
 
 // Add product
 router.post('/products', authenticate, requireAdmin, async (req, res) => {
-<<<<<<< HEAD
-  const { name, price, image, category, featured } = req.body;
-  console.log('Creating product with data:', { name, price, image, category, featured });
-  const product = await Product.create({ name, price, image, category, featured });
-  console.log('Created product:', product);
-  res.status(201).json(product);
-=======
   try {
     const { name, price, image, category, featured } = req.body;
     
@@ -176,23 +169,10 @@ router.post('/products', authenticate, requireAdmin, async (req, res) => {
       error: error.message 
     });
   }
->>>>>>> e3da09c8f3b9101eb9a75b1e207252936f73cabb
 });
 
 // Edit product
 router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
-<<<<<<< HEAD
-  const { name, price, image, category, featured } = req.body;
-  console.log('Updating product with data:', { name, price, image, category, featured });
-  const product = await Product.findByIdAndUpdate(
-    req.params.id,
-    { name, price, image, category, featured },
-    { new: true }
-  );
-  console.log('Updated product:', product);
-  if (!product) return res.status(404).json({ message: 'Product not found' });
-  res.json(product);
-=======
   try {
     const { name, price, image, category, featured } = req.body;
     
@@ -225,7 +205,6 @@ router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
       error: error.message 
     });
   }
->>>>>>> e3da09c8f3b9101eb9a75b1e207252936f73cabb
 });
 
 // Delete product

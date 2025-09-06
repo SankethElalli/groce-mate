@@ -40,7 +40,6 @@ const Home: React.FC = () => {
             (product: any) => product.featured === true
           ) || [];
           
-<<<<<<< HEAD
           console.log('All products from API:', productsResponse.data?.map((p: any) => ({ name: p.name, featured: p.featured })));
           console.log('Filtered featured products:', featured.map((p: any) => ({ name: p.name, featured: p.featured })));
           
@@ -50,13 +49,6 @@ const Home: React.FC = () => {
             : productsResponse.data?.slice(0, 12) || [];
         
           setFeaturedProducts(productsToShow);
-=======
-          console.log('All products:', productsResponse.data); // Debug log
-          console.log('Featured products:', featured); // Debug log
-          
-          // Only show featured products, don't fallback to other products
-          setFeaturedProducts(featured);
->>>>>>> e3da09c8f3b9101eb9a75b1e207252936f73cabb
         }
       } catch (error) {
         console.error('Error fetching data:', error);
