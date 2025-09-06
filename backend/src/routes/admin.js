@@ -141,15 +141,47 @@ router.get('/products', authenticate, requireAdmin, async (req, res) => {
 
 // Add product
 router.post('/products', authenticate, requireAdmin, async (req, res) => {
+<<<<<<< HEAD
   const { name, price, image, category, featured } = req.body;
   console.log('Creating product with data:', { name, price, image, category, featured });
   const product = await Product.create({ name, price, image, category, featured });
   console.log('Created product:', product);
   res.status(201).json(product);
+=======
+  try {
+    const { name, price, image, category, featured } = req.body;
+    
+    console.log('Creating product with data:', { name, price, image, category, featured }); // Debug log
+    
+    if (!name || !price || !category) {
+      return res.status(400).json({ message: 'Name, price, and category are required' });
+    }
+    
+    const productData = {
+      name: name.trim(),
+      price: parseFloat(price),
+      image: image ? image.trim() : '',
+      category,
+      featured: Boolean(featured) // Ensure it's a boolean
+    };
+    
+    const product = await Product.create(productData);
+    console.log('Product created:', product); // Debug log
+    
+    res.status(201).json(product);
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.status(500).json({ 
+      message: 'Error creating product', 
+      error: error.message 
+    });
+  }
+>>>>>>> e3da09c8f3b9101eb9a75b1e207252936f73cabb
 });
 
 // Edit product
 router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
+<<<<<<< HEAD
   const { name, price, image, category, featured } = req.body;
   console.log('Updating product with data:', { name, price, image, category, featured });
   const product = await Product.findByIdAndUpdate(
@@ -160,6 +192,40 @@ router.put('/products/:id', authenticate, requireAdmin, async (req, res) => {
   console.log('Updated product:', product);
   if (!product) return res.status(404).json({ message: 'Product not found' });
   res.json(product);
+=======
+  try {
+    const { name, price, image, category, featured } = req.body;
+    
+    console.log('Updating product with data:', { name, price, image, category, featured }); // Debug log
+    
+    const updateData = {
+      name: name.trim(),
+      price: parseFloat(price),
+      image: image ? image.trim() : '',
+      category,
+      featured: Boolean(featured) // Ensure it's a boolean
+    };
+    
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    ).populate('category');
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    console.log('Product updated:', product); // Debug log
+    res.json(product);
+  } catch (error) {
+    console.error('Error updating product:', error);
+    res.status(500).json({ 
+      message: 'Error updating product', 
+      error: error.message 
+    });
+  }
+>>>>>>> e3da09c8f3b9101eb9a75b1e207252936f73cabb
 });
 
 // Delete product
@@ -174,11 +240,36 @@ router.delete('/products/:id', authenticate, requireAdmin, async (req, res) => {
 // Get all orders
 router.get('/orders', authenticate, requireAdmin, async (req, res) => {
   try {
+    // Get all orders, newest first
     const orders = await Order.find()
       .populate('user', 'name email')
       .populate('products.product')
       .sort({ createdAt: -1 });
-    res.json(orders);
+    
+    // Normalize the response format
+    const normalizedOrders = orders.map(order => {
+      const orderObj = order.toObject();
+      
+      // Ensure we have an items array
+      if (!orderObj.items || !orderObj.items.length) {
+        // If no items array but we have products, convert them
+        if (orderObj.products && orderObj.products.length) {
+          orderObj.items = orderObj.products.map(item => ({
+            _id: item.product?._id || `product_${Date.now()}`,
+            name: item.product?.name || 'Unknown Product',
+            quantity: item.quantity || 1,
+            price: item.product?.price || 0,
+            image: item.product?.image || ''
+          }));
+        } else {
+          orderObj.items = [];
+        }
+      }
+      
+      return orderObj;
+    });
+    
+    res.json(normalizedOrders);
   } catch (error) {
     console.error('Error fetching orders:', error);
     res.status(500).json({ message: 'Failed to fetch orders' });
@@ -196,7 +287,26 @@ router.get('/orders/:id', authenticate, requireAdmin, async (req, res) => {
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    res.json(order);
+    // Normalize the order format
+    const orderObj = order.toObject();
+    
+    // Ensure we have an items array
+    if (!orderObj.items || !orderObj.items.length) {
+      // If no items array but we have products, convert them
+      if (orderObj.products && orderObj.products.length) {
+        orderObj.items = orderObj.products.map(item => ({
+          _id: item.product?._id || `product_${Date.now()}`,
+          name: item.product?.name || 'Unknown Product',
+          quantity: item.quantity || 1,
+          price: item.product?.price || 0,
+          image: item.product?.image || ''
+        }));
+      } else {
+        orderObj.items = [];
+      }
+    }
+    
+    res.json(orderObj);
   } catch (error) {
     console.error('Error fetching order:', error);
     res.status(500).json({ message: 'Failed to fetch order' });
@@ -220,9 +330,23 @@ router.put('/orders/:id/status', authenticate, requireAdmin, async (req, res) =>
       });
     }
     
+    // Create a user-friendly status for display
+    let displayStatus;
+    switch(deliveryStatus) {
+      case 'pending': displayStatus = 'Pending'; break;
+      case 'processing': displayStatus = 'Processing'; break;
+      case 'shipped': displayStatus = 'Shipped'; break;
+      case 'delivered': displayStatus = 'Delivered'; break;
+      case 'cancelled': displayStatus = 'Cancelled'; break;
+      default: displayStatus = 'Processing';
+    }
+    
     const order = await Order.findByIdAndUpdate(
       req.params.id,
-      { deliveryStatus },
+      { 
+        deliveryStatus, 
+        status: displayStatus // Update both status fields
+      },
       { new: true }
     ).populate('user', 'name email');
     
@@ -230,10 +354,66 @@ router.put('/orders/:id/status', authenticate, requireAdmin, async (req, res) =>
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    res.json(order);
+    // Normalize the response format
+    const orderObj = order.toObject();
+    
+    // Ensure we have an items array
+    if (!orderObj.items || !orderObj.items.length) {
+      // If no items array but we have products, convert them
+      if (orderObj.products && orderObj.products.length) {
+        orderObj.items = orderObj.products.map(item => ({
+          _id: item.product?._id || `product_${Date.now()}`,
+          name: item.product?.name || 'Unknown Product',
+          quantity: item.quantity || 1,
+          price: item.product?.price || 0,
+          image: item.product?.image || ''
+        }));
+      } else {
+        orderObj.items = [];
+      }
+    }
+    
+    res.json(orderObj);
   } catch (error) {
     console.error('Error updating order status:', error);
     res.status(500).json({ message: 'Failed to update order status' });
+  }
+});
+
+// Find order by orderNumber
+router.get('/orders/find/:orderNumber', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const order = await Order.findOne({ orderNumber: req.params.orderNumber })
+      .populate('user', 'name email')
+      .populate('products.product');
+    
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    
+    // Normalize the order format
+    const orderObj = order.toObject();
+    
+    // Ensure we have an items array
+    if (!orderObj.items || !orderObj.items.length) {
+      // If no items array but we have products, convert them
+      if (orderObj.products && orderObj.products.length) {
+        orderObj.items = orderObj.products.map(item => ({
+          _id: item.product?._id || `product_${Date.now()}`,
+          name: item.product?.name || 'Unknown Product',
+          quantity: item.quantity || 1,
+          price: item.product?.price || 0,
+          image: item.product?.image || ''
+        }));
+      } else {
+        orderObj.items = [];
+      }
+    }
+    
+    res.json(orderObj);
+  } catch (error) {
+    console.error('Error fetching order by number:', error);
+    res.status(500).json({ message: 'Failed to fetch order' });
   }
 });
 

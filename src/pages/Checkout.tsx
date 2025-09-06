@@ -40,7 +40,7 @@ import {
   arrowForward
 } from 'ionicons/icons';
 import { useCart } from '../contexts/CartContext';
-import './Checkout.css';
+import '../styles/Checkout.css';
 
 interface DeliveryAddress {
   fullName: string;
@@ -119,17 +119,11 @@ const Checkout: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Set the modal to show before the API call to make it appear immediately
-      setShowSuccessModal(true);
-      
-      // Generate order number
+      // Generate order number first
       const generatedOrderNumber = `ORD${Date.now()}`;
       setOrderNumber(generatedOrderNumber);
       
-      // Simulate API call (reduced delay)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Create order object with proper structure
+      // Create order object
       const order = {
         _id: `order_${Date.now()}`,
         orderNumber: generatedOrderNumber,
@@ -152,29 +146,34 @@ const Checkout: React.FC = () => {
         deliveryFee: deliveryFee,
         total: total,
         status: 'Processing',
-        deliveryStatus: 'pending', // Add explicit delivery status
+        deliveryStatus: 'processing',
         createdAt: new Date().toISOString(),
-        estimatedDelivery: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        estimatedDelivery: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        user: {
+          name: deliveryAddress.fullName,
+          email: deliveryAddress.email
+        }
       };
-      
-      console.log('Saving order:', order); // Debug log
       
       // Save order to localStorage
       const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-      existingOrders.unshift(order); // Add new order at the beginning
+      existingOrders.unshift(order);
       localStorage.setItem('orders', JSON.stringify(existingOrders));
-      
-      console.log('Orders saved to localStorage:', existingOrders); // Debug log
       
       // Clear cart
       clearCart();
       
-      // Success modal is already shown
+      // Stop loading first
+      setIsLoading(false);
+      
+      // Force a small delay then show modal
+      setTimeout(() => {
+        setShowSuccessModal(true);
+      }, 200);
       
     } catch (error) {
       console.error('Error placing order:', error);
       showError('Failed to place order. Please try again.');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -402,7 +401,6 @@ const Checkout: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <IonIcon icon={checkmarkCircleOutline} slot="start" />
                   Place Order - ₹{total.toFixed(2)}
                 </>
               )}
@@ -419,7 +417,7 @@ const Checkout: React.FC = () => {
           position="top"
         />
         
-        {/* Order Success Modal */}
+        {/* Order Success Modal - simplified and forced visibility */}
         <IonModal 
           isOpen={showSuccessModal}
           backdropDismiss={false}

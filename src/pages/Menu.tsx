@@ -1,7 +1,7 @@
 import { IonContent, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonButton, IonIcon, IonBadge } from '@ionic/react';
 import { addOutline, removeOutline, trashOutline, cartOutline } from 'ionicons/icons';
 import { useCart } from '../contexts/CartContext';
-import './Menu.css';
+import '../styles/Menu.css';
 
 const Menu: React.FC = () => {
   const { getTotalItems } = useCart();

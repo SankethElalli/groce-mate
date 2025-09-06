@@ -1,0 +1,246 @@
+/* Admin Dashboard Mobile Styles */
+
+@media (max-width: 768px) {
+  .admin-dashboard-tabs {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.25rem;
+    padding: 0.75rem;
+  }
+  
+  .admin-dashboard-tabs ion-button {
+    height: 40px;
+    font-size: 0.85rem;
+  }
+  
+  .admin-form {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .simple-admin-form {
+    gap: 0.75rem;
+  }
+  
+  .simple-admin-input,
+  .simple-admin-select {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .simple-admin-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  /* Mobile Table Styles - Card Layout */
+  .admin-table {
+    overflow: visible;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  .admin-table table {
+    display: block;
+    width: 100%;
+  }
+  
+  .admin-table thead {
+    display: none;
+  }
+  
+  .admin-table tbody {
+    display: block;
+  }
+  
+  .admin-table tr {
+    display: block;
+    background: var(--ion-card-background);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--ion-color-light);
+  }
+  
+  .admin-table tr:hover {
+    background: var(--ion-card-background);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .admin-table td {
+    display: block;
+    padding: 0.75rem 0;
+    border: none;
+    position: relative;
+    padding-left: 45%;
+    min-height: 2.5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  .admin-table td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    font-size: 0.85rem;
+    width: 40%;
+    line-height: 1.2;
+    word-wrap: break-word;
+  }
+  
+  /* Special handling for action buttons */
+  .admin-table td:last-child {
+    padding-left: 0;
+    padding-top: 1.25rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--ion-color-light);
+    min-height: auto;
+  }
+  
+  .admin-table td:last-child:before {
+    content: "Actions";
+    position: static;
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    font-size: 0.85rem;
+  }
+  
+  .table-action-buttons {
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+  
+  .simple-table-btn {
+    padding: 0.5rem;
+    min-width: 40px;
+    height: 40px;
+  }
+  
+  /* Special styling for different data types */
+  .admin-table td img {
+    max-width: 50px;
+    max-height: 50px;
+    border-radius: 6px;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    margin-top: 0.25rem;
+  }
+  
+  .order-number-link {
+    font-weight: 600;
+    color: var(--ion-color-primary);
+  }
+  
+  .order-items-modal {
+    --width: 98%;
+    --height: 95%;
+  }
+  
+  .order-details-container {
+    padding: 0.75rem;
+  }
+  
+  .order-header {
+    margin-bottom: 1rem;
+  }
+  
+  .order-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .status-buttons {
+    gap: 0.25rem;
+  }
+  
+  .status-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+  
+  .product-thumbnail,
+  .no-image {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard-tabs {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.5rem;
+  }
+  
+  .admin-dashboard-tabs ion-button {
+    height: 36px;
+    font-size: 0.8rem;
+  }
+  
+  .admin-dashboard-full {
+    padding: 0.25rem;
+  }
+  
+  .admin-form {
+    padding: 0.75rem;
+  }
+  
+  /* Extra small screen adjustments */
+  .admin-table tr {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .admin-table td {
+    padding: 0.6rem 0;
+    font-size: 0.85rem;
+    min-height: 2.2rem;
+    padding-left: 42%;
+  }
+  
+  .admin-table td:before {
+    font-size: 0.8rem;
+    top: 0.6rem;
+    width: 38%;
+  }
+  
+  .admin-table td:last-child {
+    padding-top: 1rem;
+    margin-top: 0.6rem;
+  }
+  
+  .admin-table td:last-child:before {
+    margin-bottom: 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .simple-table-btn {
+    padding: 0.4rem;
+    min-width: 36px;
+    height: 36px;
+  }
+  
+  .status-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+  }
+}

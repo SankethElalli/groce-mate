@@ -30,8 +30,8 @@ import {
 import { pencilOutline, logOutOutline, personOutline, keyOutline, shieldOutline, closeOutline, checkmarkOutline, cameraOutline, cloudOfflineOutline, refreshOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { updateProfile, changePassword, uploadProfileImage, getProfileData } from '../api/api';
-import './Profile.css';
-import '../pages/IconFix.css'; // Import IconFix.css for proper icon theming
+import '../styles/Profile.css';
+import '../styles/IconFix.css'; // Import IconFix.css for proper icon theming
 
 interface UserProfile {
   _id?: string;
@@ -480,4 +480,3 @@ const Profile: React.FC = () => {
 };
 
 export default Profile;
-                    

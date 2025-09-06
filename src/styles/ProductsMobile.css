@@ -1,5 +1,5 @@
 .products-content {
-  padding-bottom: 16px;
+  padding-bottom: 160px; /* Significantly increased padding for tab bar */
 }
 
 /* Remove custom title styling - use Ionic's IonTitle instead */
@@ -96,7 +96,7 @@
 .products-content {
   padding-top: 0 !important;
   --padding-top: 0 !important;
-  padding-bottom: 16px;
+  padding-bottom: 160px; /* Significantly increased padding for tab bar */
 }
 
 /* Responsive grid for product items */
@@ -105,12 +105,14 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
-    padding: 0 0.75rem 1.5rem !important;
+    padding: 0 0.75rem 6rem !important; /* Much more bottom padding */
+    margin-bottom: 3rem !important; /* Additional bottom margin */
   }
   
   .product-card {
     height: 300px !important;
     border-radius: 12px !important;
+    margin-bottom: 0; /* Remove default margin */
   }
   
   .product-image {
@@ -231,6 +233,11 @@
   .products-header input {
     padding: 0.6rem 0.8rem !important;
     font-size: 0.9rem !important;
+  }
+  
+  .products-list {
+    padding: 0 0.5rem 7rem !important; /* Much more bottom padding */
+    margin-bottom: 3rem !important;
   }
   
   .product-card {

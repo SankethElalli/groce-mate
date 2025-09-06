@@ -3,7 +3,7 @@ import { IonContent, IonPage, IonToast, IonChip, IonIcon, IonLabel, IonHeader, I
 import { login as apiLogin, register as apiRegister } from '../api/api';
 import { useHistory } from 'react-router-dom';
 import { cloudOfflineOutline } from 'ionicons/icons';
-import './Login.css';
+import '../styles/Login.css';
 
 const Login: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
