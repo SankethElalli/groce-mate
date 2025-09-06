@@ -127,17 +127,16 @@
 
 /* Tables */
 .admin-table {
+  background: var(--ion-card-background);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: none;
-  background: transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .admin-table table {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  background: transparent;
 }
 
 .admin-table th {
@@ -158,15 +157,10 @@
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
-  background: transparent;
-}
-
-.admin-table tr {
-  background: transparent;
 }
 
 .admin-table tr:hover {
-  background: rgba(var(--ion-color-light-rgb), 0.1);
+  background: var(--ion-color-light);
 }
 
 /* Specific column alignments */
@@ -490,12 +484,9 @@
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .admin-dashboard-tabs,
-  .admin-form {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-  
+  .admin-form,
   .admin-table {
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
   
   .admin-table th {
@@ -503,29 +494,13 @@
   }
   
   .admin-table tr:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.05);
   }
   
   .simple-admin-input,
   .simple-admin-select {
     border-color: rgba(255, 255, 255, 0.2);
     background: rgba(255, 255, 255, 0.05);
-  }
-  
-  /* Clean mobile cards in dark mode */
-  @media (max-width: 768px) {
-    .admin-table tr {
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    .admin-table tr:hover {
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    }
-    
-    .admin-table td {
-      border-bottom-color: rgba(255, 255, 255, 0.08);
-    }
   }
 }
 
@@ -568,9 +543,9 @@
   
   .admin-table table {
     display: block;
+    min-width: auto;
     width: 100%;
     box-sizing: border-box;
-    background: transparent;
   }
   
   .admin-table thead {
@@ -581,97 +556,112 @@
     display: block;
     width: 100%;
     box-sizing: border-box;
-    background: transparent;
   }
   
   .admin-table tr {
     display: block;
     background: var(--ion-card-background);
-    border-radius: 12px;
+    border-radius: 8px;
     margin-bottom: 1rem;
     padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(var(--ion-color-light-rgb), 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--ion-color-light);
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
   }
   
   .admin-table tr:hover {
     background: var(--ion-card-background);
     transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
   }
   
   .admin-table td {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.6rem 0;
     border: none;
+    min-height: 40px;
+    line-height: 1.4;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
-    gap: 0.5rem;
-    border-bottom: 1px solid rgba(var(--ion-color-light-rgb), 0.15);
-    background: transparent;
-  }
-  
-  .admin-table td:last-child {
-    border-bottom: none;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    flex-wrap: wrap;
   }
   
   .admin-table td:before {
-    content: attr(data-label);
+    content: attr(data-label) ": ";
     font-weight: 600;
     color: var(--ion-color-medium);
     font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    flex: 0 0 auto;
-    min-width: 120px;
-    max-width: 120px;
+    min-width: 90px;
+    max-width: 90px;
+    flex-shrink: 0;
+    margin-right: 0.75rem;
+    text-align: left;
+    display: inline-block;
+    align-self: flex-start;
+    padding-top: 2px;
   }
   
-  .admin-table td .cell-content {
-    flex: 1;
-    text-align: right;
-    font-weight: 500;
-    font-size: 0.95rem;
-    color: var(--ion-text-color);
-    line-height: 1.4;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  
-  /* Special handling for action buttons row */
-  .admin-table td.actions-cell {
+  .admin-table td:last-child {
     border-top: 1px solid var(--ion-color-light);
-    margin-top: 0.5rem;
-    padding-top: 1rem;
-    border-bottom: none;
-    flex-direction: column;
-    align-items: flex-start;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    justify-content: flex-start;
+    text-align: left;
+    min-height: 50px;
   }
   
-  .admin-table td.actions-cell:before {
-    margin-bottom: 0.75rem;
-    min-width: 100%;
+  .admin-table td:last-child:before {
+    content: "Actions: ";
     text-align: left;
   }
   
-  .table-action-buttons {
+  /* Content wrapper for better text control */
+  .admin-table td .cell-content {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.4;
+    display: block;
     width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
+    max-width: calc(100% - 100px); /* Increased space for label */
   }
   
-  /* Special styling for status badges */
-  .admin-table td .cell-content .status-badge {
-    margin-left: auto;
+  /* Email and Name fields specific fixes */
+  .admin-table td[data-label="Email"] .cell-content,
+  .admin-table td[data-label="Name"] .cell-content {
+    display: block;
+    width: calc(100% - 100px);
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all; /* Force breaks for email addresses */
+    padding-right: 5px;
+  }
+  
+  /* Ensure tables have proper spacing */
+  .admin-table td {
+    padding: 0.6rem 0;
+    gap: 5px;
+  }
+  
+  .admin-table td:before {
+    min-width: 90px;
+    max-width: 90px;
+    margin-right: 10px; /* Increased spacing */
   }
 }
 
@@ -724,18 +714,6 @@
     margin-right: 0.5rem;
   }
 }
-
-/* Hide scrollbars globally for admin dashboard */
-.admin-dashboard-content::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
-}
-
-.admin-dashboard_full::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
-}
-
 
 /* Hide scrollbars globally for admin dashboard */
 .admin-dashboard-content::-webkit-scrollbar {
